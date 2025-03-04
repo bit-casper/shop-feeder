@@ -3,56 +3,62 @@
     <h2>{{ title }}</h2>
     <form method="post" class="needs-validation">
         {% csrf_token %}
-        <div class="mb-3">
+        <div class="form-group">
             {{ form.name.label_tag }}
             <input type="text" class="form-control" id="id_name" name="name" value="{{ form.name.value|default:'' }}" required>
             {% if form.name.errors %}
                 <div class="invalid-feedback">{{ form.name.errors|first }}</div>
             {% endif %}
         </div>
-        <div class="mb-3">
+        <div class="form-group">
             {{ form.shop_type.label_tag }}
             {{ form.shop_type }}
         </div>
-        <div class="mb-3">
+        <div class="form-group">
             {{ form.api_endpoint.label_tag }}
             <input type="url" class="form-control" id="id_api_endpoint" name="api_endpoint" value="{{ form.api_endpoint.value|default:'' }}" required>
             {% if form.api_endpoint.errors %}
                 <div class="invalid-feedback">{{ form.api_endpoint.errors|first }}</div>
             {% endif %}
         </div>
-        <div class="mb-3 input-group">
+        <div class="form-group">
             {{ form.api_key.label_tag }}
-            <input type="password" class="form-control" id="id_api_key" name="api_key" value="{{ form.api_key.value|default:'' }}" required>
-            {% if shop.id %}
-                <button type="button" class="btn btn-outline-secondary toggle-visibility-btn" data-field="api_key">👁️</button>
-                <button type="button" class="btn btn-outline-secondary unlock-btn" data-field="api_key" data-bs-toggle="modal" data-bs-target="#unlockModalApiKey">Unlock</button>
-            {% endif %}
+            <div class="input-group">
+                <input type="password" class="form-control" id="id_api_key" name="api_key" value="{{ form.api_key.value|default:'' }}" required>
+                {% if shop.id %}
+                    <button type="button" class="btn btn-outline-secondary toggle-visibility-btn" data-field="api_key">👁️</button>
+                    <button type="button" class="btn btn-outline-secondary unlock-btn" data-field="api_key" data-bs-toggle="modal" data-bs-target="#unlockModalApiKey">Unlock</button>
+                {% endif %}
+            </div>
             {% if form.api_key.errors %}
                 <div class="invalid-feedback">{{ form.api_key.errors|first }}</div>
             {% endif %}
         </div>
-        <div class="mb-3 input-group">
+        <div class="form-group">
             {{ form.api_secret.label_tag }}
-            <input type="password" class="form-control" id="id_api_secret" name="api_secret" value="{{ form.api_secret.value|default:'' }}">
-            {% if shop.id %}
-                <button type="button" class="btn btn-outline-secondary toggle-visibility-btn" data-field="api_secret">👁️</button>
-                <button type="button" class="btn btn-outline-secondary unlock-btn" data-field="api_secret" data-bs-toggle="modal" data-bs-target="#unlockModalApiSecret">Unlock</button>
-            {% endif %}
+            <div class="input-group">
+                <input type="password" class="form-control" id="id_api_secret" name="api_secret" value="{{ form.api_secret.value|default:'' }}">
+                {% if shop.id %}
+                    <button type="button" class="btn btn-outline-secondary toggle-visibility-btn" data-field="api_secret">👁️</button>
+                    <button type="button" class="btn btn-outline-secondary unlock-btn" data-field="api_secret" data-bs-toggle="modal" data-bs-target="#unlockModalApiSecret">Unlock</button>
+                {% endif %}
+            </div>
             {% if form.api_secret.errors %}
                 <div class="invalid-feedback">{{ form.api_secret.errors|first }}</div>
             {% endif %}
         </div>
-        <div class="mb-3">
+        <div class="form-group">
             {{ form.is_active.label_tag }}
             {{ form.is_active }}
         </div>
-        <div class="mb-3">
+        <div class="form-group">
             {{ form.sync_interval.label_tag }}
             {{ form.sync_interval }}
         </div>
-        <button type="submit" class="btn btn-primary">Save</button>
-        <a href="{% url 'shop_list' %}" class="btn btn-secondary">Cancel</a>
+        <div class="form-buttons">
+            <button type="submit" class="btn btn-primary">Save</button>
+            <a href="{% url 'shop_list' %}" class="btn btn-secondary">Cancel</a>
+        </div>
     </form>
 
     {% if shop.id %}

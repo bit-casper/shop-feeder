@@ -21,13 +21,11 @@
                 <td>{{ feed.get_format_type_display }}</td>
                 <td>{{ feed.last_sync|default:'Never' }}</td>
                 <td>
-                    <span class="badge {% if feed.sync_status == 'success' %}bg-success{% elif feed.sync_status == 'failed' %}bg-danger{% else %}bg-warning{% endif %}">
-                        {{ feed.sync_status }}
-                    </span>
+                    <span class="badge bg-dark text-white">{{ feed.sync_status }}</span>
                 </td>
                 <td>
-                    <a href="{% url 'feed_update' shop.id feed.id %}" class="btn btn-sm btn-primary">Edit</a>
-                    <button class="btn btn-sm btn-success test-mapping-btn" data-feed-id="{{ feed.id }}" data-shop-id="{{ shop.id }}">Test</button>
+                    <a href="{% url 'feed_update' shop.id feed.id %}" class="btn btn-sm btn-secondary">Edit</a>
+                    <button class="btn btn-sm btn-primary test-mapping-btn" data-feed-id="{{ feed.id }}" data-shop-id="{{ shop.id }}">Test</button>
                     <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteFeedModal{{ feed.id }}">Delete</button>
                     <!-- Delete Modal -->
                     <div class="modal fade" id="deleteFeedModal{{ feed.id }}" tabindex="-1">
@@ -94,7 +92,7 @@
             
             if (result.error) {
                 resultElement.textContent = `Error: ${result.error}`;
-                resultElement.style.color = 'red';
+                resultElement.style.color = '#000000';
             } else {
                 const sample = result.sample;
                 let output = 'Mapped Sample Data:\n';
@@ -102,7 +100,7 @@
                     output += `${key}: ${value}\n`;
                 }
                 resultElement.textContent = output;
-                resultElement.style.color = 'black';
+                resultElement.style.color = '#000000';
             }
             modal.show();
         });

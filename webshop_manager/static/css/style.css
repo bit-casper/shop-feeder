@@ -1,30 +1,160 @@
+/* General Styles */
 body {
-    font-family: Arial, sans-serif;
-    margin: 20px;
+    font-family: 'Helvetica', 'Arial', sans-serif;
+    background-color: #f9f9f9;
+    color: #000000;
+    margin: 0;
+    padding: 0;
 }
-.container {
-    max-width: 900px;
-    margin: 0 auto;
+
+/* Menu Button */
+.menu-button {
+    background-color: #000000;
+    border: none;
+    border-radius: 10px;
+    padding: 6px 12px;
+    font-size: 14px;
+    color: #ffffff;
+    position: absolute;
+    right: 16px; /* Aligned with your dropdown */
+    top: 15px;
+    z-index: 1001;
 }
-table {
+
+/* Dropdown Menu */
+.navbar-collapse {
+    position: absolute;
+    top: 50px; /* Your update */
+    right: 16px; /* Your update */
+    width: 200px;
+    background-color: #000000;
+    border-radius: 10px;
+    padding: 10px;
+    z-index: 1000;
+}
+.navbar-nav {
     width: 100%;
-    border-collapse: collapse;
 }
-th, td {
-    border: 1px solid #ddd;
-    padding: 8px;
+.nav-link {
+    color: #ffffff !important;
+    padding: 8px 12px;
     text-align: left;
 }
-th {
-    background-color: #f2f2f2;
+.nav-link:hover {
+    color: #cccccc !important;
 }
-.btn {
-    padding: 6px 12px;
-    margin: 2px;
-    text-decoration: none;
-    color: white;
-    border-radius: 4px;
+
+/* Containers */
+.container {
+    max-width: 100%;
+    margin: 2% auto;
+    padding: 0;
 }
-.btn-add { background-color: #28a745; }
-.btn-edit { background-color: #007bff; }
-.btn-delete { background-color: #dc3545; }
+
+/* Card Sections */
+.card-section {
+    background: linear-gradient(135deg, #e5e5e5 0%, #d5d5d5 100%);
+    border-radius: 24px;
+    padding: 15px;
+    padding-left: 5%; /* Your update */
+    padding-right: 5%; /* Your update */
+    border: 1px solid #ffffff;
+    width: 90vw; /* Your update */
+    margin-left: 5vw; /* Your update */
+    min-height: 90vh; /* Your update */
+    position: relative;
+}
+
+/* Card Content */
+.card-content {
+    margin-top: 60px; /* Clears menu button and dropdown */
+}
+
+/* Form Elements */
+.form-group {
+    margin-bottom: 20px;
+}
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+}
+.form-control {
+    border: 1px solid #000000;
+    border-radius: 8px;
+    color: #000000;
+    width: 100%;
+}
+.input-group {
+    display: flex;
+    gap: 10px;
+}
+.input-group .form-control,
+.input-group .btn {
+    border-radius: 8px;
+}
+.form-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+/* Buttons */
+.btn-primary, .btn-success, .btn-danger, .btn-secondary, .btn-outline-secondary {
+    background-color: #000000;
+    border-color: #000000;
+    color: #ffffff;
+    border-radius: 8px;
+    padding: 6px 16px;
+    font-size: 14px;
+}
+.btn-primary:hover, .btn-success:hover, .btn-danger:hover, .btn-secondary:hover, .btn-outline-secondary:hover {
+    background-color: #333333;
+    border-color: #333333;
+    color: #ffffff;
+}
+
+/* Tables */
+.table {
+    background: linear-gradient(135deg, #e5e5e5 0%, #d5d5d5 100%);
+    border: 1px solid #ffffff;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+.table th {
+    background: transparent;
+    color: #000000;
+    border: none;
+    padding: 12px;
+}
+.table td {
+    background: transparent;
+    border: none;
+    padding: 12px;
+}
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+/* Headings */
+h2 {
+    color: #000000;
+    margin-bottom: 20px;
+}
+
+/* Modals */
+.modal-content {
+    border: 1px solid #000000;
+    border-radius: 0;
+}
+.modal-header {
+    background-color: #000000;
+    color: #ffffff;
+    border-bottom: 1px solid #ffffff;
+}
+.modal-title {
+    color: #ffffff;
+}
+.btn-close {
+    filter: invert(1);
+}
