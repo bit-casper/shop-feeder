@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework',
+#    'rest_framework',
     'encrypted_model_fields',
     'shops.apps.ShopsConfig',  # Add your app
 ]
