@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h2>Feeds for {{ shop.name }}</h2>
+    <a href="{% url 'feed_create' shop.id %}" class="btn btn-primary mb-3">Add New Feed</a>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Type</th>
+                <th>Source</th>
+                <th>Format</th>
+                <th>Last Sync</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for feed in feeds %}
+            <tr>
+                <td>{{ feed.get_source_type_display }}</td>
+                <td>{{ feed.ftp_host|default:feed.url }}</td>
+                <td>{{ feed.get_format_type_display }}</td>
+                <td>{{ feed.last_sync|default:'Never' }}</td>
+                <td>
+                    <span class="badge {% if feed.sync_status == 'success' %}bg-success{% elif feed.sync_status == 'failed' %}bg-danger{% else %}bg-warning{% endif %}">
+                        {{ feed.sync_status }}
+                    </span>
+                </td>
+                <td>
+                    <a href="{% url 'feed_update' shop.id feed.id %}" class="btn btn-sm btn-primary">Edit</a>
+                    <button class="btn btn-sm btn-success test-mapping-btn" data-feed-id="{{ feed.id }}" data-shop-id="{{ shop.id }}">Test</button>
+                    <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteFeedModal{{ feed.id }}">Delete</button>
+                    <!-- Delete Modal -->
+                    <div class="modal fade" id="deleteFeedModal{{ feed.id }}" tabindex="-1">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Confirm Delete</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body">
+                                    Are you sure you want to delete this feed?
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                    <form action="{% url 'feed_delete' shop.id feed.id %}" method="post" style="display:inline;">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-danger">Delete</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="6">No feeds found.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Test Mapping Modal -->
+    <div class="modal fade" id="testMappingModal" tabindex="-1" aria-labelledby="testMappingModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="testMappingModalLabel">Test Mapping Result</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <pre id="mappingResult"></pre>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.querySelectorAll('.test-mapping-btn').forEach(button => {
+        button.addEventListener('click', async () => {
+            const shopId = button.dataset.shopId;
+            const feedId = button.dataset.feedId;
+            const response = await fetch(`/shops/${shopId}/feeds/${feedId}/test/`, {
+                method: 'POST',
+                headers: { 'X-CSRFToken': '{{ csrf_token }}', 'Content-Type': 'application/json' },
+            });
+            const result = await response.json();
+            
+            const modal = new bootstrap.Modal(document.getElementById('testMappingModal'));
+            const resultElement = document.getElementById('mappingResult');
+            
+            if (result.error) {
+                resultElement.textContent = `Error: ${result.error}`;
+                resultElement.style.color = 'red';
+            } else {
+                const sample = result.sample;
+                let output = 'Mapped Sample Data:\n';
+                for (const [key, value] of Object.entries(sample)) {
+                    output += `${key}: ${value}\n`;
+                }
+                resultElement.textContent = output;
+                resultElement.style.color = 'black';
+            }
+            modal.show();
+        });
+    });
+</script>
+{% endblock %}

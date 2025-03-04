@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h2>Shops</h2>
+    <a href="{% url 'shop_create' %}" class="btn btn-primary mb-3">Add New Shop</a>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Active</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for shop in shops %}
+            <tr>
+                <td>{{ shop.name }}</td>
+                <td>{{ shop.get_shop_type_display }}</td>
+                <td>
+                    <span class="badge {% if shop.is_active %}bg-success{% else %}bg-secondary{% endif %}">
+                        {{ shop.is_active|yesno }}
+                    </span>
+                </td>
+                <td>
+                    <a href="{% url 'feed_list' shop.id %}" class="btn btn-sm btn-info">Feeds</a>
+                    <a href="{% url 'shop_update' shop.id %}" class="btn btn-sm btn-primary">Edit</a>
+                    <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteShopModal{{ shop.id }}">Delete</button>
+                    <!-- Delete Modal -->
+                    <div class="modal fade" id="deleteShopModal{{ shop.id }}" tabindex="-1">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Confirm Delete</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body">
+                                    Are you sure you want to delete "{{ shop.name }}"?
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                    <form action="{% url 'shop_delete' shop.id %}" method="post" style="display:inline;">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-danger">Delete</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="4">No shops found.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

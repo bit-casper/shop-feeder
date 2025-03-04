@@ -1,0 +1,148 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h2>{{ title }}</h2>
+    <form method="post" class="needs-validation">
+        {% csrf_token %}
+        <div class="mb-3">
+            {{ form.name.label_tag }}
+            <input type="text" class="form-control" id="id_name" name="name" value="{{ form.name.value|default:'' }}" required>
+            {% if form.name.errors %}
+                <div class="invalid-feedback">{{ form.name.errors|first }}</div>
+            {% endif %}
+        </div>
+        <div class="mb-3">
+            {{ form.shop_type.label_tag }}
+            {{ form.shop_type }}
+        </div>
+        <div class="mb-3">
+            {{ form.api_endpoint.label_tag }}
+            <input type="url" class="form-control" id="id_api_endpoint" name="api_endpoint" value="{{ form.api_endpoint.value|default:'' }}" required>
+            {% if form.api_endpoint.errors %}
+                <div class="invalid-feedback">{{ form.api_endpoint.errors|first }}</div>
+            {% endif %}
+        </div>
+        <div class="mb-3 input-group">
+            {{ form.api_key.label_tag }}
+            <input type="password" class="form-control" id="id_api_key" name="api_key" value="{{ form.api_key.value|default:'' }}" required>
+            {% if shop.id %}
+                <button type="button" class="btn btn-outline-secondary toggle-visibility-btn" data-field="api_key">👁️</button>
+                <button type="button" class="btn btn-outline-secondary unlock-btn" data-field="api_key" data-bs-toggle="modal" data-bs-target="#unlockModalApiKey">Unlock</button>
+            {% endif %}
+            {% if form.api_key.errors %}
+                <div class="invalid-feedback">{{ form.api_key.errors|first }}</div>
+            {% endif %}
+        </div>
+        <div class="mb-3 input-group">
+            {{ form.api_secret.label_tag }}
+            <input type="password" class="form-control" id="id_api_secret" name="api_secret" value="{{ form.api_secret.value|default:'' }}">
+            {% if shop.id %}
+                <button type="button" class="btn btn-outline-secondary toggle-visibility-btn" data-field="api_secret">👁️</button>
+                <button type="button" class="btn btn-outline-secondary unlock-btn" data-field="api_secret" data-bs-toggle="modal" data-bs-target="#unlockModalApiSecret">Unlock</button>
+            {% endif %}
+            {% if form.api_secret.errors %}
+                <div class="invalid-feedback">{{ form.api_secret.errors|first }}</div>
+            {% endif %}
+        </div>
+        <div class="mb-3">
+            {{ form.is_active.label_tag }}
+            {{ form.is_active }}
+        </div>
+        <div class="mb-3">
+            {{ form.sync_interval.label_tag }}
+            {{ form.sync_interval }}
+        </div>
+        <button type="submit" class="btn btn-primary">Save</button>
+        <a href="{% url 'shop_list' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+
+    {% if shop.id %}
+    <!-- Unlock Modal for API Key -->
+    <div class="modal fade" id="unlockModalApiKey" tabindex="-1" aria-labelledby="unlockModalApiKeyLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="unlockModalApiKeyLabel">Unlock API Key</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to unlock the API Key field? This will allow changes to sensitive data.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary unlock-confirm" data-field="api_key">Unlock</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Unlock Modal for API Secret -->
+    <div class="modal fade" id="unlockModalApiSecret" tabindex="-1" aria-labelledby="unlockModalApiSecretLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="unlockModalApiSecretLabel">Unlock API Secret</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to unlock the API Secret field? This will allow changes to sensitive data.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary unlock-confirm" data-field="api_secret">Unlock</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+    (function () {
+        'use strict';
+        var forms = document.querySelectorAll('.needs-validation');
+        Array.prototype.slice.call(forms).forEach(function (form) {
+            form.addEventListener('submit', function (event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+    })();
+
+    {% if shop.id %}
+    const apiKeyField = document.getElementById('id_api_key');
+    const apiSecretField = document.getElementById('id_api_secret');
+    apiKeyField.setAttribute('readonly', 'readonly');
+    apiSecretField.setAttribute('readonly', 'readonly');
+
+    document.querySelectorAll('.unlock-confirm').forEach(button => {
+        button.addEventListener('click', function () {
+            const fieldName = this.dataset.field;
+            const field = document.getElementById(`id_${fieldName}`);
+            const unlockButton = document.querySelector(`.unlock-btn[data-field="${fieldName}"]`);
+            field.removeAttribute('readonly');
+            unlockButton.style.display = 'none';
+            const modalId = fieldName === 'api_key' ? 'unlockModalApiKey' : 'unlockModalApiSecret';
+            const modal = bootstrap.Modal.getInstance(document.getElementById(modalId));
+            modal.hide();
+        });
+    });
+
+    document.querySelectorAll('.toggle-visibility-btn').forEach(button => {
+        button.addEventListener('click', function () {
+            const field = document.getElementById(`id_${this.dataset.field}`);
+            if (field.type === 'password') {
+                field.type = 'text';
+                this.textContent = '🙈';
+            } else {
+                field.type = 'password';
+                this.textContent = '👁️';
+            }
+        });
+    });
+    {% endif %}
+</script>
+{% endblock %}
