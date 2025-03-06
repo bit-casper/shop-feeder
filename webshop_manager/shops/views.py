@@ -108,8 +108,10 @@ class FeedTestMappingView(LoginRequiredMixin, View):
                 response = requests.get(feed.url)
                 response.raise_for_status()
                 xml_data = response.content
-            else:
+            elif feed.source_type == 'ftp':
                 return JsonResponse({'error': 'FTP not yet implemented'}, status=400)
+            elif feed.source_type == 'local':
+                xml_data = ET.parse("test_xml.xml")
 
             tree = ET.fromstring(xml_data)
             root = tree.getroot()

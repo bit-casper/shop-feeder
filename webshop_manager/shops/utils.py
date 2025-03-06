@@ -37,7 +37,8 @@ def sync_feed(feed):
             response.raise_for_status()
             xml_data = response.content
         # Add FTP logic if needed...
-
+        elif feed.source_type == 'local':
+            xml_data = ET.parse("test_xml.xml")
         tree = ET.fromstring(xml_data)
         supplier_products = {}
         for item in tree.findall('.//product'):  # Adjust XPath
