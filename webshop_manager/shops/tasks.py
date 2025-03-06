@@ -49,11 +49,34 @@ def sync_feed_to_shops(feed_id):
         SyncLog.objects.create(feed=feed, shop=None, status='failed', message=str(e))
         raise
 
+# def sync_to_shopify(shop, data, feed):
+#     # Shopify REST API (using API key and password for basic auth)
+#     headers = {
+#         'Content-Type': 'application/json',
+#         'Authorization': f"Basic {shop.api_key}:{shop.api_secret}".encode('utf-8').decode('ascii')  # Simplified; use base64 in production
+#     }
+#     payload = {
+#         'product': {
+#             'title': data.get('title', 'Unnamed Product'),
+#             'body_html': data.get('description', ''),
+#             'variants': [{
+#                 'price': data.get('price', '0.00'),
+#                 'sku': data.get('sku', '')
+#             }]
+#         }
+#     }
+#     # Shopify endpoint: adjust path based on API version (e.g., /admin/api/2023-10/products.json)
+#     url = f"{shop.api_endpoint}/products.json"
+#     response = requests.post(url, json=payload, headers=headers)
+#     response.raise_for_status()
+
+#     product_id = response.json()['product']['id']
+#     SyncLog.objects.create(feed=feed, shop=shop, status='success', message=f"Product {product_id} synced to Shopify")
+
 def sync_to_shopify(shop, data, feed):
-    # Shopify REST API (using API key and password for basic auth)
     headers = {
-        'Content-Type': 'application/json',
-        'Authorization': f"Basic {shop.api_key}:{shop.api_secret}".encode('utf-8').decode('ascii')  # Simplified; use base64 in production
+        'X-Shopify-Access-Token': shop.api_key,  # Use api_key as token
+        'Content-Type': 'application/json'
     }
     payload = {
         'product': {
@@ -65,7 +88,6 @@ def sync_to_shopify(shop, data, feed):
             }]
         }
     }
-    # Shopify endpoint: adjust path based on API version (e.g., /admin/api/2023-10/products.json)
     url = f"{shop.api_endpoint}/products.json"
     response = requests.post(url, json=payload, headers=headers)
     response.raise_for_status()
