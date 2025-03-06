@@ -6,6 +6,7 @@ import requests
 import xml.etree.ElementTree as ET
 from .models import Shop, Feed
 from .forms import ShopForm, FeedForm
+from .tasks import sync_feed_to_shops  # Add this import
 
 class ShopListView(LoginRequiredMixin, View):
     def get(self, request):
@@ -16,7 +17,7 @@ class ShopListView(LoginRequiredMixin, View):
     def post(self, request):
         if 'sync_feed' in request.POST:
             feed_id = request.POST.get('feed_id')
-            sync_feed_to_shops.delay(feed_id)  # Async task
+            sync_feed_to_shops.delay(feed_id)  # Now recognized
             return redirect('shop_list')
         return self.get(request)
 
@@ -62,12 +63,11 @@ class FeedCreateView(LoginRequiredMixin, View):
         if form.is_valid():
             feed = form.save(commit=False)
             feed.save()
-            feed.shops.set(form.cleaned_data['shops'])
+            if form.cleaned_data['shops']:
+                feed.shops.set(form.cleaned_data['shops'])
             return redirect('shop_list')
         print("Form errors:", form.errors)
         return render(request, 'shops/feed_form.html', {'form': form, 'title': 'Add Feed'})
-
-
 
 class FeedEditDashboardView(LoginRequiredMixin, View):
     def get(self, request, feed_id):
@@ -94,8 +94,6 @@ class FeedEditDashboardView(LoginRequiredMixin, View):
             'title': f'Edit Feed: {feed.url or feed.ftp_host}',
         })
 
-
-
 class FeedDeleteView(LoginRequiredMixin, View):
     def post(self, request, feed_id):
         feed = get_object_or_404(Feed, id=feed_id)
@@ -104,7 +102,7 @@ class FeedDeleteView(LoginRequiredMixin, View):
 
 class FeedTestMappingView(LoginRequiredMixin, View):
     def post(self, request, shop_id, pk):
-        feed = get_object_or_404(Feed, pk=pk, shops__id=shop_id)  # Still needs shop_id for now
+        feed = get_object_or_404(Feed, pk=pk, shops__id=shop_id)
         try:
             if feed.source_type == 'url':
                 response = requests.get(feed.url)
