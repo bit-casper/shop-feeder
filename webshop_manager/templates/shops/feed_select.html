@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h2>Select Feeds for {{ shop.name }}</h2>
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label>Select Existing Feeds:</label>
+            {% for feed in feeds %}
+                <div>
+                    <input type="checkbox" name="feeds" value="{{ feed.id }}">
+                    {{ feed.url|default:feed.ftp_host }} ({{ feed.get_source_type_display }})
+                </div>
+            {% empty %}
+                <p>No available feeds to add.</p>
+            {% endfor %}
+        </div>
+        <div class="form-buttons">
+            <button type="submit" class="btn btn-primary">Add Selected Feeds</button>
+            <a href="{% url 'feed_list' shop.id %}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+{% endblock %}

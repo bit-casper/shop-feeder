@@ -14,7 +14,7 @@ from pathlib import Path
 from decouple import config
 
 SECRET_KEY = config('SECRET_KEY')
-FIELD_ENCRYPTION_KEY = config('FIELD_ENCRYPTION_KEY')  # Add this to .env
+#FIELD_ENCRYPTION_KEY = config('FIELD_ENCRYPTION_KEY')  # Add this to .env
 
 #FERNET_KEYS = [FERNET_KEY]  # For django-fernet-fields
 
@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 #    'rest_framework',
-    'encrypted_model_fields',
+#    'encrypted_model_fields',
     'shops.apps.ShopsConfig',  # Add your app
 ]
 
@@ -136,3 +136,10 @@ STATICFILES_DIRS = [BASE_DIR / 'static']
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'

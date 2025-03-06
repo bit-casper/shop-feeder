@@ -1,8 +1,22 @@
 {% extends 'base.html' %}
 {% block content %}
-    <h2>{{ title }} for {{ shop.name }}</h2>
-    <form method="post" class="needs-validation">
+    <h2>{{ title }}</h2>
+    <form method="post" class="needs-validation" novalidate>
         {% csrf_token %}
+        <div class="form-group">
+            {{ form.name.label_tag }}
+            <input type="text" class="form-control" id="id_name" name="name" value="{{ form.name.value|default:'' }}">
+            {% if form.name.errors %}
+                <div class="invalid-feedback">{{ form.name.errors|first }}</div>
+            {% endif %}
+        </div>
+        <div class="form-group">
+            {{ form.shops.label_tag }}
+            {{ form.shops }}
+            {% if form.shops.errors %}
+                <div class="invalid-feedback">{{ form.shops.errors|first }}</div>
+            {% endif %}
+        </div>
         <div class="form-group">
             {{ form.source_type.label_tag }}
             {% if feed.id %}
@@ -10,6 +24,9 @@
                 <input type="hidden" name="source_type" value="{{ form.source_type.value }}">
             {% else %}
                 {{ form.source_type }}
+            {% endif %}
+            {% if form.source_type.errors %}
+                <div class="invalid-feedback">{{ form.source_type.errors|first }}</div>
             {% endif %}
         </div>
         <div class="form-group ftp-field" style="display: none;">
@@ -60,6 +77,9 @@
         <div class="form-group">
             {{ form.format_type.label_tag }}
             {{ form.format_type }}
+            {% if form.format_type.errors %}
+                <div class="invalid-feedback">{{ form.format_type.errors|first }}</div>
+            {% endif %}
         </div>
         <div class="form-group">
             {{ form.mapping.label_tag }}
@@ -70,7 +90,7 @@
         </div>
         <div class="form-buttons">
             <button type="submit" class="btn btn-primary">Save</button>
-            <a href="{% url 'feed_list' shop.id %}" class="btn btn-secondary">Cancel</a>
+            <a href="{% url 'shop_list' %}" class="btn btn-secondary">Cancel</a>
         </div>
     </form>
 {% endblock %}

@@ -158,3 +158,27 @@ h2 {
 .btn-close {
     filter: invert(1);
 }
+
+/* Clickable Rows */
+.clickable-row {
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+.clickable-row:hover {
+    background-color: #e0e0e0 !important;
+}
+.accordion-item {
+    border: none;
+    padding: 0; /* Remove padding to avoid spill */
+}
+.accordion-collapse {
+    background-color: transparent; /* Match table background */
+}
+.accordion-body {
+    padding: 5px 12px; /* Reduced padding, align with table cells */
+    background-color: transparent; /* No gray box */
+    text-align: left;
+}
+.accordion-body .btn {
+    margin-right: 10px;
+}

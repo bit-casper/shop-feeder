@@ -1,4 +1,6 @@
-Django>=4.0
-django-encrypted-model-fields
-python-decouple
-requests
+Django==5.1.6
+requests>=2.32.3
+celery>=5.4.0
+redis>=5.0.7
+python-decouple>=3.8
+shopify>=9.2.0
