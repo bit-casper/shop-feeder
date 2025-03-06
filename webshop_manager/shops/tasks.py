@@ -96,11 +96,17 @@ def sync_to_shopify(shop, data, feed):
         }
     }
     url = f"{shop.api_endpoint}/products.json"
-    response = requests.post(url, json=payload, headers=headers)
-    response.raise_for_status()
+    try:
+        response = requests.post(url, json=payload, headers=headers)
+        response.raise_for_status()
 
-    product_id = response.json()['product']['id']
-    SyncLog.objects.create(feed=feed, shop=shop, status='success', message=f"Product {product_id} synced to Shopify")
+        product_id = response.json()['product']['id']
+        SyncLog.objects.create(feed=feed, shop=shop, status='success', message=f"Product {product_id} synced to Shopify")
+    except Exception as e:
+        feed.sync_status = 'failed'
+        feed.save()
+        SyncLog.objects.create(feed=feed, shop=None, status='failed', message=str(e))
+        raise
 
 def sync_to_uniconta(shop, data, feed):
     # Uniconta REST API (placeholder - adjust to actual API)
