@@ -20,7 +20,7 @@ def sync_feed_to_shops(feed_id):
             # Placeholder for FTP
             raise NotImplementedError("FTP sync not implemented yet")
         elif feed.source_type == 'local':
-            xml_data = ET.parse('test_xml.xml')
+            xml_data = ET.parse(feed.source_path)
         else:
             raise NotImplementedError("Unknown source")
 

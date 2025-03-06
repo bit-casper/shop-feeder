@@ -31,7 +31,7 @@ class Feed(models.Model):
     sync_status = models.CharField(max_length=20, default='pending')
 
     def __str__(self):
-        return self.name or f"{self.url or self.ftp_host} ({self.get_source_type_display()})"
+        return self.name or f"{self.url or self.ftp_host or self.source_path} ({self.get_source_type_display()})"
 
 class SyncLog(models.Model):
     feed = models.ForeignKey(Feed, on_delete=models.CASCADE)
