@@ -33,9 +33,9 @@ def sync_feed_to_shops(feed_id):
 
             # Sync to each subscribed shop
             for shop in feed.shops.all():
-                if shop.shop_type == 'shopify':
+                if shop.shop_type == 'Shopify':
                     sync_to_shopify(shop, mapped_data, feed)
-                elif shop.shop_type == 'uniconta':
+                elif shop.shop_type == 'Uniconta':
                     sync_to_uniconta(shop, mapped_data, feed)
 
         feed.sync_status = 'success'
