@@ -95,7 +95,10 @@ def sync_to_shopify(shop, data, feed):
             }]
         }
     }
-    url = f"{shop.api_endpoint}/products.json"
+    #endpoint https://caspers-test.myshopify.com/admin/api/2022-07
+    #url = f"{shop.api_endpoint}/products.json"
+    #url = "https://" + api_key + ":" +password + "@" + store + ".myshopify.com/admin/api/2021-04/products.json"
+    url = "https://" + shop.api_key + ":" + shop.access_token + "@" + shop.shop_name + ".myshopify.com/admin/api/2021-04/products.json"
     try:
         response = requests.post(url, json=payload, headers=headers)
         response.raise_for_status()

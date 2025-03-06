@@ -7,6 +7,7 @@ class Shop(models.Model):
     api_endpoint = models.URLField()
     api_key = models.CharField(max_length=255)
     api_secret = models.CharField(max_length=255, null=True, blank=True)
+    api_access_token = models.CharField(max_length=255, null=True, blank=True)
     is_active = models.BooleanField(default=True)
     sync_interval = models.PositiveIntegerField(default=1440)
 

@@ -37,7 +37,7 @@
         <div class="form-group">
             {{ form.api_secret.label_tag }}
             <div class="input-group">
-                <input type="password" class="form-control" id="id_api_secret" name="api_secret" value="{{ form.api_secret.value|default:'' }}">
+                <input type="password" class="form-control" id="id_api_secret" name="api_secret" value="{{ form.api_secret.value|default:'' }}" required>
                 {% if shop.id %}
                     <button type="button" class="btn btn-outline-secondary toggle-visibility-btn" data-field="api_secret">👁️</button>
                     <button type="button" class="btn btn-outline-secondary unlock-btn" data-field="api_secret" data-bs-toggle="modal" data-bs-target="#unlockModalApiSecret">Unlock</button>
@@ -45,6 +45,19 @@
             </div>
             {% if form.api_secret.errors %}
                 <div class="invalid-feedback">{{ form.api_secret.errors|first }}</div>
+            {% endif %}
+        </div>
+        <div class="form-group">
+            {{ form.api_access_token.label_tag }}
+            <div class="input-group">
+                <input type="password" class="form-control" id="id_api_access_token" name="api_access_token" value="{{ form.api_access_token.value|default:'' }}" required>
+                {% if shop.id %}
+                    <button type="button" class="btn btn-outline-secondary toggle-visibility-btn" data-field="api_access_token">👁️</button>
+                    <button type="button" class="btn btn-outline-secondary unlock-btn" data-field="api_access_token" data-bs-toggle="modal" data-bs-target="#unlockModalApiAccessToken">Unlock</button>
+                {% endif %}
+            </div>
+            {% if form.api_access_token.errors %}
+                <div class="invalid-feedback">{{ form.api_access_token.errors|first }}</div>
             {% endif %}
         </div>
         <div class="form-group">
@@ -99,6 +112,25 @@
             </div>
         </div>
     </div>
+
+    <!-- Unlock Modal for API Access Token -->
+    <div class="modal fade" id="unlockModalApiAccessToken" tabindex="-1" aria-labelledby="unlockModalApiAccessTokenLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="unlockModalApiAccessTokenLabel">Unlock API Access Token</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to unlock the API Access Token field? This will allow changes to sensitive data.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary unlock-confirm" data-field="api_access_token">Unlock</button>
+                </div>
+            </div>
+        </div>
+    </div>
     {% endif %}
 {% endblock %}
 
@@ -121,8 +153,10 @@
     {% if shop.id %}
     const apiKeyField = document.getElementById('id_api_key');
     const apiSecretField = document.getElementById('id_api_secret');
+    const apiAccessTokenField = document.getElementById('id_api_access_token');
     apiKeyField.setAttribute('readonly', 'readonly');
     apiSecretField.setAttribute('readonly', 'readonly');
+    apiAccessTokenField.setAttribute('readonly', 'readonly');
 
     document.querySelectorAll('.unlock-confirm').forEach(button => {
         button.addEventListener('click', function () {
@@ -131,7 +165,7 @@
             const unlockButton = document.querySelector(`.unlock-btn[data-field="${fieldName}"]`);
             field.removeAttribute('readonly');
             unlockButton.style.display = 'none';
-            const modalId = fieldName === 'api_key' ? 'unlockModalApiKey' : 'unlockModalApiSecret';
+            const modalId = fieldName === 'api_key' ? 'unlockModalApiKey' : fieldName === 'api_access_token' ? 'unlockModalApiAccessToken' : 'unlockModalApiSecret';
             const modal = bootstrap.Modal.getInstance(document.getElementById(modalId));
             modal.hide();
         });

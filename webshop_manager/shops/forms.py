@@ -4,10 +4,11 @@ from .models import Shop, Feed
 class ShopForm(forms.ModelForm):
     class Meta:
         model = Shop
-        fields = ['name', 'shop_type', 'api_endpoint', 'api_key', 'api_secret', 'is_active', 'sync_interval']
+        fields = ['shop_name', 'shop_type', 'api_endpoint', 'api_key', 'api_secret', 'api_access_token', 'is_active', 'sync_interval']
         widgets = {
             'api_key': forms.PasswordInput(),
             'api_secret': forms.PasswordInput(),
+            'api_access_token': forms.PasswordInput(),
         }
 
 class FeedForm(forms.ModelForm):
