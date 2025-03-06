@@ -12,7 +12,7 @@ class Shop(models.Model):
     sync_interval = models.PositiveIntegerField(default=1440)
 
     def __str__(self):
-        return self.name
+        return self.shop_name
 
 class Feed(models.Model):
     SOURCE_TYPES = (('ftp', 'FTP'), ('url', 'URL'), ('local', 'LOCAL'))
