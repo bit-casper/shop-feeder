@@ -2,7 +2,7 @@ from django.db import models
 
 class Shop(models.Model):
     SHOP_TYPES = (('shopify', 'Shopify'), ('uniconta', 'Uniconta'))
-    name = models.CharField(max_length=100)
+    shop_name = models.CharField(max_length=100)
     shop_type = models.CharField(max_length=20, choices=SHOP_TYPES)
     api_endpoint = models.URLField()
     api_key = models.CharField(max_length=255)
