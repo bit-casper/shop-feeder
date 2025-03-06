@@ -4,10 +4,10 @@
     <form method="post" class="needs-validation">
         {% csrf_token %}
         <div class="form-group">
-            {{ form.name.label_tag }}
-            <input type="text" class="form-control" id="id_name" name="name" value="{{ form.name.value|default:'' }}" required>
-            {% if form.name.errors %}
-                <div class="invalid-feedback">{{ form.name.errors|first }}</div>
+            {{ form.shop_name.label_tag }}
+            <input type="text" class="form-control" id="id_shop_name" name="shop_name" value="{{ form.shop_name.value|default:'' }}" required>
+            {% if form.shop_name.errors %}
+                <div class="invalid-feedback">{{ form.shop_name.errors|first }}</div>
             {% endif %}
         </div>
         <div class="form-group">
