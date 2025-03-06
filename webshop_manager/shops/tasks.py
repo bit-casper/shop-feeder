@@ -101,7 +101,7 @@ def sync_to_shopify(shop, data, feed):
         response.raise_for_status()
 
         product_id = response.json()['product']['id']
-        SyncLog.objects.create(feed=feed, shop=shop, status='success', message=f"Product {product_id} synced to Shopify")
+        SyncLog.objects.create(feed=feed, shop=shop.shop_type, status='success', message=f"Product {product_id} synced to Shopify")
     except Exception as e:
         feed.sync_status = 'failed'
         feed.save()
@@ -125,4 +125,4 @@ def sync_to_uniconta(shop, data, feed):
     response = requests.post(url, json=payload, headers=headers)
     response.raise_for_status()
 
-    SyncLog.objects.create(feed=feed, shop=shop, status='success', message="Product synced to Uniconta")
+    SyncLog.objects.create(feed=feed, shop=shop.shop_type, status='success', message="Product synced to Uniconta")
