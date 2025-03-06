@@ -14,7 +14,7 @@ class Shop(models.Model):
         return self.name
 
 class Feed(models.Model):
-    SOURCE_TYPES = (('ftp', 'FTP'), ('url', 'URL'))
+    SOURCE_TYPES = (('ftp', 'FTP'), ('url', 'URL'), ('local', 'LOCAL'))
     FORMAT_TYPES = (('xml', 'XML'),)
     shops = models.ManyToManyField(Shop, related_name='feeds')
     name = models.CharField(max_length=100, blank=True, null=True)

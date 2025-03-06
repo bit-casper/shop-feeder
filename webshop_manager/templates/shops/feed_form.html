@@ -115,6 +115,7 @@
         const sourceType = document.getElementById('id_source_type').value;
         const ftpFields = document.querySelectorAll('.ftp-field');
         const urlFields = document.querySelectorAll('.url-field');
+        const localFields = document.querySelectorAll('.local-field');
         const ftpHost = document.getElementById('id_ftp_host');
         const ftpUser = document.getElementById('id_ftp_user');
         const ftpPass = document.getElementById('id_ftp_pass');
@@ -134,6 +135,13 @@
             ftpUser.removeAttribute('required');
             ftpPass.removeAttribute('required');
             urlField.setAttribute('required', 'required');
+        } else if (sourceType === 'local') {
+            ftpFields.forEach(field => field.style.display = 'none');
+            urlFields.forEach(field => field.style.display = 'none');
+            ftpHost.removeAttribute('required');
+            ftpUser.removeAttribute('required');
+            ftpPass.removeAttribute('required');
+            urlField.removeAttribute('required');
         }
     }
 

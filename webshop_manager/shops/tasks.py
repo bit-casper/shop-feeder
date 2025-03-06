@@ -16,9 +16,11 @@ def sync_feed_to_shops(feed_id):
             response = requests.get(feed.url, timeout=10)
             response.raise_for_status()
             xml_data = response.content
-        else:
+        elif feed.source_type == 'ftp':
             # Placeholder for FTP
             raise NotImplementedError("FTP sync not implemented yet")
+        elif feed.source_type == 'local':
+            xml_data = ET.parse('test_xml.xml')
 
         # Parse XML
         tree = ET.fromstring(xml_data)
