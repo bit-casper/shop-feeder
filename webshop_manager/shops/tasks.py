@@ -81,9 +81,14 @@ def sync_feed_to_shops(feed_id):
 #     SyncLog.objects.create(feed=feed, shop=shop, status='success', message=f"Product {product_id} synced to Shopify")
 
 def sync_to_shopify(shop, data, feed):
+    # headers = {
+    #     'X-Shopify-Access-Token': shop.api_key,  # Use api_key as token
+    #     'Content-Type': 'application/json'
+    # }
     headers = {
-        'X-Shopify-Access-Token': shop.api_key,  # Use api_key as token
-        'Content-Type': 'application/json'
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+        "X-Shopify-Access-Token": shop.api_access_token
     }
     payload = {
         'product': {
@@ -98,7 +103,8 @@ def sync_to_shopify(shop, data, feed):
     #endpoint https://caspers-test.myshopify.com/admin/api/2022-07
     #url = f"{shop.api_endpoint}/products.json"
     #url = "https://" + api_key + ":" +password + "@" + store + ".myshopify.com/admin/api/2021-04/products.json"
-    url = "https://" + shop.api_key + ":" + shop.api_access_token + "@" + shop.shop_name + ".myshopify.com/admin/api/2021-04/products.json"
+    url = "https://" + shop.api_key + ":" + shop.api_access_token + "@" + shop.shop_name + ".myshopify.com/admin/api/2022-07/products.json"
+    #https://9101cbada402d38b6d5db33b72ed64e8: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@caspers-test.myshopify.com/admin/api/2021-04/products.json
     try:
         response = requests.post(url, json=payload, headers=headers)
         response.raise_for_status()
