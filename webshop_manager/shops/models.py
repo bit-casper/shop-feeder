@@ -17,7 +17,7 @@ class Feed(models.Model):
     SOURCE_TYPES = (('ftp', 'FTP'), ('url', 'URL'))
     FORMAT_TYPES = (('xml', 'XML'),)
     shops = models.ManyToManyField(Shop, related_name='feeds')
-    name = models.CharField(max_length=100, blank=True, null=True)  # New field
+    name = models.CharField(max_length=100, blank=True, null=True)
     source_type = models.CharField(max_length=10, choices=SOURCE_TYPES)
     ftp_host = models.CharField(max_length=255, null=True, blank=True)
     ftp_user = models.CharField(max_length=255, null=True, blank=True)
@@ -25,7 +25,7 @@ class Feed(models.Model):
     url = models.URLField(null=True, blank=True)
     file_pattern = models.CharField(max_length=255, default='products.xml')
     format_type = models.CharField(max_length=10, choices=FORMAT_TYPES)
-    mapping = models.JSONField()
+    mapping = models.JSONField(blank=True, null=True, default=dict)
     last_sync = models.DateTimeField(null=True, blank=True)
     sync_status = models.CharField(max_length=20, default='pending')
 
@@ -34,10 +34,10 @@ class Feed(models.Model):
 
 class SyncLog(models.Model):
     feed = models.ForeignKey(Feed, on_delete=models.CASCADE)
-    shop = models.ForeignKey(Shop, on_delete=models.CASCADE)
+    shop = models.ForeignKey(Shop, on_delete=models.CASCADE, null=True, blank=True)  # Made nullable
     timestamp = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=20)
     message = models.TextField()
 
     def __str__(self):
-        return f"{self.feed} - {self.shop} - {self.timestamp}"
+        return f"{self.feed} - {self.shop or 'No Shop'} - {self.timestamp}"
