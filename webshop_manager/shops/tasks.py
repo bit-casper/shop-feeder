@@ -3,6 +3,7 @@ import requests
 import xml.etree.ElementTree as ET
 from django.utils import timezone
 from .models import Feed, Shop, SyncLog
+import os
 
 @shared_task
 def sync_feed_to_shops(feed_id):
@@ -20,7 +21,8 @@ def sync_feed_to_shops(feed_id):
             # Placeholder for FTP
             raise NotImplementedError("FTP sync not implemented yet")
         elif feed.source_type == 'local':
-            xml_data = ET.parse("/text_xml.xml")
+            xml_data = ET.parse(os.path.join(os.path.dirname(os.path.abspath(__file__), "text_xml.xml")))
+            # xml_data = ET.parse("/text_xml.xml")
         else:
             raise NotImplementedError("Unknown source")
 
