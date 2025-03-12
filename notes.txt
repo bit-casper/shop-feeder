@@ -1,3 +1,10 @@
+Notes
+
+    celery -A webshop_manager worker -l info
+
+    
+
+
 TODO
 
 - Move sync buttom from feed to shop

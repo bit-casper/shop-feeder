@@ -5,6 +5,57 @@ from django.utils import timezone
 from .models import Feed, Shop, SyncLog
 import os
 
+# @shared_task
+# def sync_feed_to_shops(feed_id):
+#     feed = Feed.objects.get(id=feed_id)
+#     feed.sync_status = 'running'
+#     feed.save()
+
+#     try:
+#         # Fetch feed data
+#         if feed.source_type == 'url':
+#             response = requests.get(feed.url, timeout=10)
+#             response.raise_for_status()
+#             xml_data = response.content
+#         elif feed.source_type == 'ftp':
+#             # Placeholder for FTP
+#             raise NotImplementedError("FTP sync not implemented yet")
+#         elif feed.source_type == 'local':
+#             xml_data = ET.tostring(ET.parse(os.path.join(os.path.dirname(os.path.abspath(__file__)), "test_xml.xml")).getroot(), encoding='utf-8')
+#             # xml_string = ET.tostring(xml_data.getroot(), encoding='utf-8')
+#             # xml_data = ET.parse("/text_xml.xml")
+#         else:
+#             raise NotImplementedError("Unknown source")
+
+#         # Parse XML
+#         tree = ET.fromstring(xml_data)
+#         root = tree  # Assuming root is the iterable element
+
+#         # Process each item in the feed
+#         for item in root.findall('.//item'):  # Adjust based on XML structure
+#             mapped_data = {}
+#             for xml_key, shop_key in feed.mapping.items():
+#                 element = item.find(xml_key)
+#                 mapped_data[shop_key] = element.text if element is not None else 'N/A'
+
+#             # Sync to each subscribed shop
+#             for shop in feed.shops.all():
+#                 if shop.shop_type == 'shopify':
+#                     sync_to_shopify(shop, mapped_data, feed)
+#                 elif shop.shop_type == 'uniconta':
+#                     sync_to_uniconta(shop, mapped_data, feed)
+
+#         feed.sync_status = 'success'
+#         feed.last_sync = timezone.now()
+#         feed.save()
+#         SyncLog.objects.create(feed=feed, shop=None, status='success', message='Sync completed successfully')
+
+#     except Exception as e:
+#         feed.sync_status = 'failed'
+#         feed.save()
+#         SyncLog.objects.create(feed=feed, shop=None, status='failed', message=str(e))
+#         raise
+
 @shared_task
 def sync_feed_to_shops(feed_id):
     feed = Feed.objects.get(id=feed_id)
@@ -14,29 +65,28 @@ def sync_feed_to_shops(feed_id):
     try:
         # Fetch feed data
         if feed.source_type == 'url':
-            response = requests.get(feed.url, timeout=10)
+            response = requests.get(feed.url)
             response.raise_for_status()
             xml_data = response.content
         elif feed.source_type == 'ftp':
-            # Placeholder for FTP
-            raise NotImplementedError("FTP sync not implemented yet")
+            return JsonResponse({'error': 'FTP not yet implemented'}, status=400)
         elif feed.source_type == 'local':
-            xml_data = ET.tostring(ET.parse(os.path.join(os.path.dirname(os.path.abspath(__file__)), "test_xml.xml")).getroot(), encoding='utf-8')
-            # xml_string = ET.tostring(xml_data.getroot(), encoding='utf-8')
-            # xml_data = ET.parse("/text_xml.xml")
-        else:
-            raise NotImplementedError("Unknown source")
+            # Get the absolute path to the file based on views.py location
+            base_dir = os.path.dirname(os.path.abspath(__file__))  # Directory of views.py
+            file_path = os.path.join(base_dir, feed.file_pattern)   # Full path to the file
+            tree = ET.parse(file_path)                             # Parse the file
+            xml_data = tree.getroot()                              # Get the root Element
 
-        # Parse XML
-        tree = ET.fromstring(xml_data)
-        root = tree  # Assuming root is the iterable element
+        # If source_type is 'url', xml_data is still bytes, so parse it
+        if feed.source_type != 'local':
+            tree = ET.fromstring(xml_data)
 
-        # Process each item in the feed
-        for item in root.findall('.//item'):  # Adjust based on XML structure
-            mapped_data = {}
-            for xml_key, shop_key in feed.mapping.items():
-                element = item.find(xml_key)
-                mapped_data[shop_key] = element.text if element is not None else 'N/A'
+        # Use 'tree' directly as the root element
+        mapped_data = {}
+        for xml_key, shop_key in feed.mapping.items():
+            element = tree.find(xml_key)
+            value = element.text if element is not None else 'N/A'
+            mapped_data[shop_key] = value
 
             # Sync to each subscribed shop
             for shop in feed.shops.all():
@@ -55,6 +105,7 @@ def sync_feed_to_shops(feed_id):
         feed.save()
         SyncLog.objects.create(feed=feed, shop=None, status='failed', message=str(e))
         raise
+
 
 # def sync_to_shopify(shop, data, feed):
 #     # Shopify REST API (using API key and password for basic auth)
