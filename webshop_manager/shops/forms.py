@@ -23,7 +23,7 @@ class FeedForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         for shop in self.fields['shops'].queryset:
             self.fields['shops'].choices = [
-                (shop.id, f"{shop.name} - {shop.get_shop_type_display()}")
+                (shop.id, f"{shop.shop_name} - {shop.get_shop_type_display()}")
                 for shop in self.fields['shops'].queryset
             ]
 

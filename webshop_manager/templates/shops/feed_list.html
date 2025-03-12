@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
-    <h2>Feeds for {{ shop.name }}</h2>
+    <h2>Feeds for {{ shop.shop_name }}</h2>
     <a href="{% url 'feed_create' shop.id %}" class="btn btn-primary mb-3">Add New Feed</a>
     <a href="{% url 'feed_select' shop.id %}" class="btn btn-primary mb-3">Add Existing Feed</a>
     <div class="accordion" id="feedAccordion">

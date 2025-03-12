@@ -16,7 +16,7 @@
             <tbody>
                 {% for shop in shops %}
                 <tr class="clickable-row" data-bs-toggle="collapse" data-bs-target="#collapse{{ shop.id }}" aria-expanded="false" aria-controls="collapse{{ shop.id }}">
-                    <td>{{ shop.name }}</td>
+                    <td>{{ shop.shop_name }}</td>
                     <td>{{ shop.get_shop_type_display }}</td>
                     <td>{{ shop.api_endpoint }}</td>
                     <td>{{ shop.is_active|yesno:"Yes,No" }}</td>

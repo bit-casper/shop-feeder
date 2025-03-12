@@ -1,3 +1,4 @@
+import os
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views import View
@@ -100,6 +101,64 @@ class FeedDeleteView(LoginRequiredMixin, View):
         feed.delete()
         return redirect('shop_list')
 
+# class FeedTestMappingView(LoginRequiredMixin, View):
+#     def post(self, request, shop_id, pk):
+#         feed = get_object_or_404(Feed, pk=pk, shops__id=shop_id)
+#         try:
+#             if feed.source_type == 'url':
+#                 response = requests.get(feed.url)
+#                 response.raise_for_status()
+#                 xml_data = response.content
+#             elif feed.source_type == 'ftp':
+#                 return JsonResponse({'error': 'FTP not yet implemented'}, status=400)
+#             elif feed.source_type == 'local':
+#                 xml_data = ET.parse(ET.parse(feed.source_path))
+
+#             tree = ET.fromstring(xml_data)
+#             root = tree.getroot()
+#             mapped_data = {}
+#             for xml_key, shop_key in feed.mapping.items():
+#                 element = root.find(xml_key)
+#                 value = element.text if element is not None else 'N/A'
+#                 mapped_data[shop_key] = value
+
+#             return JsonResponse({'sample': mapped_data})
+#         except Exception as e:
+#             return JsonResponse({'error': str(e)}, status=500)
+
+
+# class FeedTestMappingView(LoginRequiredMixin, View):
+#     def post(self, request, shop_id, pk):
+#         feed = get_object_or_404(Feed, pk=pk, shops__id=shop_id)
+#         try:
+#             if feed.source_type == 'url':
+#                 response = requests.get(feed.url)
+#                 response.raise_for_status()
+#                 xml_data = response.content
+#             elif feed.source_type == 'ftp':
+#                 return JsonResponse({'error': 'FTP not yet implemented'}, status=400)
+#             elif feed.source_type == 'local':
+#                 # Parse the XML file once and get the root element
+#                 tree = ET.parse(feed.source_path)  # Returns an ElementTree object
+#                 xml_data = tree.getroot()          # Get the root Element
+
+#             # If source_type is 'url', xml_data is still bytes, so parse it
+#             if feed.source_type != 'local':
+#                 tree = ET.fromstring(xml_data)
+#                 # root = tree.getroot()  # This line is unnecessary; tree is already the root for 'url'
+
+#             # Use 'tree' directly as the root element
+#             mapped_data = {}
+#             for xml_key, shop_key in feed.mapping.items():
+#                 element = tree.find(xml_key)
+#                 value = element.text if element is not None else 'N/A'
+#                 mapped_data[shop_key] = value
+
+#             return JsonResponse({'sample': mapped_data})
+#         except Exception as e:
+#             return JsonResponse({'error': str(e)}, status=500)
+
+
 class FeedTestMappingView(LoginRequiredMixin, View):
     def post(self, request, shop_id, pk):
         feed = get_object_or_404(Feed, pk=pk, shops__id=shop_id)
@@ -111,13 +170,20 @@ class FeedTestMappingView(LoginRequiredMixin, View):
             elif feed.source_type == 'ftp':
                 return JsonResponse({'error': 'FTP not yet implemented'}, status=400)
             elif feed.source_type == 'local':
-                xml_data = ET.parse(ET.parse(feed.source_path))
+                # Get the absolute path to the file based on views.py location
+                base_dir = os.path.dirname(os.path.abspath(__file__))  # Directory of views.py
+                file_path = os.path.join(base_dir, feed.source_path)   # Full path to the file
+                tree = ET.parse(file_path)                             # Parse the file
+                xml_data = tree.getroot()                              # Get the root Element
 
-            tree = ET.fromstring(xml_data)
-            root = tree.getroot()
+            # If source_type is 'url', xml_data is still bytes, so parse it
+            if feed.source_type != 'local':
+                tree = ET.fromstring(xml_data)
+
+            # Use 'tree' directly as the root element
             mapped_data = {}
             for xml_key, shop_key in feed.mapping.items():
-                element = root.find(xml_key)
+                element = tree.find(xml_key)
                 value = element.text if element is not None else 'N/A'
                 mapped_data[shop_key] = value
 
