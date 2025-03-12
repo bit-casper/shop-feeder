@@ -20,7 +20,7 @@ class Feed(models.Model):
     shops = models.ManyToManyField(Shop, related_name='feeds')
     name = models.CharField(max_length=100, blank=True, null=True)
     source_type = models.CharField(max_length=10, choices=SOURCE_TYPES)
-    source_path = models.CharField(max_length=30, default='test_xml.xml')
+    source_path = models.CharField(max_length=30, default='test_xml.xml') # This was just used for testing mapping of local file. This can safely be deleted since we're now using Feed.file_pattern
     ftp_host = models.CharField(max_length=255, null=True, blank=True)
     ftp_user = models.CharField(max_length=255, null=True, blank=True)
     ftp_pass = models.CharField(max_length=255, null=True, blank=True)

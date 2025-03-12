@@ -172,7 +172,7 @@ class FeedTestMappingView(LoginRequiredMixin, View):
             elif feed.source_type == 'local':
                 # Get the absolute path to the file based on views.py location
                 base_dir = os.path.dirname(os.path.abspath(__file__))  # Directory of views.py
-                file_path = os.path.join(base_dir, feed.source_path)   # Full path to the file
+                file_path = os.path.join(base_dir, feed.file_pattern)   # Full path to the file
                 tree = ET.parse(file_path)                             # Parse the file
                 xml_data = tree.getroot()                              # Get the root Element
 

@@ -90,14 +90,38 @@ def sync_to_shopify(shop, data, feed):
         "Content-Type": "application/json",
         "X-Shopify-Access-Token": shop.api_access_token
     }
+    # payload = {
+    #     'product': {
+    #         'title': data.get('title', 'Unnamed Product'),
+    #         'body_html': data.get('description', ''),
+    #         'variants': [{
+    #             'price': data.get('price', '0.00'),
+    #             'sku': data.get('sku', '')
+    #         }]
+    #     }
+    # }
     payload = {
-        'product': {
+        "product": {
             'title': data.get('title', 'Unnamed Product'),
             'body_html': data.get('description', ''),
-            'variants': [{
-                'price': data.get('price', '0.00'),
-                'sku': data.get('sku', '')
-            }]
+            #"images": images,
+            #"product_type": product.category,
+            #"vendor": product.brandName,
+            #"metafields_global_description_tag": product.description,
+            #"status": status,
+            "variants": [
+                {
+                    'price': data.get('price', '0.00'),
+                    'sku': data.get('sku', '')
+                    #"barcode": product.barcode,
+                    #"compare_at_price": product.compare_at_price,
+                    #"tracked": True,
+                    #"inventory_item_id": 1,  # to be gotten by get inventory endpoint
+                    #"inventory_quantity": product.quantity,
+                    #"weight": product.weight,
+                    #"weight_unit": "lb"
+                }
+            ]
         }
     }
     #endpoint https://caspers-test.myshopify.com/admin/api/2022-07

@@ -1,0 +1,3 @@
+TODO
+
+- Move sync buttom from feed to shop

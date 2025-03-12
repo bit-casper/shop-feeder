@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export>
+    <Service>
+        <Header>
+            <Reference>
+            </Reference>
+            <Handle>0</Handle>
+            <More>false</More>
+            <Manifest>
+            <Name>NISMP_Manifest</Name>
+            <Version>1.0</Version>
+            </Manifest>
+        </Header>
+        <Body>
+            <InventTable>
+            <ItemId>1010010</ItemId>
+            <ItemCaption>Royal manuelt ankerspil</ItemCaption>
+            <ShortTxt>Montering direkte på dækket. Til 5/16&quot; kæde.</ShortTxt>
+            <DescriptionTxt>Lofrans manuelt ankerspil til både på 26-43 fod. Dette manuelle Lofrans ankerspil til både på 26-43 fod, er lavet i eloxeret aluminiumshus og kædehjul af bronce.</DescriptionTxt>
+            <SpecificationsTxt>
+                Type: Horisontal
+                Anbefalet bådlængde: 8 - 15 m (25 - 45')
+                Brand: Lofrans
+                Bredde: 312,0 mm
+                Højde: 192,0 mm
+                Kæde Ø: 8 mm
+                Længde: 222,0 mm
+                Tov Ø: 8 mm
+                Træk: 400 kg
+                Vægt: 10,0 kg
+            </SpecificationsTxt>
+            <DimensionsTxt />
+            <ItemImageLargeUrl>https://palby.dk/produktbilleder/web_billeder/1010010.jpg</ItemImageLargeUrl>
+            <GrossSalesPrice>5349.00</GrossSalesPrice>
+            <GrossSalesPriceExlTax>4279.20</GrossSalesPriceExlTax>
+            <SalesPrice>3417.00</SalesPrice>
+            <CurrencyCode>DKK</CurrencyCode>
+            <LowestQty>1.00</LowestQty>
+            <MultipleQty>1.00</MultipleQty>
+            <StandardQty>1.00</StandardQty>
+            <InStockConfirmed>2022-10-17</InStockConfirmed>
+            <ItemEan>5707400009637</ItemEan>
+            <GrossWeight>10.45</GrossWeight>
+            <CatalogPageNew>319</CatalogPageNew>
+            <NoDeliveryParcelShopDelivery>No</NoDeliveryParcelShopDelivery>
+            <OnHandAvailPhysical>0.00</OnHandAvailPhysical>
+            <MainItemId />
+            <InStockBestGuess>2021-12-31</InStockBestGuess>
+            <StockOrderedQty>4.00</StockOrderedQty>
+            <GroupingMasterItemId />
+            <GroupingMasterItemCaption>ROYAL MANUEL ANKERSPIL</GroupingMasterItemCaption>
+            <GroupingMasterItemShortTxt>Fåes til 3/8&quot; eller 5/16&quot;</GroupingMasterItemShortTxt>
+            <OrigCountryRegionId />
+            <Intracode>73269098</Intracode>
+            <ItemBrand>Lofrans</ItemBrand>
+            <AccessoryItems>
+            <AccessoryItem>01.0710</AccessoryItem>
+            <AccessoryItem>1010910</AccessoryItem>
+            </AccessoryItems>
+            <RelatedItems>
+            <RelatedItem>1010020</RelatedItem>
+            <RelatedItem>1010223</RelatedItem>
+            </RelatedItems>
+            <MainItemId />
+            <CatalogCategories>
+            <Category>Produkter &gt; Ankering, Rig &amp; Dæksudstyr &gt; Ankering &gt; Ankerspil &gt; Horisontal</Category>
+            </CatalogCategories>
+            <Catalog>
+            <CatalogNode>
+            <CatalogId>Kompakt</CatalogId>
+            <NodeId>220</NodeId>
+            <LineNum>264782511.00</LineNum>
+            </CatalogNode>
+            </Catalog>
+            </InventTable>
+            
+            <InventTable>
+            <ItemId>1010020</ItemId>
+            <ItemCaption>Royal manuelt ankerspil 3/8</ItemCaption>
+            <ShortTxt>Montering direkte på dækket.
+            Til 3/8&quot; kæde.</ShortTxt><DescriptionTxt>Lofrans manuelt ankerspil til både på 26-43 fod. Dette manuelle Lofrans ankerspil til både på 26-43 fod, er lavet i eloxeret aluminiumshus og kædehjul af bronce.</DescriptionTxt><SpecificationsTxt>Type: Horisontal
+            Anbefalet bådlængde: 8 - 15 m (25 - 45')
+            Brand: Lofrans
+            Bredde: 312,0 mm
+            Højde: 192,0 mm
+            Kæde Ø: 10 mm
+            Længde: 222,0 mm
+            Tov Ø: 10 mm
+            Træk: 400 kg
+            Vægt: 10,0 kg</SpecificationsTxt>
+            <DimensionsTxt />
+            <ItemImageLargeUrl>https://palby.dk/produktbilleder/web_billeder/1010010.jpg</ItemImageLargeUrl>
+            <GrossSalesPrice>5349.00</GrossSalesPrice>
+            <GrossSalesPriceExlTax>4279.20</GrossSalesPriceExlTax>
+            <SalesPrice>3417.00</SalesPrice>
+            <CurrencyCode>DKK</CurrencyCode>
+            <LowestQty>1.00</LowestQty>
+            <MultipleQty>1.00</MultipleQty>
+            <StandardQty>1.00</StandardQty>
+            <InStockConfirmed>2022-10-17</InStockConfirmed>
+            <ItemEan>5204986000794</ItemEan>
+            <GrossWeight>11.78</GrossWeight>
+            <CatalogPageNew>319</CatalogPageNew>
+            <NoDeliveryParcelShopDelivery>No</NoDeliveryParcelShopDelivery>
+            <OnHandAvailPhysical>0.00</OnHandAvailPhysical>
+            <MainItemId>1010010</MainItemId>
+            <InStockBestGuess>2022-06-15</InStockBestGuess>
+            <StockOrderedQty>3.00</StockOrderedQty>
+            <GroupingMasterItemId>1010010</GroupingMasterItemId>
+            <GroupingMasterItemCaption />
+            <GroupingMasterItemShortTxt />
+            <OrigCountryRegionId>IT</OrigCountryRegionId>
+            <Intracode>84253100</Intracode>
+            <ItemBrand>Lofrans</ItemBrand>
+            <AccessoryItems>
+            <AccessoryItem>01.0720</AccessoryItem>
+            <AccessoryItem>01.1510</AccessoryItem>
+            <AccessoryItem>01.1565</AccessoryItem>
+            <AccessoryItem>1010920</AccessoryItem>
+            </AccessoryItems><RelatedItems>
+            <RelatedItem>1010010</RelatedItem>
+            <RelatedItem>1010223</RelatedItem>
+            </RelatedItems>
+            <MainItemId>1010010</MainItemId>
+            <CatalogCategories>
+            <Category>Produkter &gt; Ankering, Rig &amp; Dæksudstyr &gt; Ankering &gt; Ankerspil &gt; Horisontal</Category>
+            </CatalogCategories>
+            <Catalog>
+            <CatalogNode>
+            <CatalogId>Kompakt</CatalogId>
+            <NodeId>220</NodeId>
+            <LineNum>264782524.00</LineNum>
+            </CatalogNode>
+            </Catalog>
+            </InventTable>
+        </Body>
+    </Service>
+</Export>

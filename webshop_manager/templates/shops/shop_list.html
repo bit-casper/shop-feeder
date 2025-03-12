@@ -68,6 +68,8 @@
                 <thead>
                     <tr>
                         <th>Feed</th>
+                        <th>Type</th>
+                        <th>Source</th>
                         <th>Subscribed Shops</th>
                         <th></th>
                     </tr>
@@ -76,6 +78,8 @@
                     {% for feed in feeds %}
                     <tr class="clickable-row" data-bs-toggle="collapse" data-bs-target="#feedCollapse{{ feed.id }}" aria-expanded="false" aria-controls="feedCollapse{{ feed.id }}">
                         <td>{{ feed }}</td>
+                        <td>{{ feed.format_type }}</td>
+                        <td>{{ feed.source_type }}</td>
                         <td>{{ feed.shops.count }}</td>
                         <td></td>
                     </tr>

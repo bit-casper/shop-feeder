@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ColumbusStock>
+    <FileInfo>
+        <Type>Stock</Type>
+        <Version>3</Version>
+        <SubVersion>0</SubVersion>
+        <Created>2022-09-14T02:00:02</Created>
+    </FileInfo>
+    <ProductList>
+        <Product>
+            <ItemId>ABA-900</ItemId>
+            <ItemGroup>02364</ItemGroup>
+            <DiscGroup>02364</DiscGroup>
+            <Text>ABA Skruetrækker 25cm</Text>
+            <InStock>20</InStock>
+            <InStockExpected>1900-01-01</InStockExpected>
+            <SalesPrice>119.20</SalesPrice>
+            <GrossSalesPrice>149.00</GrossSalesPrice>
+            <EAN>5707860079508</EAN>
+            <Height>0.00</Height>
+            <Length>0.00</Length>
+            <Width>0.00</Width>
+            <NetWeight>0.000</NetWeight>
+            <PipedItemDetailsText></PipedItemDetailsText>
+            <CatParent></CatParent>
+            <CatChild></CatChild>
+        </Product>
+        <Product>
+            <ItemId>ABA-1524</ItemId>
+            <ItemGroup>02364</ItemGroup>
+            <DiscGroup>02364</DiscGroup>
+            <Text>ABA Spændebånd 15-24 mm W5 2stk.</Text>
+            <InStock>50</InStock>
+            <InStockExpected>1900-01-01</InStockExpected>
+            <SalesPrice>56.00</SalesPrice>
+            <GrossSalesPrice>70.00</GrossSalesPrice>
+            <EAN>5707860075425</EAN>
+            <Height>0.00</Height>
+            <Length>0.00</Length>
+            <Width>0.00</Width>
+            <NetWeight>0.000</NetWeight>
+            <PipedItemDetailsText></PipedItemDetailsText>
+            <CatParent></CatParent>
+            <CatChild></CatChild>
+        </Product>
+    </ProductList>
+</ColumbusStock>
