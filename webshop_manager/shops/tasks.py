@@ -164,7 +164,7 @@ def sync_to_shopify(shop, data, feed):
             "variants": [
                 {
                     'price': data.get('price', '0.00'),
-                    'sku': data.get('sku', '')
+                    'sku': data.get('sku', ''),
                     "barcode": data.get("barcode", None),
                     #"compare_at_price": product.compare_at_price,
                     #"tracked": True,
