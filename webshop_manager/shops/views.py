@@ -77,7 +77,7 @@ class FeedEditDashboardView(LoginRequiredMixin, View):
         return render(request, 'shops/feed_form.html', {
             'form': form,
             'feed': feed,
-            'title': f'Edit Feed: {feed.url or feed.ftp_host}',
+            'title': f'Edit Feed: {feed.url or feed.ftp_host or feed.name}',
         })
 
     def post(self, request, feed_id):

@@ -20,7 +20,7 @@ class Feed(models.Model):
     shops = models.ManyToManyField(Shop, related_name='feeds')
     name = models.CharField(max_length=100, blank=True, null=True)
     source_type = models.CharField(max_length=10, choices=SOURCE_TYPES)
-    source_path = models.CharField(max_length=30, default='test_xml.xml') # This was just used for testing mapping of local file. This can safely be deleted since we're now using Feed.file_pattern
+    feed_product_tag = models.CharField(max_length=30, default='item')
     ftp_host = models.CharField(max_length=255, null=True, blank=True)
     ftp_user = models.CharField(max_length=255, null=True, blank=True)
     ftp_pass = models.CharField(max_length=255, null=True, blank=True)
@@ -32,7 +32,7 @@ class Feed(models.Model):
     sync_status = models.CharField(max_length=20, default='pending')
 
     def __str__(self):
-        return self.name or f"{self.url or self.ftp_host or self.source_path} ({self.get_source_type_display()})"
+        return self.name or f"{self.url or self.ftp_host or self.file_pattern} ({self.get_source_type_display()})"
 
 class SyncLog(models.Model):
     feed = models.ForeignKey(Feed, on_delete=models.CASCADE)
