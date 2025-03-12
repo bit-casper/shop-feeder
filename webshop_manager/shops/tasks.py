@@ -83,13 +83,14 @@ def sync_feed_to_shops(feed_id):
 
         # Use 'tree' directly as the root element
         mapped_data = {}
-        for xml_key, shop_key in feed.mapping.items():
-            element = tree.find(xml_key)
-            value = element.text if element is not None else 'N/A'
-            mapped_data[shop_key] = value
+        for shop in feed.shops.all():
 
-            # Sync to each subscribed shop
-            for shop in feed.shops.all():
+            for xml_key, shop_key in feed.mapping.items():
+                element = tree.find(xml_key)
+                value = element.text if element is not None else 'N/A'
+                mapped_data[shop_key] = value
+
+                # Sync to each subscribed shop
                 if shop.shop_type == 'shopify':
                     sync_to_shopify(shop, mapped_data, feed)
                 elif shop.shop_type == 'uniconta':
@@ -155,21 +156,21 @@ def sync_to_shopify(shop, data, feed):
         "product": {
             'title': data.get('title', 'Unnamed Product'),
             'body_html': data.get('description', ''),
-            #"images": images,
+            "images": data.get("images", None),
             #"product_type": product.category,
-            #"vendor": product.brandName,
+            "vendor": data.get("vendor", None),
             #"metafields_global_description_tag": product.description,
             #"status": status,
             "variants": [
                 {
                     'price': data.get('price', '0.00'),
                     'sku': data.get('sku', '')
-                    #"barcode": product.barcode,
+                    "barcode": data.get("barcode", None),
                     #"compare_at_price": product.compare_at_price,
                     #"tracked": True,
                     #"inventory_item_id": 1,  # to be gotten by get inventory endpoint
-                    #"inventory_quantity": product.quantity,
-                    #"weight": product.weight,
+                    "inventory_quantity": data.get("inventory_quantity", None),
+                    "weight": data.get("weight", None),
                     #"weight_unit": "lb"
                 }
             ]
