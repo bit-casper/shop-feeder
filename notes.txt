@@ -11,8 +11,10 @@ TODO
 __SYNC TASK__
 - Find out if we can fetch all inventory_id's from a shop, if not we need to manually put them in shop object on creation.
 - tasks.py -> sync_feed_to_shops() is currently creating products, we need it to only update existing products. This is why we need inventory_id
-- tasks.py -> sync_feed_to_shops() is currently only working for one product in the feed
 
+Look at tasks.py line 85+
+And views.py line 198
+Need to fix shopify push for all products in the feed.
 
 - Move sync buttom from feed to shop
 

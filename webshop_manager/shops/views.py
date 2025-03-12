@@ -159,10 +159,48 @@ class FeedDeleteView(LoginRequiredMixin, View):
 #             return JsonResponse({'error': str(e)}, status=500)
 
 
+# class FeedTestMappingView(LoginRequiredMixin, View):
+#     def post(self, request, shop_id, pk):
+#         feed = get_object_or_404(Feed, pk=pk, shops__id=shop_id)
+#         try:
+#             if feed.source_type == 'url':
+#                 response = requests.get(feed.url)
+#                 response.raise_for_status()
+#                 xml_data = response.content
+#             elif feed.source_type == 'ftp':
+#                 return JsonResponse({'error': 'FTP not yet implemented'}, status=400)
+#             elif feed.source_type == 'local':
+#                 # Get the absolute path to the file based on views.py location
+#                 base_dir = os.path.dirname(os.path.abspath(__file__))  # Directory of views.py
+#                 file_path = os.path.join(base_dir, feed.file_pattern)   # Full path to the file
+#                 tree = ET.parse(file_path)                             # Parse the file
+#                 xml_data = tree.getroot()                              # Get the root Element
+
+#             # If source_type is 'url', xml_data is still bytes, so parse it
+#             if feed.source_type != 'local':
+#                 tree = ET.fromstring(xml_data)
+
+#             # Use 'tree' directly as the root element
+#             mapped_data = {}
+#             for xml_key, shop_key in feed.mapping.items():
+#                 element = tree.find(xml_key)
+#                 value = element.text if element is not None else 'N/A'
+#                 mapped_data[shop_key] = value
+
+#             return JsonResponse({'sample': mapped_data})
+#         except Exception as e:
+#             return JsonResponse({'error': str(e)}, status=500)
+
+
+
+
+
 class FeedTestMappingView(LoginRequiredMixin, View):
     def post(self, request, shop_id, pk):
         feed = get_object_or_404(Feed, pk=pk, shops__id=shop_id)
+        
         try:
+            # Fetch feed data
             if feed.source_type == 'url':
                 response = requests.get(feed.url)
                 response.raise_for_status()
@@ -180,13 +218,27 @@ class FeedTestMappingView(LoginRequiredMixin, View):
             if feed.source_type != 'local':
                 tree = ET.fromstring(xml_data)
 
-            # Use 'tree' directly as the root element
-            mapped_data = {}
-            for xml_key, shop_key in feed.mapping.items():
-                element = tree.find(xml_key)
-                value = element.text if element is not None else 'N/A'
-                mapped_data[shop_key] = value
+            
+            for item in tree.findall('.//' + str(feed.feed_product_tag)):
+                #print(item.text)
+                mapped_data = {}
+                
+                for xml_key, shop_key in feed.mapping.items():
+                    element = item.find(xml_key)
+                    value = element.text if element is not None else 'N/A'
+                    print(value)
+                    mapped_data[shop_key] = value
 
-            return JsonResponse({'sample': mapped_data})
+                # Sync to each subscribed shop
+                for shop in feed.shops.all():
+                    if shop.shop_type == 'shopify':
+                        # sync_to_shopify(shop, mapped_data, feed)
+                        print("test")
+                    elif shop.shop_type == 'uniconta':
+                        # sync_to_uniconta(shop, mapped_data, feed)
+                        print("test")
+
+            # return JsonResponse({'sample': mapped_data})
+            return JsonResponse({'sample': "disabled"})
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=500)
