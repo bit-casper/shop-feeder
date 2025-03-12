@@ -85,14 +85,15 @@ def sync_feed_to_shops(feed_id):
         # for item in root.findall('.//item'):
         #     mapped_data = {}
             
-        for xml_key, shop_key in feed.mapping.items():
-            mapped_data = {}
-            element = tree.find(xml_key)
-            value = element.text if element is not None else 'N/A'
-            mapped_data[shop_key] = value
+        # Sync to each subscribed shop
+        for shop in feed.shops.all():
+            for xml_key, shop_key in feed.mapping.items():
+                mapped_data = {}
+                element = tree.find(xml_key)
+                value = element.text if element is not None else 'N/A'
+                mapped_data[shop_key] = value
 
-            # Sync to each subscribed shop
-            for shop in feed.shops.all():
+            
                 if shop.shop_type == 'shopify':
                     sync_to_shopify(shop, mapped_data, feed)
                 elif shop.shop_type == 'uniconta':
