@@ -86,7 +86,7 @@ def sync_feed_to_shops(feed_id):
         mapped_data = {}
         
         for xml_key, shop_key in feed.mapping.items():
-            element = item.find(xml_key)
+            element = xml_data.find(xml_key)
             value = element.text if element is not None else 'N/A'
             mapped_data[shop_key] = value
 
