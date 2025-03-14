@@ -8,7 +8,7 @@ Notes
 TODO
 
 
-- tasks.py - mapped fields works in same cases. Palby "OnHandAvailPhysical" specifically doesn't work according to logs from latest test.
+- tasks.py - mapped fields works in same cases. Palby "OnHandAvailPhysical" specifically doesn't work according to logs from latest test, trying to push N/A when its actually 0.00
 - tasks.py -> sync_feed_to_shops() is currently creating multiple products because the for-loop is arranged wrong.
 - Find out if we can fetch all inventory_id's from a shop, if not we need to manually put them in shop object on creation.
 - tasks.py -> sync_feed_to_shops() is currently creating products, we need it to only update existing products. This is why we need inventory_id
