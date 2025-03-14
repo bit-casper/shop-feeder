@@ -142,7 +142,8 @@ def sync_feed_to_shops(feed_id):
         root = xml_data  # Assuming root is the iterable element
 
         # Process each item in the feed
-        for item in root.findall('.//item'):  # Adjust based on XML structure
+        # for item in root.findall('.//item'):
+        for item in root.findall('.//' + feed.feed_product_tag):  # Adjust based on XML structure
             mapped_data = {}
             for xml_key, shop_key in feed.mapping.items():
                 element = item.find(xml_key)
