@@ -238,7 +238,7 @@ class FeedTestMappingView(LoginRequiredMixin, View):
                         # sync_to_uniconta(shop, mapped_data, feed)
                         print("test")
 
-            # return JsonResponse({'sample': mapped_data})
-            return JsonResponse({'sample': "disabled"})
+            return JsonResponse({'sample': mapped_data})
+            #return JsonResponse({'sample': "disabled"})
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=500)
