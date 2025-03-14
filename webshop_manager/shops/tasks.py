@@ -82,20 +82,20 @@ def sync_feed_to_shops(feed_id):
             tree = ET.fromstring(xml_data)
 
         
-        for item in tree.findall('.//' + feed.feed_product_tag):
-            mapped_data = {}
-            
-            for xml_key, shop_key in feed.mapping.items():
-                element = item.find(xml_key)
-                value = element.text if element is not None else 'N/A'
-                mapped_data[shop_key] = value
+        #for item in tree.findall('.//' + feed.feed_product_tag):
+        mapped_data = {}
+        
+        for xml_key, shop_key in feed.mapping.items():
+            element = item.find(xml_key)
+            value = element.text if element is not None else 'N/A'
+            mapped_data[shop_key] = value
 
-            # Sync to each subscribed shop
-            for shop in feed.shops.all():
-                if shop.shop_type == 'shopify':
-                    sync_to_shopify(shop, mapped_data, feed)
-                elif shop.shop_type == 'uniconta':
-                    sync_to_uniconta(shop, mapped_data, feed)
+        # Sync to each subscribed shop
+        for shop in feed.shops.all():
+            if shop.shop_type == 'shopify':
+                sync_to_shopify(shop, mapped_data, feed)
+            elif shop.shop_type == 'uniconta':
+                sync_to_uniconta(shop, mapped_data, feed)
 
         feed.sync_status = 'success'
         feed.last_sync = timezone.now()
