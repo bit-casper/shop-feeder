@@ -8,14 +8,10 @@ Notes
 TODO
 
 
-__SYNC TASK__
+- tasks.py - mapped fields works in same cases. Palby "OnHandAvailPhysical" specifically doesn't work according to logs from latest test.
+- tasks.py -> sync_feed_to_shops() is currently creating multiple products because the for-loop is arranged wrong.
 - Find out if we can fetch all inventory_id's from a shop, if not we need to manually put them in shop object on creation.
 - tasks.py -> sync_feed_to_shops() is currently creating products, we need it to only update existing products. This is why we need inventory_id
-
-Look at tasks.py line 85+
-And views.py line 198
-Need to fix shopify push for all products in the feed.
-
 - Move sync buttom from feed to shop
 
 
@@ -24,4 +20,3 @@ Need to fix shopify push for all products in the feed.
 
 FIXED
 
-- tasks.py -> sync_feed_to_shops() is currently creating multiple products because the for-loop is arranged wrong.
