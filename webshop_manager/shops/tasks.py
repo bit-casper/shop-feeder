@@ -229,7 +229,7 @@ def sync_to_uniconta(shop, data, feed):
         'ItemNumber': data.get('sku', ''),
         'Name': data.get('title', 'Unnamed Product'),
         'Description': data.get('description', ''),
-        'SalesPrice': float(data.get('price', '0.00'))
+        'SalesPrice': data.get('price', '0.00')
     }
     # Adjust endpoint based on Uniconta API docs
     url = f"{shop.api_endpoint}/api/items"
