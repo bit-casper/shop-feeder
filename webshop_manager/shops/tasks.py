@@ -143,40 +143,40 @@ def sync_to_shopify(shop, data, feed):
         "Content-Type": "application/json",
         "X-Shopify-Access-Token": shop.api_access_token
     }
-    # payload = {
-    #     'product': {
-    #         'title': data.get('title', 'Unnamed Product'),
-    #         'body_html': data.get('description', ''),
-    #         'variants': [{
-    #             'price': data.get('price', '0.00'),
-    #             'sku': data.get('sku', '')
-    #         }]
-    #     }
-    # }
     payload = {
-        "product": {
+        'product': {
             'title': data.get('title', 'Unnamed Product'),
             'body_html': data.get('description', ''),
-            "images": data.get("images", None),
-            #"product_type": product.category,
-            "vendor": data.get("vendor", None),
-            #"metafields_global_description_tag": product.description,
-            #"status": status,
-            "variants": [
-                {
-                    'price': data.get('price', '0.00'),
-                    'sku': data.get('sku', ''),
-                    "barcode": data.get("barcode", None),
-                    #"compare_at_price": product.compare_at_price,
-                    #"tracked": True,
-                    #"inventory_item_id": 1,  # to be gotten by get inventory endpoint
-                    "inventory_quantity": data.get("inventory_quantity", None),
-                    "weight": data.get("weight", None),
-                    #"weight_unit": "lb"
-                }
-            ]
+            'variants': [{
+                'price': data.get('price', '0.00'),
+                'sku': data.get('sku', '')
+            }]
         }
     }
+    # payload = {
+    #     "product": {
+    #         'title': data.get('title', 'Unnamed Product'),
+    #         'body_html': data.get('description', ''),
+    #         "images": data.get("images", None),
+    #         #"product_type": product.category,
+    #         "vendor": data.get("vendor", None),
+    #         #"metafields_global_description_tag": product.description,
+    #         #"status": status,
+    #         "variants": [
+    #             {
+    #                 'price': data.get('price', '0.00'),
+    #                 'sku': data.get('sku', ''),
+    #                 "barcode": data.get("barcode", None),
+    #                 #"compare_at_price": product.compare_at_price,
+    #                 #"tracked": True,
+    #                 #"inventory_item_id": 1,  # to be gotten by get inventory endpoint
+    #                 "inventory_quantity": data.get("inventory_quantity", None),
+    #                 "weight": data.get("weight", None),
+    #                 #"weight_unit": "lb"
+    #             }
+    #         ]
+    #     }
+    # }
     #endpoint https://caspers-test.myshopify.com/admin/api/2022-07
     #url = f"{shop.api_endpoint}/products.json"
     #url = "https://" + api_key + ":" +password + "@" + store + ".myshopify.com/admin/api/2021-04/products.json"
