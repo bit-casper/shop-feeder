@@ -143,11 +143,22 @@ def sync_feed_to_shops(feed_id):
 
         # Process each item in the feed
         # for item in root.findall('.//item'):
-        for item in root.findall('.//' + feed.feed_product_tag):  # Adjust based on XML structure
+        # for item in root.findall('.//' + feed.feed_product_tag):  # Adjust based on XML structure
+        #     mapped_data = {}
+        #     for xml_key, shop_key in feed.mapping.items():
+        #         element = item.find(xml_key)
+        #         mapped_data[shop_key] = element.text if element is not None else 'N/A'
+
+
+        for item in root.findall('.//' + feed.feed_product_tag):  # './/Product'
             mapped_data = {}
             for xml_key, shop_key in feed.mapping.items():
-                element = item.find(xml_key)
+                # Split the path and find from root or adjust logic
+                #element = item.find(xml_key)
+                element = root.find(f".//{xml_key}") if '/' in xml_key else item.find(xml_key)
+                value = element.text if element is not None else 'N/A'
                 mapped_data[shop_key] = element.text if element is not None else 'N/A'
+                #mapped_data[shop_key] = value
 
             # Sync to each subscribed shop
             for shop in feed.shops.all():
@@ -168,35 +179,13 @@ def sync_feed_to_shops(feed_id):
         raise
 
 
-# def sync_to_shopify(shop, data, feed):
-#     # Shopify REST API (using API key and password for basic auth)
-#     headers = {
-#         'Content-Type': 'application/json',
-#         'Authorization': f"Basic {shop.api_key}:{shop.api_secret}".encode('utf-8').decode('ascii')  # Simplified; use base64 in production
-#     }
-#     payload = {
-#         'product': {
-#             'title': data.get('title', 'Unnamed Product'),
-#             'body_html': data.get('description', ''),
-#             'variants': [{
-#                 'price': data.get('price', '0.00'),
-#                 'sku': data.get('sku', '')
-#             }]
-#         }
-#     }
-#     # Shopify endpoint: adjust path based on API version (e.g., /admin/api/2023-10/products.json)
-#     url = f"{shop.api_endpoint}/products.json"
-#     response = requests.post(url, json=payload, headers=headers)
-#     response.raise_for_status()
 
-#     product_id = response.json()['product']['id']
-#     SyncLog.objects.create(feed=feed, shop=shop, status='success', message=f"Product {product_id} synced to Shopify")
+
 
 def sync_to_shopify(shop, data, feed):
-    # headers = {
-    #     'X-Shopify-Access-Token': shop.api_key,  # Use api_key as token
-    #     'Content-Type': 'application/json'
-    # }
+    import logging
+    logger = logging.getLogger(__name__)
+    
     headers = {
         "Accept": "application/json",
         "Content-Type": "application/json",
@@ -205,54 +194,30 @@ def sync_to_shopify(shop, data, feed):
     payload = {
         'product': {
             'title': data.get('title', 'Unnamed Product'),
-            'body_html': data.get('description', ''),
+            'body_html': data.get('body_html', ''),
             'variants': [{
                 'price': str(data.get('price', '0.00')),
-                'sku': data.get('sku', '')
+                'sku': data.get('sku', ''),
+                'inventory_quantity': int(data.get('inventory_quantity', 0))  # Add for completeness
             }]
         }
     }
-    # payload = {
-    #     "product": {
-    #         'title': data.get('title', 'Unnamed Product'),
-    #         'body_html': data.get('description', ''),
-    #         "images": data.get("images", None),
-    #         #"product_type": product.category,
-    #         "vendor": data.get("vendor", None),
-    #         #"metafields_global_description_tag": product.description,
-    #         #"status": status,
-    #         "variants": [
-    #             {
-    #                 'price': data.get('price', '0.00'),
-    #                 'sku': data.get('sku', ''),
-    #                 "barcode": data.get("barcode", None),
-    #                 #"compare_at_price": product.compare_at_price,
-    #                 #"tracked": True,
-    #                 #"inventory_item_id": 1,  # to be gotten by get inventory endpoint
-    #                 "inventory_quantity": data.get("inventory_quantity", None),
-    #                 "weight": data.get("weight", None),
-    #                 #"weight_unit": "lb"
-    #             }
-    #         ]
-    #     }
-    # }
-    #endpoint https://caspers-test.myshopify.com/admin/api/2022-07
-    #url = f"{shop.api_endpoint}/products.json"
-    #url = "https://" + api_key + ":" +password + "@" + store + ".myshopify.com/admin/api/2021-04/products.json"
     url = f"https://{shop.shop_name}.myshopify.com/admin/api/2022-07/products.json"
-    # url = "https://" + shop.api_key + ":" + shop.api_access_token + "@" + shop.shop_name + ".myshopify.com/admin/api/2021-04/products.json"
-    #https://9101cbada402d38b6d5db33b72ed64e8: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@caspers-test.myshopify.com/admin/api/2021-04/products.json
+    logger.info(f"Syncing to Shopify - Shop: {shop.shop_name}, URL: {url}, Payload: {payload}, Headers: {headers}")
+    
     try:
         response = requests.post(url, json=payload, headers=headers)
+        logger.info(f"Shopify Response - Status: {response.status_code}, Body: {response.text}")
         response.raise_for_status()
-
         product_id = response.json()['product']['id']
-        SyncLog.objects.create(feed=feed, shop=shop, status='success', message=f"Product {product_id} synced to Shopify")
+        SyncLog.objects.create(feed=feed, shop=shop, status='success', message=f"Product {product_id} synced")
     except Exception as e:
+        logger.error(f"Shopify Sync Failed - Error: {str(e)}, Response: {response.text if 'response' in locals() else 'No response'}")
         feed.sync_status = 'failed'
         feed.save()
         SyncLog.objects.create(feed=feed, shop=None, status='failed', message=str(e))
         raise
+
 
 def sync_to_uniconta(shop, data, feed):
     # Uniconta REST API (placeholder - adjust to actual API)
