@@ -148,7 +148,7 @@ def sync_to_shopify(shop, data, feed):
             'title': data.get('title', 'Unnamed Product'),
             'body_html': data.get('description', ''),
             'variants': [{
-                'price': data.get('price', '0.00'),
+                'price': str(data.get('price', '0.00')),
                 'sku': data.get('sku', '')
             }]
         }
@@ -180,7 +180,7 @@ def sync_to_shopify(shop, data, feed):
     #endpoint https://caspers-test.myshopify.com/admin/api/2022-07
     #url = f"{shop.api_endpoint}/products.json"
     #url = "https://" + api_key + ":" +password + "@" + store + ".myshopify.com/admin/api/2021-04/products.json"
-    url = "https://" + shop.api_key + ":" + shop.api_access_token + "@" + shop.shop_name + ".myshopify.com/admin/api/2022-07/products.json"
+    url = "https://" + shop.api_key + ":" + shop.api_access_token + "@" + shop.shop_name + ".myshopify.com/admin/api/2021-04/products.json"
     #https://9101cbada402d38b6d5db33b72ed64e8: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@caspers-test.myshopify.com/admin/api/2021-04/products.json
     try:
         response = requests.post(url, json=payload, headers=headers)
