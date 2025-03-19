@@ -8,11 +8,69 @@ from .utils import getAllProducts
 import json
 
 
+# @shared_task
+# def sync_feed_to_shops(feed_id):
+#     feed = Feed.objects.get(id=feed_id)
+#     feed.sync_status = 'running'
+#     feed.save()
+
+#     try:
+#         # Fetch feed data
+#         if feed.source_type == 'url':
+#             response = requests.get(feed.url)
+#             response.raise_for_status()
+#             xml_data = response.content
+#         elif feed.source_type == 'ftp':
+#             return JsonResponse({'error': 'FTP not yet implemented'}, status=400)
+#         elif feed.source_type == 'local':
+#             # Get the absolute path to the file based on views.py location
+#             base_dir = os.path.dirname(os.path.abspath(__file__))  # Directory of views.py
+#             file_path = os.path.join(base_dir, feed.file_pattern)   # Full path to the file
+#             tree = ET.parse(file_path)                             # Parse the file
+#             xml_data = tree.getroot()                              # Get the root Element
+
+#         # If source_type is 'url', xml_data is still bytes, so parse it
+#         if feed.source_type != 'local':
+#             tree = ET.fromstring(xml_data)
+#             xml_data = tree
+
+        
+#         # Parse XML
+#         #tree = ET.fromstring(xml_data)
+#         root = xml_data  # Assuming root is the iterable element
+
+#         for item in root.findall('.//' + feed.feed_product_tag):  # './/Product'
+#             mapped_data = {}
+
+#             for xml_key, shop_key in feed.mapping.items():
+#                 element = item.find(xml_key)
+#                 value = element.text if element is not None else 'N/A'
+#                 mapped_data[shop_key] = value
+
+#             for shop in feed.shops.all():
+#                 if shop.shop_type == 'shopify':
+#                     sync_to_shopify(shop, mapped_data, feed)
+#                 elif shop.shop_type == 'uniconta':
+#                     sync_to_uniconta(shop, mapped_data, feed)
+
+#         feed.sync_status = 'success'
+#         feed.last_sync = timezone.now()
+#         feed.save()
+#         SyncLog.objects.create(feed=feed, shop=None, status='success', message='Sync completed successfully')
+
+#     except Exception as e:
+#         feed.sync_status = 'failed'
+#         feed.save()
+#         SyncLog.objects.create(feed=feed, shop=None, status='failed', message=str(e))
+#         raise
+
 @shared_task
 def sync_feed_to_shops(feed_id):
     feed = Feed.objects.get(id=feed_id)
     feed.sync_status = 'running'
     feed.save()
+
+    mapped_data = []  # Initialize as a list to hold all products
 
     try:
         # Fetch feed data
@@ -23,31 +81,27 @@ def sync_feed_to_shops(feed_id):
         elif feed.source_type == 'ftp':
             return JsonResponse({'error': 'FTP not yet implemented'}, status=400)
         elif feed.source_type == 'local':
-            # Get the absolute path to the file based on views.py location
-            base_dir = os.path.dirname(os.path.abspath(__file__))  # Directory of views.py
-            file_path = os.path.join(base_dir, feed.file_pattern)   # Full path to the file
-            tree = ET.parse(file_path)                             # Parse the file
-            xml_data = tree.getroot()                              # Get the root Element
+            base_dir = os.path.dirname(os.path.abspath(__file__))
+            file_path = os.path.join(base_dir, feed.file_pattern)
+            tree = ET.parse(file_path)
+            xml_data = tree.getroot()
 
-        # If source_type is 'url', xml_data is still bytes, so parse it
         if feed.source_type != 'local':
             tree = ET.fromstring(xml_data)
             xml_data = tree
 
-        
-        # Parse XML
-        #tree = ET.fromstring(xml_data)
-        root = xml_data  # Assuming root is the iterable element
+        root = xml_data
 
-        mapped_data = {}
-        for item in root.findall('.//' + feed.feed_product_tag):  # './/Product'
-            
-
+        # Map all products from XML into mapped_data
+        for item in root.findall('.//' + feed.feed_product_tag):  # './/InventTable'
+            product_data = {}  # Dictionary for a single product
             for xml_key, shop_key in feed.mapping.items():
                 element = item.find(xml_key)
                 value = element.text if element is not None else 'N/A'
-                mapped_data[shop_key] = value
+                product_data[shop_key] = value
+            mapped_data.append(product_data)  # Add this product to the list
 
+        # Now process all shops with the complete mapped_data
         for shop in feed.shops.all():
             if shop.shop_type == 'shopify':
                 sync_to_shopify(shop, mapped_data, feed)
@@ -64,8 +118,6 @@ def sync_feed_to_shops(feed_id):
         feed.save()
         SyncLog.objects.create(feed=feed, shop=None, status='failed', message=str(e))
         raise
-
-
 
 
 
@@ -91,21 +143,35 @@ def sync_to_shopify(shop, data, feed):
     #                         }
     #                     })
 
+    # changed_products = []
+    # with open('data.json', 'r') as f:
+    #     shop_data = json.load(f)
+    #     for ishop in shop_data:
+    #         for variant in ishop['variants']:  # Loop through all variants
+    #             for ifeed in data:
+    #                 if variant['sku'] == ifeed['sku']:
+    #                     if variant['price'] != ifeed['price']:
+    #                         changed_products.append({
+    #                             "variant": {
+    #                                 "id": ishop['id'],
+    #                                 "price": str(ifeed['price'])
+    #                             }
+    #                         })
+
     changed_products = []
     with open('data.json', 'r') as f:
         shop_data = json.load(f)
         for ishop in shop_data:
-            for variant in ishop['variants']:  # Loop through all variants
-                for ifeed in data:
-                    if variant['sku'] == ifeed['sku']:
-                        if variant['price'] != ifeed['price']:
+            for variant in ishop['variants']:
+                for product in mapped_data:  # Iterate over all products in mapped_data
+                    if variant['sku'] == product['sku']:
+                        if variant['price'] != product['price']:
                             changed_products.append({
                                 "variant": {
-                                    "id": ishop['id'],
-                                    "price": str(ifeed['price'])
+                                    "id": variant['id'],
+                                    "price": str(product['price'])
                                 }
                             })
-                        
 
 
     # Build headers and url for the shopify update call
