@@ -153,7 +153,8 @@ def sync_to_shopify(shop, data, feed):
                         if variant['price'] != ifeed['price']:
                             changed_products.append({
                                 "variant": {
-                                    "id": ishop['id'],
+                                    # "id": ishop['id'],
+                                    "id": variant['id'],
                                     "price": str(ifeed['price'])
                                 }
                             })
