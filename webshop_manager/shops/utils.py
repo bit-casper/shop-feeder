@@ -109,9 +109,9 @@ def getAllProducts(shop):  # get all shopify products and save them into a json 
 
     print("Getting all shopify products ....")
     getProducts(shop, product_list_url)
-    with open('data.json', 'w') as f:
-        json.dump(product_list, f)
-    # return product_list
+    # with open('data.json', 'w') as f:
+    #     json.dump(product_list, f)
+    return product_list
     print("Shopify products List size : "+str(len(product_list)))
 
 
