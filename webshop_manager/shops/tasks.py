@@ -39,21 +39,10 @@ def sync_feed_to_shops(feed_id):
         #tree = ET.fromstring(xml_data)
         root = xml_data  # Assuming root is the iterable element
 
-        # Process each item in the feed
-        # for item in root.findall('.//item'):
-        # for item in root.findall('.//' + feed.feed_product_tag):  # Adjust based on XML structure
-        #     mapped_data = {}
-        #     for xml_key, shop_key in feed.mapping.items():
-        #         element = item.find(xml_key)
-        #         mapped_data[shop_key] = element.text if element is not None else 'N/A'
-
-
         for item in root.findall('.//' + feed.feed_product_tag):  # './/Product'
             mapped_data = {}
 
             for xml_key, shop_key in feed.mapping.items():
-                # element = root.find(f".//{xml_key}") if '/' in xml_key else item.find(xml_key)
-                # mapped_data[shop_key] = element.text if element is not None else 'N/A'
                 element = item.find(xml_key)
                 value = element.text if element is not None else 'N/A'
                 mapped_data[shop_key] = value
@@ -80,7 +69,7 @@ def sync_feed_to_shops(feed_id):
 
 
 def sync_to_shopify(shop, data, feed):
-
+    print("ifeed:", ifeed)  # Debug output
     # Fetch shopify data
     # fetched_products = getAllProducts(shop)
     getAllProducts(shop)
@@ -111,7 +100,7 @@ def sync_to_shopify(shop, data, feed):
                         if variant['price'] != ifeed['price']:
                             changed_products.append({
                                 "variant": {
-                                    "id": ifeed['id'],
+                                    "id": ishop['id'],
                                     "price": str(ifeed['price'])
                                 }
                             })
