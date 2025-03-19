@@ -90,11 +90,11 @@ def sync_to_shopify(shop, data, feed):
     with open('data.json', 'r') as f:
         for ishop in json.load(f):
             for ifeed in data:
-                if ishop['variants']['sku'] == ifeed['sku']:
-                    if ishop['variants']['price'] != ifeed['price']:
+                if ishop['sku'] == ifeed['sku']:
+                    if ishop['price'] != ifeed['price']:
                         changed_products.append({
                             "variant": {
-                                "id": ishop['variants']['id'],
+                                "id": ifeed['id'],
                                 "price": str(ifeed['price'])
                             }
                         })
