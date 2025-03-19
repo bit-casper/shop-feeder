@@ -32,7 +32,7 @@ Add new product workflow:
 
 - tasks.py -> sync_feed_to_shops() is currently creating products, we need it to only update existing products. This is why we need inventory_id
 - Move sync buttom from feed to shop
-
+- More detailed logging (Would be nice to see which data was updated and the before and after values)
 
 
 
