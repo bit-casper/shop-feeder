@@ -5,6 +5,7 @@ from django.utils import timezone
 from .models import Feed, Shop, SyncLog
 import os
 from .utils import getAllProducts
+import json
 
 
 @shared_task
@@ -87,10 +88,10 @@ def sync_to_shopify(shop, data, feed):
     # Compare feeds and shopify and build a list of products to update
     changed_products = []
     with open('data.json', 'r') as f:
-        for ishop in f:
-            for ifeed in data:
-                if ishop.get('sku') == ifeed['sku']:
-                    if ishop.get('price') != ifeed['price']:
+        for ishop in f.json():
+            for ifeed in data.json():
+                if ishop['sku'] == ifeed['sku']:
+                    if ishop['price'] != ifeed['price']:
                         changed_products.append({
                             "variant": {
                                 "id": ifeed['id'],
