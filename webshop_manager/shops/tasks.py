@@ -69,7 +69,7 @@ def sync_feed_to_shops(feed_id):
 
 
 def sync_to_shopify(shop, data, feed):
-    print("ifeed:", ifeed)  # Debug output
+    print("data:", data)  # Debug output
     # Fetch shopify data
     # fetched_products = getAllProducts(shop)
     getAllProducts(shop)
