@@ -152,15 +152,14 @@ def sync_feed_to_shops(feed_id):
 
         for item in root.findall('.//' + feed.feed_product_tag):  # './/Product'
             mapped_data = {}
-            for xml_key, shop_key in feed.mapping.items():
-                # Split the path and find from root or adjust logic
-                #element = item.find(xml_key)
-                element = root.find(f".//{xml_key}") if '/' in xml_key else item.find(xml_key)
-                #value = element.text if element is not None else 'N/A'
-                mapped_data[shop_key] = element.text if element is not None else 'N/A'
-                #mapped_data[shop_key] = value
 
-            # Sync to each subscribed shop
+            for xml_key, shop_key in feed.mapping.items():
+                # element = root.find(f".//{xml_key}") if '/' in xml_key else item.find(xml_key)
+                # mapped_data[shop_key] = element.text if element is not None else 'N/A'
+                element = item.find(xml_key)
+                value = element.text if element is not None else 'N/A'
+                mapped_data[shop_key] = value
+
             for shop in feed.shops.all():
                 if shop.shop_type == 'shopify':
                     sync_to_shopify(shop, mapped_data, feed)

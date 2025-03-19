@@ -89,9 +89,17 @@ WSGI_APPLICATION = 'webshop_manager.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'shop_feeder_dev',
+        'USER': 'admin',
+        'PASSWORD': 'password',
+        'HOST': '192.168.86.141',  # Raspberry Pi IP address
+        'PORT': '5432',           # Default PostgreSQL port
     }
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': BASE_DIR / 'db.sqlite3',
+    # }
 }
 
 
