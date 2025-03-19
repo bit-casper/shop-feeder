@@ -15,9 +15,6 @@ def sync_feed_to_shops(feed_id):
     feed.save()
 
     try:
-        # Fetch shopify data
-        getAllProducts(feed.shop)
-
         # Fetch feed data
         if feed.source_type == 'url':
             response = requests.get(feed.url)
@@ -83,6 +80,10 @@ def sync_feed_to_shops(feed_id):
 
 
 def sync_to_shopify(shop, data, feed):
+
+    # Fetch shopify data
+    getAllProducts(feed.shop)
+
     headers = {
         "Accept": "application/json",
         "Content-Type": "application/json",
