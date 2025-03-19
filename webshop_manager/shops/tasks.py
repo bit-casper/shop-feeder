@@ -4,7 +4,6 @@ import xml.etree.ElementTree as ET
 from django.utils import timezone
 from .models import Feed, Shop, SyncLog
 import os
-import time
 from .utils import getAllProducts
 
 

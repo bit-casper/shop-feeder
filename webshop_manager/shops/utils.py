@@ -3,6 +3,7 @@ import xml.etree.ElementTree as ET
 from django.utils import timezone
 from .models import Feed, SyncLog
 import json
+import time
 # import logging
 
 # logger = logging.getLogger(__name__)
