@@ -122,7 +122,7 @@ def sync_feed_to_shops(feed_id):
 
 
 def sync_to_shopify(shop, data, feed):
-    print("data:", data)  # Debug output
+    # print("data:", data)  # Debug output
     # Fetch shopify data
     # fetched_products = getAllProducts(shop)
     getAllProducts(shop)
@@ -199,21 +199,22 @@ def sync_to_shopify(shop, data, feed):
         # Loop over all changed products, build a payload for each of them and push it into shopify
         for i in changed_products:
             # Build the payload
-            payload = {
-                "variant": {
-                    "id": i['variant']['id'],
-                    "price": str(i['variant']['price'])
-                }
-            }
-            print(payload)
-            print("")
-            print(i)
+            # payload = {
+            #     "variant": {
+            #         "id": i['variant']['id'],
+            #         "price": str(i['variant']['price'])
+            #     }
+            # }
+            payload = i
+            # print(payload)
+            # print("")
+            # print(i)
             # url = f"https://{shop.shop_name}.myshopify.com/admin/api/2022-07/products.json"
             url = f"https://{shop.shop_name}.myshopify.com/admin/api/2022-07/variants/" + str(i["variant"]["id"]) + ".json"
             # url = f"https://{shop.shop_name}.myshopify.com/admin/api/2022-07/products/" + str(product_id)+".json"
             # response = requests.post(url, json=payload, headers=headers)
             response = requests.put(url, json=payload, headers=headers)
-            print(response.status_code)
+            # print(response.status_code)
             response.raise_for_status()
             # product_id = response.json()['product']['id']
             # SyncLog.objects.create(feed=feed, shop=shop, status='success', message=f"Product {product_id} synced")
