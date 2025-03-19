@@ -212,6 +212,7 @@ def sync_to_shopify(shop, data, feed):
             # url = f"https://{shop.shop_name}.myshopify.com/admin/api/2022-07/products/" + str(product_id)+".json"
             # response = requests.post(url, json=payload, headers=headers)
             response = requests.put(url, json=payload, headers=headers)
+            print(response.status_code)
             response.raise_for_status()
             # product_id = response.json()['product']['id']
             # SyncLog.objects.create(feed=feed, shop=shop, status='success', message=f"Product {product_id} synced")
