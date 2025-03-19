@@ -200,7 +200,7 @@ def sync_to_shopify(shop, data, feed):
             # Build the payload
             payload = i
             # url = f"https://{shop.shop_name}.myshopify.com/admin/api/2022-07/products.json"
-            url = f"https://{shop.shop_name}.myshopify.com/admin/api/2022-07/variants/" + str(i["variants"]["id"]) + ".json"
+            url = f"https://{shop.shop_name}.myshopify.com/admin/api/2022-07/variants/" + str(i["variant"]["id"]) + ".json"
             # response = requests.post(url, json=payload, headers=headers)
             response = requests.put(url, json=payload, headers=headers)
             response.raise_for_status()
