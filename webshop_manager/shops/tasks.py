@@ -82,7 +82,7 @@ def sync_feed_to_shops(feed_id):
 def sync_to_shopify(shop, data, feed):
 
     # Fetch shopify data
-    getAllProducts(feed.shop)
+    getAllProducts(shop)
 
     headers = {
         "Accept": "application/json",
