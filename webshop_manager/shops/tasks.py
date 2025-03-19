@@ -198,7 +198,12 @@ def sync_to_shopify(shop, data, feed):
         # Loop over all changed products, build a payload for each of them and push it into shopify
         for i in changed_products:
             # Build the payload
-            payload = i
+            payload = {
+                "variant": {
+                    "id": i['variant']['id'],
+                    "price": str(i['variant']['price'])
+                }
+            }
             # url = f"https://{shop.shop_name}.myshopify.com/admin/api/2022-07/products.json"
             url = f"https://{shop.shop_name}.myshopify.com/admin/api/2022-07/products/" + str(i["variant"]["id"]) + ".json"
             # url = f"https://{shop.shop_name}.myshopify.com/admin/api/2022-07/products/" + str(product_id)+".json"
