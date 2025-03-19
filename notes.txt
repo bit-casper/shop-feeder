@@ -7,10 +7,29 @@ Notes
 
 TODO
 
+Update price workflow:
+    - Get all feeds from suppliers
+    - Get all products from Shopify
+    - Convert all feeds to match Shopify format (JSON)
+    - Scan for price changes (Feeds overwrite Shopify)
+    - Write changes to Shopify
 
-- tasks.py - mapped fields works in same cases. Palby "OnHandAvailPhysical" specifically doesn't work according to logs from latest test, trying to push N/A when its actually 0.00
-- tasks.py -> sync_feed_to_shops() is currently creating multiple products because the for-loop is arranged wrong.
-- Find out if we can fetch all inventory_id's from a shop, if not we need to manually put them in shop object on creation.
+Update inventory workflow:
+    - Get all feeds from suppliers
+    - Get all inventory items from Shopify
+    - Convert all feeds to match Shopify format (JSON)
+    - Scan for inventory changes (Feeds overwrite Shopify)
+    - Write changes to Shopify
+
+Add new product workflow:
+    - Get all feeds from suppliers
+    - Get all products from Uniconta
+    - Convert all feeds to match Uniconta format
+    - Scan for new products that exist in feeds but not in Uniconta
+    - Write new products to Uniconta
+
+
+
 - tasks.py -> sync_feed_to_shops() is currently creating products, we need it to only update existing products. This is why we need inventory_id
 - Move sync buttom from feed to shop
 
@@ -20,3 +39,5 @@ TODO
 
 FIXED
 
+- tasks.py - mapped fields works in same cases. Palby "OnHandAvailPhysical" specifically doesn't work according to logs from latest test, trying to push N/A when its actually 0.00
+- tasks.py -> sync_feed_to_shops() is currently creating multiple products because the for-loop is arranged wrong.
