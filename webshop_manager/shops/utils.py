@@ -98,7 +98,7 @@ import json
 
 
 
-
+index = 0
 product_list = []
 
 
