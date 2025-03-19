@@ -89,7 +89,7 @@ def sync_to_shopify(shop, data, feed):
     # Compare feeds and shopify and build a list of products to update
     changed_products = []
     with open('data.json', 'r') as f:
-        shop_data = json.loads(f)
+        shop_data = json.load(f)
         for ishop in shop_data['variants']:
             for ifeed in data:
                 if ishop['sku'] == ifeed['sku']:
