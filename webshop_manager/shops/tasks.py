@@ -82,13 +82,15 @@ def sync_feed_to_shops(feed_id):
 def sync_to_shopify(shop, data, feed):
 
     # Fetch shopify data
-    fetched_products = getAllProducts(shop)
+    # fetched_products = getAllProducts(shop)
+    getAllProducts(shop)
 
 
     # Compare feeds and shopify and build a list of products to update
     changed_products = []
     # with open('data.json', 'r') as f:
-    for ishop in fetched_products['variants']:
+    shop_data = json.loads('data.json')
+    for ishop in shop_data['variants']:
         for ifeed in data:
             if ishop['sku'] == ifeed['sku']:
                 if ishop['price'] != ifeed['price']:
