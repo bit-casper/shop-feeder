@@ -197,7 +197,7 @@ def sync_to_shopify(shop, data, feed):
             'variants': [{
                 'price': str(data.get('price', '0.00')),
                 'sku': data.get('sku', ''),
-                'inventory_quantity': data.get('inventory_quantity', 0)  # Add for completeness
+                'inventory_quantity': data.get('inventory_quantity', '0')  # Add for completeness
             }]
         }
     }
