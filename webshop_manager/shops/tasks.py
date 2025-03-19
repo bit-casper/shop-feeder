@@ -143,35 +143,35 @@ def sync_to_shopify(shop, data, feed):
     #                         }
     #                     })
 
-    # changed_products = []
-    # with open('data.json', 'r') as f:
-    #     shop_data = json.load(f)
-    #     for ishop in shop_data:
-    #         for variant in ishop['variants']:  # Loop through all variants
-    #             for ifeed in data:
-    #                 if variant['sku'] == ifeed['sku']:
-    #                     if variant['price'] != ifeed['price']:
-    #                         changed_products.append({
-    #                             "variant": {
-    #                                 "id": ishop['id'],
-    #                                 "price": str(ifeed['price'])
-    #                             }
-    #                         })
-
     changed_products = []
     with open('data.json', 'r') as f:
         shop_data = json.load(f)
         for ishop in shop_data:
-            for variant in ishop['variants']:
-                for product in mapped_data:  # Iterate over all products in mapped_data
-                    if variant['sku'] == product['sku']:
-                        if variant['price'] != product['price']:
+            for variant in ishop['variants']:  # Loop through all variants
+                for ifeed in data:
+                    if variant['sku'] == ifeed['sku']:
+                        if variant['price'] != ifeed['price']:
                             changed_products.append({
                                 "variant": {
-                                    "id": variant['id'],
-                                    "price": str(product['price'])
+                                    "id": ishop['id'],
+                                    "price": str(ifeed['price'])
                                 }
                             })
+
+    # changed_products = []
+    # with open('data.json', 'r') as f:
+    #     shop_data = json.load(f)
+    #     for ishop in shop_data:
+    #         for variant in ishop['variants']:
+    #             for product in data:  # Iterate over all products in mapped_data
+    #                 if variant['sku'] == product['sku']:
+    #                     if variant['price'] != product['price']:
+    #                         changed_products.append({
+    #                             "variant": {
+    #                                 "id": variant['id'],
+    #                                 "price": str(product['price'])
+    #                             }
+    #                         })
 
 
     # Build headers and url for the shopify update call
