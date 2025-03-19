@@ -83,34 +83,62 @@ def sync_to_shopify(shop, data, feed):
     # Fetch shopify data
     getAllProducts(shop)
 
+
+    # Compare feeds and shopify and build a list of products to update
+    changed_products = []
+    with open('data.json', 'r') as f:
+        for ishop in f:
+            for ifeed in data:
+                if ishop['variants']['sku'] == ifeed['sku']:
+                    if ishop['variants']['price'] != ifeed['price']:
+                        changed_products.append({
+                            "variant": {
+                                "id": ifeed['id'],
+                                "price": str(ifeed['price'])
+                            }
+                        })
+                        
+
+
+    # Build headers and url for the shopify update call
+    url = f"https://{shop.shop_name}.myshopify.com/admin/api/2022-07/products.json"
     headers = {
         "Accept": "application/json",
         "Content-Type": "application/json",
         "X-Shopify-Access-Token": shop.api_access_token
     }
-    payload = {
-        'product': {
-            'title': data.get('title', 'Unnamed Product'),
-            'body_html': data.get('body_html', ''),
-            'variants': [{
-                'price': str(data.get('price', '0.00')),
-                'sku': data.get('sku', ''),
-                # 'inventory_quantity': data.get('inventory_quantity', '0')  # Add for completeness
-            }]
-        }
-    }
-    url = f"https://{shop.shop_name}.myshopify.com/admin/api/2022-07/products.json"
+    # payload = {
+    #     'product': {
+    #         'title': data.get('title', 'Unnamed Product'),
+    #         'body_html': data.get('body_html', ''),
+    #         'variants': [{
+    #             'price': str(data.get('price', '0.00')),
+    #             'sku': data.get('sku', ''),
+    #             # 'inventory_quantity': data.get('inventory_quantity', '0')  # Add for completeness
+    #         }]
+    #     }
+    # }
     
+
+    # Execute the shopify update call
     try:
-        response = requests.post(url, json=payload, headers=headers)
-        response.raise_for_status()
-        product_id = response.json()['product']['id']
-        SyncLog.objects.create(feed=feed, shop=shop, status='success', message=f"Product {product_id} synced")
+        # Loop over all changed products, build a payload for each of them and push it into shopify
+        for i in changed_products:
+            # Build the payload
+            payload = i
+            # response = requests.post(url, json=payload, headers=headers)
+            response = requests.put(url, json=payload, headers=headers)
+            response.raise_for_status()
+            # product_id = response.json()['product']['id']
+            # SyncLog.objects.create(feed=feed, shop=shop, status='success', message=f"Product {product_id} synced")
+            SyncLog.objects.create(feed=feed, shop=shop, status='success', message=f"{len(changed_products)} products were synced")
     except Exception as e:
         feed.sync_status = 'failed'
         feed.save()
         SyncLog.objects.create(feed=feed, shop=None, status='failed', message=str(e))
         raise
+
+
 
 
 def sync_to_uniconta(shop, data, feed):
