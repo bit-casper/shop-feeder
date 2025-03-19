@@ -87,19 +87,34 @@ def sync_to_shopify(shop, data, feed):
 
 
     # Compare feeds and shopify and build a list of products to update
+    # changed_products = []
+    # with open('data.json', 'r') as f:
+    #     shop_data = json.load(f)
+    #     for ishop in shop_data:
+    #         for ifeed in data:
+    #             if ishop['variants']['sku'] == ifeed['sku']:
+    #                 if ishop['variants']['price'] != ifeed['price']:
+    #                     changed_products.append({
+    #                         "variant": {
+    #                             "id": ifeed['id'],
+    #                             "price": str(ifeed['price'])
+    #                         }
+    #                     })
+
     changed_products = []
     with open('data.json', 'r') as f:
         shop_data = json.load(f)
         for ishop in shop_data:
-            for ifeed in data:
-                if ishop['variants']['sku'] == ifeed['sku']:
-                    if ishop['variants']['price'] != ifeed['price']:
-                        changed_products.append({
-                            "variant": {
-                                "id": ifeed['id'],
-                                "price": str(ifeed['price'])
-                            }
-                        })
+            for variant in ishop['variants']:  # Loop through all variants
+                for ifeed in data:
+                    if variant['sku'] == ifeed['sku']:
+                        if variant['price'] != ifeed['price']:
+                            changed_products.append({
+                                "variant": {
+                                    "id": ifeed['id'],
+                                    "price": str(ifeed['price'])
+                                }
+                            })
                         
 
 
