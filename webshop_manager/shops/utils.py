@@ -132,14 +132,15 @@ def getProducts(shop, url):  # get shopify products
         for p in products:
             product_list.append(p)
 
-        if "rel=\"next\"" in r.headers['Link']:
-            next = ''
-            urls = findUrlInString(r.headers['Link'])
-            if len(urls) == 1:
-                next = urls[0]
-            else:
-                next = urls[1]
-            getProducts(next)
+        if "Link" in r.headers:
+            if "rel=\"next\"" in r.headers['Link']:
+                next = ''
+                urls = findUrlInString(r.headers['Link'])
+                if len(urls) == 1:
+                    next = urls[0]
+                else:
+                    next = urls[1]
+                getProducts(next)
 
     except requests.exceptions.Timeout as e:
         print(e)
