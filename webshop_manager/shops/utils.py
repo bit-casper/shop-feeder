@@ -129,7 +129,11 @@ def getAllProducts(shop):  # get all shopify products and save them into a json 
 
 def getProducts(shop, url, last_product_list = None):  # get shopify products
     #global index
-    final_product_list = last_product_list
+    if last_product_list == None:
+        final_product_list = []
+    else:
+        final_product_list = last_product_list
+        
     index = 0
     index = index+1
     print("page : "+str(index))
