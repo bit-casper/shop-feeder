@@ -89,24 +89,26 @@ WSGI_APPLICATION = 'webshop_manager.wsgi.application'
 
 DATABASES = {
     # FOR WORK NETWORK
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'shop_feeder_dev',
-        'USER': 'admin',
-        'PASSWORD': 'password',
-        'HOST': '192.168.108.196',  # Raspberry Pi IP address
-        'PORT': '5432',           # Default PostgreSQL port
-    }
-
-    # FOR HOME NETWORK
     # 'default': {
     #     'ENGINE': 'django.db.backends.postgresql',
     #     'NAME': 'shop_feeder_dev',
     #     'USER': 'admin',
     #     'PASSWORD': 'password',
-    #     'HOST': '192.168.86.141',  # Raspberry Pi IP address
+    #     'HOST': '192.168.108.196',  # Raspberry Pi IP address
     #     'PORT': '5432',           # Default PostgreSQL port
     # }
+
+    # FOR HOME NETWORK
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'shop_feeder_dev',
+        'USER': 'admin',
+        'PASSWORD': 'password',
+        'HOST': '192.168.86.141',  # Raspberry Pi IP address
+        'PORT': '5432',           # Default PostgreSQL port
+    }
+
+    
     # 'default': {
     #     'ENGINE': 'django.db.backends.sqlite3',
     #     'NAME': BASE_DIR / 'db.sqlite3',
@@ -158,12 +160,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 # FOR WORK NETWORK
-CELERY_BROKER_URL = 'redis://192.168.108.196:6379/0'
-CELERY_RESULT_BACKEND = 'redis://192.168.108.196:6379/0'
+# CELERY_BROKER_URL = 'redis://192.168.108.196:6379/0'
+# CELERY_RESULT_BACKEND = 'redis://192.168.108.196:6379/0'
 
 # FOR HOME NETWORK
-# CELERY_BROKER_URL = 'redis://192.168.86.141:6379/0'
-# CELERY_RESULT_BACKEND = 'redis://192.168.86.141:6379/0'
+CELERY_BROKER_URL = 'redis://192.168.86.141:6379/0'
+CELERY_RESULT_BACKEND = 'redis://192.168.86.141:6379/0'
 
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
