@@ -6,6 +6,7 @@ from .models import Feed, Shop, SyncLog
 import os
 from .utils import getAllProducts, DownloadNewFiles
 import json
+import time
 
 
 # @shared_task
@@ -197,6 +198,7 @@ def create_to_shopify(shop, data, feed):
     try:
         # Loop over all changed products, build a payload for each of them and push it into shopify
         for i in data:
+            time.sleep(520/1000)
             payload = {
                 "product": {
                     "title": i["title"],
