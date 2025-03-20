@@ -230,7 +230,9 @@ def create_to_shopify(shop, data, feed):
             response = requests.post(url, json=payload, headers=headers)
 
             if response.status_code == 200 or response.status_code == 201:
-                created_string = " product with id : " + str(product_id) + " : " + "created" + "d , SKU : " + i['sku']
+                product_id = data['product']['id']
+                inventory_id = data['product']['variants'][0]['inventory_item_id']
+                created_string = " product with id : " + str(product_id) + " : " + "created" + "d , SKU : " + i['sku'] + " : " + "inventory_item_id : " + str(inventory_id)
                 print(created_string, flush=True)
             else:
                 print(response.status_code)
