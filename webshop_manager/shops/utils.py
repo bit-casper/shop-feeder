@@ -333,12 +333,7 @@ def findUrlInString(string):
 
 
 def DownloadNewFiles(feed):
-    # fetched_files = []
-    # for host in settings.FTP['host']:
-    #     index = settings.FTP['host'].index(host)
-
     host_name = feed.ftp_host
-
     user = feed.ftp_user
     password = feed.ftp_pass
     path = "/"
@@ -354,9 +349,12 @@ def DownloadNewFiles(feed):
         data.append(more_data)
 
     resp = ftp.retrbinary("RETR " + str(file), callback=handle_binary)
-    data = "".join(data)
+    
+    # Decode bytes to string using UTF-8 (common for XML)
+    data = b"".join(data).decode('utf-8')  # Join bytes first, then decode
     ftp.quit()
     return data
+
     # if str(path) != "":
     #     ftp.cwd(path)
 
