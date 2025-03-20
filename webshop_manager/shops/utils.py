@@ -99,16 +99,27 @@ import time
 
 
 
-index = 0
-product_list = []
+# index = 0
+#product_list = []
 
+
+# def getAllProducts(shop):  # get all shopify products and save them into a json file
+#     url = f"https://{shop.shop_name}.myshopify.com/admin/api/2022-07/products.json"
+#     product_list_url = url + "?fields=id,variants&limit=200"
+
+#     print("Getting all shopify products ....")
+#     getProducts(shop, product_list_url)
+#     with open('data.json', 'w') as f:
+#         json.dump(product_list, f)
+#     # return product_list
+#     print("Shopify products List size : "+str(len(product_list)))
 
 def getAllProducts(shop):  # get all shopify products and save them into a json file
     url = f"https://{shop.shop_name}.myshopify.com/admin/api/2022-07/products.json"
     product_list_url = url + "?fields=id,variants&limit=200"
 
     print("Getting all shopify products ....")
-    getProducts(shop, product_list_url)
+    product_list = getProducts(shop, product_list_url)
     with open('data.json', 'w') as f:
         json.dump(product_list, f)
     # return product_list
@@ -116,8 +127,10 @@ def getAllProducts(shop):  # get all shopify products and save them into a json 
 
 
 
-def getProducts(shop, url):  # get shopify products
-    global index
+def getProducts(shop, url, last_product_list = None):  # get shopify products
+    #global index
+    final_product_list = last_product_list
+    index = 0
     index = index+1
     print("page : "+str(index))
 
@@ -131,7 +144,8 @@ def getProducts(shop, url):  # get shopify products
         products = data['products']
 
         for p in products:
-            product_list.append(p)
+            # product_list.append(p)
+            final_product_list.append(p)
 
         if "Link" in r.headers:
             if "rel=\"next\"" in r.headers['Link']:
@@ -141,7 +155,7 @@ def getProducts(shop, url):  # get shopify products
                     next = urls[0]
                 else:
                     next = urls[1]
-                getProducts(next)
+                getProducts(next, last_product_list=final_product_list)
 
     except requests.exceptions.Timeout as e:
         print(e)

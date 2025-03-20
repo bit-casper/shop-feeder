@@ -168,10 +168,10 @@ def sync_to_shopify(shop, data, feed):
 
             # Log the result
             product_id = response.json()['variant']['product_id']
-            #variant_id = response.json()['variant']['id']
+            variant_id = response.json()['variant']['id']
             # print(response.json())
-            SyncLog.objects.create(feed=feed, shop=shop, status='success', message=f"Product {product_id} synced")
-            #SyncLog.objects.create(feed=feed, shop=shop, status='success', message=f"Variant {variant_id} of product {product_id} synced")
+            #SyncLog.objects.create(feed=feed, shop=shop, status='success', message=f"Product {product_id} synced")
+            SyncLog.objects.create(feed=feed, shop=shop, status='success', message=f"Variant {variant_id} of product {product_id} synced")
             # SyncLog.objects.create(feed=feed, shop=shop, status='success', message=f"{len(changed_products)} products were synced")
     except Exception as e:
         feed.sync_status = 'failed'
