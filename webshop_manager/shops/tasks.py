@@ -228,7 +228,7 @@ def create_to_shopify(shop, data, feed):
             # url and request for creating product
             url = f"https://{shop.shop_name}.myshopify.com/admin/api/2022-07/products.json"
             response = requests.post(url, json=payload, headers=headers)
-
+            data = response.json()
             if response.status_code == 200 or response.status_code == 201:
                 product_id = data['product']['id']
                 inventory_id = data['product']['variants'][0]['inventory_item_id']
