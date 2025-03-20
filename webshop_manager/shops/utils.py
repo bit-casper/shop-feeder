@@ -339,10 +339,14 @@ def DownloadNewFiles(feed):
     path = "/"
     file = feed.file_pattern
 
-    print("starting connection to {}.".format(host_name))
+    print("Starting connection to {}.".format(host_name))
     
     ftp = FTP(host_name)
     ftp.login(user=user, passwd=password)
+
+    print("Successfully logged in to {}.".format(host_name))
+
+    print("Starting download of {}.".format(file))
 
     data = []
     def handle_binary(more_data):
@@ -350,8 +354,15 @@ def DownloadNewFiles(feed):
 
     resp = ftp.retrbinary("RETR " + str(file), callback=handle_binary)
     
+    print("Download completed, decoding data...")
+
     # Decode bytes to string using UTF-8 (common for XML)
     data = b"".join(data).decode('utf-8')  # Join bytes first, then decode
+    
+    print("Decoding completed")
+
+    print("Closing connection to {}.".format(host_name))
+    
     ftp.quit()
     return data
 
