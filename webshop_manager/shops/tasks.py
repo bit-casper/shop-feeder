@@ -105,6 +105,7 @@ def sync_feed_to_shops(feed_id):
         for shop in feed.shops.all():
             if shop.shop_type == 'shopify':
                 # sync_to_shopify(shop, mapped_data, feed)
+                print(mapped_data)
                 create_to_shopify(shop, mapped_data, feed)
             elif shop.shop_type == 'uniconta':
                 sync_to_uniconta(shop, mapped_data, feed)
