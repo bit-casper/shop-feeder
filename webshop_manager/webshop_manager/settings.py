@@ -31,7 +31,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["192.168.86.141", "127.0.0.1", "localhost"]
+ALLOWED_HOSTS = ["192.168.86.141", "127.0.0.1", "localhost", "192.168.108.196", "192.168.108.195"]
 
 
 # Application definition
@@ -88,14 +88,25 @@ WSGI_APPLICATION = 'webshop_manager.wsgi.application'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
 DATABASES = {
+    # FOR WORK NETWORK
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'shop_feeder_dev',
         'USER': 'admin',
         'PASSWORD': 'password',
-        'HOST': '192.168.86.141',  # Raspberry Pi IP address
+        'HOST': '192.168.108.196',  # Raspberry Pi IP address
         'PORT': '5432',           # Default PostgreSQL port
     }
+
+    # FOR HOME NETWORK
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.postgresql',
+    #     'NAME': 'shop_feeder_dev',
+    #     'USER': 'admin',
+    #     'PASSWORD': 'password',
+    #     'HOST': '192.168.86.141',  # Raspberry Pi IP address
+    #     'PORT': '5432',           # Default PostgreSQL port
+    # }
     # 'default': {
     #     'ENGINE': 'django.db.backends.sqlite3',
     #     'NAME': BASE_DIR / 'db.sqlite3',
@@ -146,10 +157,14 @@ STATICFILES_DIRS = [BASE_DIR / 'static']
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-# CELERY_BROKER_URL = 'redis://localhost:6379/0'
-# CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
-CELERY_BROKER_URL = 'redis://192.168.86.141:6379/0'
-CELERY_RESULT_BACKEND = 'redis://192.168.86.141:6379/0'
+# FOR WORK NETWORK
+CELERY_BROKER_URL = 'redis://192.168.108.196:6379/0'
+CELERY_RESULT_BACKEND = 'redis://192.168.108.196:6379/0'
+
+# FOR HOME NETWORK
+# CELERY_BROKER_URL = 'redis://192.168.86.141:6379/0'
+# CELERY_RESULT_BACKEND = 'redis://192.168.86.141:6379/0'
+
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
