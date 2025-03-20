@@ -133,7 +133,7 @@ def getProducts(shop, url, last_product_list = None):  # get shopify products
         final_product_list = []
     else:
         final_product_list = last_product_list
-        
+
     index = 0
     index = index+1
     print("page : "+str(index))
@@ -161,6 +161,7 @@ def getProducts(shop, url, last_product_list = None):  # get shopify products
                     next = urls[1]
                 getProducts(next, last_product_list=final_product_list)
 
+        return final_product_list
     except requests.exceptions.Timeout as e:
         print(e)
         time.sleep(2)
