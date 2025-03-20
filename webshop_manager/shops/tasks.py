@@ -221,7 +221,7 @@ def create_to_shopify(shop, data, feed):
                 "product": {
                     "title": i["title"],
                     "body_html": i["body_html"],
-                    "images": i["images"],
+                    "image": i["images"],
                     #"product_type": i["title"],
                     #"vendor": i["title"],
                     # "metafields_global_description_tag": product.description,
