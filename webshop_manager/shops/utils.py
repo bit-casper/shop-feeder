@@ -113,9 +113,6 @@ def getAllProducts(shop):  # get all shopify products and save them into a json 
         json.dump(product_list, f)
     # return product_list
     print("Shopify products List size : "+str(len(product_list)))
-    global index 
-    index = 0
-    product_list = []
 
 
 
