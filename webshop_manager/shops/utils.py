@@ -4,6 +4,7 @@ from django.utils import timezone
 from .models import Feed, SyncLog
 import json
 import time
+from ftplib import FTP
 # import logging
 
 # logger = logging.getLogger(__name__)
@@ -327,3 +328,48 @@ def findUrlInString(string):
     regex = r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))"
     url = re.findall(regex, string)
     return [x[0] for x in url]
+
+
+
+
+def DownloadNewFiles(feed):
+    # fetched_files = []
+    # for host in settings.FTP['host']:
+    #     index = settings.FTP['host'].index(host)
+
+    host_name = feed.ftp_host
+
+    user = feed.ftp_user
+    password = feed.ftp_pass
+    path = "/"
+    files = ftp.file_pattern
+
+    print("starting connection to {}.".format(host_name))
+    
+    ftp = FTP(host_name)
+    ftp.login(user=user, passwd=password)
+
+    data = []
+    def handle_binary(more_data):
+        data.append(more_data)
+
+    resp = ftp.retrbinary("RETR pub/pmc/PMC-ids.csv.gz", callback=handle_binary)
+    data = "".join(data)
+    ftp.quit()
+    return data
+    # if str(path) != "":
+    #     ftp.cwd(path)
+
+    # for file in files:
+    #     print("downloading {}.".format(file))
+
+    #     with open(file, "wb") as fp:
+    #         ftp.retrbinary(f"RETR {file}", fp.write)
+    #     fetched_files.append(file)
+    #     print("download completed.")
+    # ftp.quit()
+
+    # print("Moving files: ")
+    # for file in fetched_files:
+    #     shutil.move(str(file), os.path.join(settings.PATH_TO_PRODUCT_FEEDS, file))
+    #     print("moved {} to its final location".format(file))

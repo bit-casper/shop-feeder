@@ -4,7 +4,7 @@ import xml.etree.ElementTree as ET
 from django.utils import timezone
 from .models import Feed, Shop, SyncLog
 import os
-from .utils import getAllProducts
+from .utils import getAllProducts, DownloadNewFiles
 import json
 
 
@@ -79,7 +79,8 @@ def sync_feed_to_shops(feed_id):
             response.raise_for_status()
             xml_data = response.content
         elif feed.source_type == 'ftp':
-            return JsonResponse({'error': 'FTP not yet implemented'}, status=400)
+            xml_data = DownloadNewFiles(feed)
+            #return JsonResponse({'error': 'FTP not yet implemented'}, status=400)
         elif feed.source_type == 'local':
             base_dir = os.path.dirname(os.path.abspath(__file__))
             file_path = os.path.join(base_dir, feed.file_pattern)
@@ -184,26 +185,6 @@ def sync_to_shopify(shop, data, feed):
 
 
 def create_to_shopify(shop, data, feed):
-
-    # Fetch shopify data
-    #getAllProducts(shop)
-
-    # Compare feeds and shopify and build a list of products to update
-    # changed_products = []
-    # with open('data.json', 'r') as f:
-    #     shop_data = json.load(f)
-    #     for ishop in shop_data:
-    #         for variant in ishop['variants']:  # Loop through all variants
-    #             for ifeed in data:
-    #                 if variant['sku'] == ifeed['sku']:
-    #                     if variant['price'] != ifeed['price']:
-    #                         changed_products.append({
-    #                             "variant": {
-    #                                 # "id": ishop['id'],
-    #                                 "id": variant['id'],
-    #                                 "price": str(ifeed['price'])
-    #                             }
-    #                         })
 
     # Build headers
     headers = {
