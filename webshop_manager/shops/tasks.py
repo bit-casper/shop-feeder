@@ -254,8 +254,8 @@ def create_to_shopify(shop, data, feed):
             response.raise_for_status()
 
             # Log the result
-            # product_id = response.json()['variant']['product_id']
-            variant_id = response.json()['product']['id']
+            product_id = response.json()['product']['id']
+            # variant_id = response.json()['variant']['id']
             # print(response.json())
             #SyncLog.objects.create(feed=feed, shop=shop, status='success', message=f"Product {product_id} synced")
             SyncLog.objects.create(feed=feed, shop=shop, status='success', message=f"Product {product_id} created")
