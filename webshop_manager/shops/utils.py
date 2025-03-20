@@ -342,7 +342,7 @@ def DownloadNewFiles(feed):
     user = feed.ftp_user
     password = feed.ftp_pass
     path = "/"
-    files = ftp.file_pattern
+    files = feed.file_pattern
 
     print("starting connection to {}.".format(host_name))
     
