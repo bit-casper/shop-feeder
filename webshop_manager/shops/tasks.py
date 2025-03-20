@@ -229,6 +229,13 @@ def create_to_shopify(shop, data, feed):
             url = f"https://{shop.shop_name}.myshopify.com/admin/api/2022-07/products.json"
             response = requests.post(url, json=payload, headers=headers)
 
+            if response.status_code == 200 or response.status_code == 201:
+                created_string = " product with id : " + str(product_id) + " : " + "created" + "d , SKU : " + i['sku']
+                print(created_string, flush=True)
+            else:
+                print(response.status_code)
+                print(response.text)
+
             # url and request for updating variant
             # url = f"https://{shop.shop_name}.myshopify.com/admin/api/2022-07/variants/" + str(i["variant"]["id"]) + ".json"
             # response = requests.put(url, json=payload, headers=headers)
