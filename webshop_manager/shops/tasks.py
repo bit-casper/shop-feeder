@@ -182,6 +182,91 @@ def sync_to_shopify(shop, data, feed):
 
 
 
+def create_to_shopify(shop, data, feed):
+
+    # Fetch shopify data
+    getAllProducts(shop)
+
+    # Compare feeds and shopify and build a list of products to update
+    changed_products = []
+    with open('data.json', 'r') as f:
+        shop_data = json.load(f)
+        for ishop in shop_data:
+            for variant in ishop['variants']:  # Loop through all variants
+                for ifeed in data:
+                    if variant['sku'] == ifeed['sku']:
+                        if variant['price'] != ifeed['price']:
+                            changed_products.append({
+                                "variant": {
+                                    # "id": ishop['id'],
+                                    "id": variant['id'],
+                                    "price": str(ifeed['price'])
+                                }
+                            })
+
+    # Build headers
+    headers = {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+        "X-Shopify-Access-Token": shop.api_access_token
+    }
+
+    # Execute the shopify update call
+    try:
+        # Loop over all changed products, build a payload for each of them and push it into shopify
+        for i in changed_products:
+            payload = {
+                "product": {
+                    "title": i["title"],
+                    "body_html": i["body_html"],
+                    "images": i["images"],
+                    #"product_type": i["title"],
+                    #"vendor": i["title"],
+                    # "metafields_global_description_tag": product.description,
+                    #"status": i["title"],
+                    "variants": [
+
+                        {
+                            "barcode": i["barcode"],
+                            "price": i["price"],
+                            #"compare_at_price": i["compare_at_price"],
+                            "tracked": True,
+                            # "inventory_item_id": 1,  # to be gotten by get inventory endpoint
+                            #"inventory_quantity": i["inventory_quantity"],
+                            "sku": i["sku"],
+                            "weight": i["weight"],
+                            "weight_unit": "kg"
+                        }
+                    ]
+                }
+            }
+            
+            # url and request for creating product
+            url = f"https://{shop.shop_name}.myshopify.com/admin/api/2022-07/products.json"
+            response = requests.post(url, json=payload, headers=headers)
+
+            # url and request for updating variant
+            # url = f"https://{shop.shop_name}.myshopify.com/admin/api/2022-07/variants/" + str(i["variant"]["id"]) + ".json"
+            # response = requests.put(url, json=payload, headers=headers)
+
+            response.raise_for_status()
+
+            # Log the result
+            # product_id = response.json()['variant']['product_id']
+            variant_id = response.json()['product']['id']
+            # print(response.json())
+            #SyncLog.objects.create(feed=feed, shop=shop, status='success', message=f"Product {product_id} synced")
+            SyncLog.objects.create(feed=feed, shop=shop, status='success', message=f"Product {product_id} created")
+            # SyncLog.objects.create(feed=feed, shop=shop, status='success', message=f"{len(changed_products)} products were synced")
+    except Exception as e:
+        feed.sync_status = 'failed'
+        feed.save()
+        SyncLog.objects.create(feed=feed, shop=None, status='failed', message=str(e))
+        raise
+
+
+
+
 def sync_to_uniconta(shop, data, feed):
     # Uniconta REST API (placeholder - adjust to actual API)
     headers = {
