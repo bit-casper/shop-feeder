@@ -190,21 +190,21 @@ def create_to_shopify(shop, data, feed):
     getAllProducts(shop)
 
     # Compare feeds and shopify and build a list of products to update
-    changed_products = []
-    with open('data.json', 'r') as f:
-        shop_data = json.load(f)
-        for ishop in shop_data:
-            for variant in ishop['variants']:  # Loop through all variants
-                for ifeed in data:
-                    if variant['sku'] == ifeed['sku']:
-                        if variant['price'] != ifeed['price']:
-                            changed_products.append({
-                                "variant": {
-                                    # "id": ishop['id'],
-                                    "id": variant['id'],
-                                    "price": str(ifeed['price'])
-                                }
-                            })
+    # changed_products = []
+    # with open('data.json', 'r') as f:
+    #     shop_data = json.load(f)
+    #     for ishop in shop_data:
+    #         for variant in ishop['variants']:  # Loop through all variants
+    #             for ifeed in data:
+    #                 if variant['sku'] == ifeed['sku']:
+    #                     if variant['price'] != ifeed['price']:
+    #                         changed_products.append({
+    #                             "variant": {
+    #                                 # "id": ishop['id'],
+    #                                 "id": variant['id'],
+    #                                 "price": str(ifeed['price'])
+    #                             }
+    #                         })
 
     # Build headers
     headers = {
@@ -216,7 +216,7 @@ def create_to_shopify(shop, data, feed):
     # Execute the shopify update call
     try:
         # Loop over all changed products, build a payload for each of them and push it into shopify
-        for i in changed_products:
+        for i in data:
             payload = {
                 "product": {
                     "title": i["title"],
