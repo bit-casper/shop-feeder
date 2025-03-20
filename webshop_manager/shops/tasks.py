@@ -187,7 +187,7 @@ def sync_to_shopify(shop, data, feed):
 def create_to_shopify(shop, data, feed):
 
     # Fetch shopify data
-    getAllProducts(shop)
+    #getAllProducts(shop)
 
     # Compare feeds and shopify and build a list of products to update
     # changed_products = []
