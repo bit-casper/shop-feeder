@@ -342,7 +342,7 @@ def DownloadNewFiles(feed):
     user = feed.ftp_user
     password = feed.ftp_pass
     path = "/"
-    files = feed.file_pattern
+    file = feed.file_pattern
 
     print("starting connection to {}.".format(host_name))
     
@@ -353,7 +353,7 @@ def DownloadNewFiles(feed):
     def handle_binary(more_data):
         data.append(more_data)
 
-    resp = ftp.retrbinary("RETR pub/pmc/PMC-ids.csv.gz", callback=handle_binary)
+    resp = ftp.retrbinary("RETR " + str(file), callback=handle_binary)
     data = "".join(data)
     ftp.quit()
     return data
