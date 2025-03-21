@@ -240,7 +240,8 @@ def sync_inventory_to_shopify(shop, data, feed):
             inventory_id = str(data['inventory_level']['inventory_item_id'])
             new_inventory = str(data['inventory_level']['available'])
             old_inventory = str(i['old_inventory'])
-            created_string = "Updated inventory of SKU: " + sku + ", inventory_item_id: " + inventory_id + " - old: " + old_inventory + " / new: " + new_inventory 
+            # created_string = "Updated inventory of SKU: " + sku + ", inventory_item_id: " + inventory_id + " - old: " + old_inventory + " / new: " + new_inventory
+            created_string = "Updated inventory of SKU: " + sku + "\n" + "inventory_item_id: " + inventory_id + "\n" + "old: " + old_inventory + "\n" + "new: " + new_inventory
             SyncLog.objects.create(feed=feed, shop=shop, status='success', message=created_string)
 
     except Exception as e:
