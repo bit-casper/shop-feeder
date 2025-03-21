@@ -122,7 +122,7 @@ def sync_to_shopify(shop, data, feed):
             product_id = str(data['variant']['product_id'])
             variant_id = str(data['variant']['id'])
             inventory_item_id = str(data['variant']['inventory_item_id'])
-            created_string = "Updated variant with SKU: " + sku + ", product_id: " + product_id + ", variant_id: " + variant_id + ", inventory_item_id: " + inventory_item_id
+            created_string = "Updated variant with " + "\n" + "SKU: " + sku + "\n"  + "product_id: " + product_id + "\n" + "variant_id: " + variant_id + "\n" + "inventory_item_id: " + inventory_item_id
             SyncLog.objects.create(feed=feed, shop=shop, status='success', message=created_string)
 
     except Exception as e:
@@ -191,7 +191,7 @@ def sync_inventory_to_shopify(shop, data, feed):
             new_inventory = str(data['inventory_level']['available'])
             old_inventory = str(i['old_inventory'])
             # created_string = "Updated inventory of SKU: " + sku + ", inventory_item_id: " + inventory_id + " - old: " + old_inventory + " / new: " + new_inventory
-            created_string = "Updated inventory of SKU: " + sku + "\n" + "inventory_item_id: " + inventory_id + "\n" + "old: " + old_inventory + "\n" + "new: " + new_inventory
+            created_string = "Updated inventory of" + "\n" + "SKU: " + sku + "\n" + "inventory_item_id: " + inventory_id + "\n" + "old: " + old_inventory + "\n" + "new: " + new_inventory
             SyncLog.objects.create(feed=feed, shop=shop, status='success', message=created_string)
 
     except Exception as e:
@@ -256,7 +256,7 @@ def create_to_shopify(shop, data, feed):
             sku = str(i['sku'])
             product_id = str(data['product']['id'])
             inventory_id = str(data['product']['variants'][0]['inventory_item_id'])
-            created_string = "Created product with SKU: " + sku + ", product_id: " + product_id + ", inventory_item_id: " + inventory_id
+            created_string = "Created product with" + "\n" + "SKU: " + sku + "\n" + "product_id: " + product_id + "\n" + "inventory_item_id: " + inventory_id
             SyncLog.objects.create(feed=feed, shop=shop, status='success', message=created_string)
 
     except Exception as e:
