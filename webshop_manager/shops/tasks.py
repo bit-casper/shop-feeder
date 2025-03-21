@@ -234,8 +234,8 @@ def sync_inventory_to_shopify(shop, data, feed):
 
             # if response.status_code == 200 or response.status_code == 201:
             sku = str(i['sku'])
-            inventory_id = str(data['inventory_item_id'])
-            new_inventory = str(data['available'])
+            inventory_id = str(data['inventory_level']['inventory_item_id'])
+            new_inventory = str(data['inventory_level']['available'])
             old_inventory = str(i['old_inventory'])
             created_string = "Updated inventory of SKU : " + sku + " : " + "inventory_item_id : " + inventory_id + " - old: " + old_inventory + " / new: " + new_inventory 
             print(created_string, flush=True)
