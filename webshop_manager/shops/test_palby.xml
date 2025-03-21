@@ -43,7 +43,7 @@
             <GrossWeight>10.45</GrossWeight>
             <CatalogPageNew>319</CatalogPageNew>
             <NoDeliveryParcelShopDelivery>No</NoDeliveryParcelShopDelivery>
-            <OnHandAvailPhysical>2.00</OnHandAvailPhysical>
+            <OnHandAvailPhysical>999.00</OnHandAvailPhysical>
             <MainItemId />
             <InStockBestGuess>2021-12-31</InStockBestGuess>
             <StockOrderedQty>4.00</StockOrderedQty>
