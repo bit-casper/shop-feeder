@@ -43,7 +43,7 @@
             <GrossWeight>10.45</GrossWeight>
             <CatalogPageNew>319</CatalogPageNew>
             <NoDeliveryParcelShopDelivery>No</NoDeliveryParcelShopDelivery>
-            <OnHandAvailPhysical>999.00</OnHandAvailPhysical>
+            <OnHandAvailPhysical>2.00</OnHandAvailPhysical>
             <MainItemId />
             <InStockBestGuess>2021-12-31</InStockBestGuess>
             <StockOrderedQty>4.00</StockOrderedQty>
@@ -102,7 +102,7 @@
             <GrossWeight>11.78</GrossWeight>
             <CatalogPageNew>319</CatalogPageNew>
             <NoDeliveryParcelShopDelivery>No</NoDeliveryParcelShopDelivery>
-            <OnHandAvailPhysical>998.00</OnHandAvailPhysical>
+            <OnHandAvailPhysical>1.00</OnHandAvailPhysical>
             <MainItemId>1010010</MainItemId>
             <InStockBestGuess>2022-06-15</InStockBestGuess>
             <StockOrderedQty>3.00</StockOrderedQty>
