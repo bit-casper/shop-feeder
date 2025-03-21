@@ -7,6 +7,7 @@ import os
 from .utils import getAllProducts, DownloadNewFiles
 import json
 import time
+import math
 
 
 # @shared_task
@@ -222,9 +223,9 @@ def sync_inventory_to_shopify(shop, data, feed):
         for i in changed_products:
             # Build payload with only the required fields
             payload = {
-                "location_id":i['location_id'],
-                "inventory_item_id":i['inventory_item_id'],
-                "available":i['available']
+                "location_id": i['location_id'],
+                "inventory_item_id": i['inventory_item_id'],
+                "available": math.floor(float(i['available']))
             }
 
             # url and request for updating inventory
