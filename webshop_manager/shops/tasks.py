@@ -147,7 +147,7 @@ def sync_inventory_to_shopify(shop, data, feed):
             for variant in ishop['variants']:  # Loop through all variants
                 for ifeed in data:
                     if variant['sku'] == ifeed['sku']:
-                        if variant['inventory_quantity'] != ifeed['inventory_quantity']:
+                        if math.floor(float(variant['inventory_quantity'])) != math.floor(float(ifeed['inventory_quantity'])):
                             changed_products.append({
                                 "sku": variant['sku'], # For logging
                                 "old_inventory": variant['inventory_quantity'], # For logging
