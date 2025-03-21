@@ -224,7 +224,7 @@ def sync_inventory_to_shopify(shop, data, feed):
             payload = {
                 "location_id":i['location_id'],
                 "inventory_item_id":i['inventory_item_id'],
-                "available":i['inventory_quantity']
+                "available":i['available']
             }
 
             # url and request for updating inventory
