@@ -10,61 +10,6 @@ import time
 import math
 
 
-# @shared_task
-# def sync_feed_to_shops(feed_id):
-#     feed = Feed.objects.get(id=feed_id)
-#     feed.sync_status = 'running'
-#     feed.save()
-
-#     try:
-#         # Fetch feed data
-#         if feed.source_type == 'url':
-#             response = requests.get(feed.url)
-#             response.raise_for_status()
-#             xml_data = response.content
-#         elif feed.source_type == 'ftp':
-#             return JsonResponse({'error': 'FTP not yet implemented'}, status=400)
-#         elif feed.source_type == 'local':
-#             # Get the absolute path to the file based on views.py location
-#             base_dir = os.path.dirname(os.path.abspath(__file__))  # Directory of views.py
-#             file_path = os.path.join(base_dir, feed.file_pattern)   # Full path to the file
-#             tree = ET.parse(file_path)                             # Parse the file
-#             xml_data = tree.getroot()                              # Get the root Element
-
-#         # If source_type is 'url', xml_data is still bytes, so parse it
-#         if feed.source_type != 'local':
-#             tree = ET.fromstring(xml_data)
-#             xml_data = tree
-
-        
-#         # Parse XML
-#         #tree = ET.fromstring(xml_data)
-#         root = xml_data  # Assuming root is the iterable element
-
-#         for item in root.findall('.//' + feed.feed_product_tag):  # './/Product'
-#             mapped_data = {}
-
-#             for xml_key, shop_key in feed.mapping.items():
-#                 element = item.find(xml_key)
-#                 value = element.text if element is not None else 'N/A'
-#                 mapped_data[shop_key] = value
-
-#             for shop in feed.shops.all():
-#                 if shop.shop_type == 'shopify':
-#                     sync_to_shopify(shop, mapped_data, feed)
-#                 elif shop.shop_type == 'uniconta':
-#                     sync_to_uniconta(shop, mapped_data, feed)
-
-#         feed.sync_status = 'success'
-#         feed.last_sync = timezone.now()
-#         feed.save()
-#         SyncLog.objects.create(feed=feed, shop=None, status='success', message='Sync completed successfully')
-
-#     except Exception as e:
-#         feed.sync_status = 'failed'
-#         feed.save()
-#         SyncLog.objects.create(feed=feed, shop=None, status='failed', message=str(e))
-#         raise
 
 @shared_task
 def sync_feed_to_shops(feed_id):
@@ -159,13 +104,14 @@ def sync_to_shopify(shop, data, feed):
     try:
         # Loop over all changed products, build a payload for each of them and push it into shopify
         for i in changed_products:
-            payload = i
-            
-            # url and request for creating product
-            # url = f"https://{shop.shop_name}.myshopify.com/admin/api/2022-07/products.json"
-            # response = requests.post(url, json=payload, headers=headers)
 
-            # url and request for updating variant
+            # Delay to enforce api rate limit
+            time.sleep(520/1000)
+
+            # Build payload
+            payload = i
+
+            # Build url and send request for updating variant
             url = f"https://{shop.shop_name}.myshopify.com/admin/api/2022-07/variants/" + str(i["variant"]["id"]) + ".json"
             response = requests.put(url, json=payload, headers=headers)
             response.raise_for_status()
@@ -222,6 +168,10 @@ def sync_inventory_to_shopify(shop, data, feed):
     try:
         # Loop over all changed products, build a payload for each of them and push it into shopify
         for i in changed_products:
+
+            # Delay to enforce api rate limit
+            time.sleep(520/1000)
+
             # Build payload with only the required fields
             payload = {
                 "location_id": i['location_id'],
@@ -229,7 +179,7 @@ def sync_inventory_to_shopify(shop, data, feed):
                 "available": math.floor(float(i['available']))
             }
 
-            # url and request for updating inventory
+            # Build url and send request for updating inventory
             url = f"https://{shop.shop_name}.myshopify.com/admin/api/2022-07/inventory_levels/set.json"
             response = requests.post(url, json=payload, headers=headers)
             response.raise_for_status()
@@ -265,7 +215,11 @@ def create_to_shopify(shop, data, feed):
     try:
         # Loop over all changed products, build a payload for each of them and push it into shopify
         for i in data:
+
+            # Delay to enforce api rate limit
             time.sleep(520/1000)
+
+            # Build payload
             payload = {
                 "product": {
                     "title": i["title"],
@@ -292,7 +246,7 @@ def create_to_shopify(shop, data, feed):
                 }
             }
             
-            # url and request for creating product
+            # Build url and send request for creating product
             url = f"https://{shop.shop_name}.myshopify.com/admin/api/2022-07/products.json"
             response = requests.post(url, json=payload, headers=headers)
             response.raise_for_status()
