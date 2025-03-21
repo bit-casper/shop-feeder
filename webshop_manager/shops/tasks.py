@@ -168,16 +168,17 @@ def sync_to_shopify(shop, data, feed):
             # url and request for updating variant
             url = f"https://{shop.shop_name}.myshopify.com/admin/api/2022-07/variants/" + str(i["variant"]["id"]) + ".json"
             response = requests.put(url, json=payload, headers=headers)
-
             response.raise_for_status()
 
             # Log the result
-            product_id = response.json()['variant']['product_id']
-            variant_id = response.json()['variant']['id']
-            # print(response.json())
-            #SyncLog.objects.create(feed=feed, shop=shop, status='success', message=f"Product {product_id} synced")
-            SyncLog.objects.create(feed=feed, shop=shop, status='success', message=f"Variant {variant_id} of product {product_id} synced")
-            # SyncLog.objects.create(feed=feed, shop=shop, status='success', message=f"{len(changed_products)} products were synced")
+            data = response.json()
+            sku = str(variant['sku'])
+            product_id = str(data['variant']['product_id'])
+            variant_id = str(data['variant']['id'])
+            inventory_item_id = str(data['variant']['inventory_item_id'])
+            created_string = "Updated variant with SKU: " + sku + ", product_id: " + product_id + ", variant_id: " + variant_id + ", inventory_item_id: " + inventory_item_id
+            SyncLog.objects.create(feed=feed, shop=shop, status='success', message=created_string)
+
     except Exception as e:
         feed.sync_status = 'failed'
         feed.save()
@@ -204,10 +205,10 @@ def sync_inventory_to_shopify(shop, data, feed):
                             changed_products.append({
                                 "sku": variant['sku'], # For logging
                                 "old_inventory": variant['inventory_quantity'], # For logging
-                                #"location_id":61527654518, # physical location
-                                "location_id":61796188278, # remote location
-                                "inventory_item_id":variant['inventory_item_id'],
-                                "available":ifeed['inventory_quantity']
+                                #"location_id": 61527654518, # physical location
+                                "location_id": 61796188278, # remote location
+                                "inventory_item_id": variant['inventory_item_id'],
+                                "available": ifeed['inventory_quantity']
                             })
 
     # Build headers
@@ -231,33 +232,17 @@ def sync_inventory_to_shopify(shop, data, feed):
             # url and request for updating inventory
             url = f"https://{shop.shop_name}.myshopify.com/admin/api/2022-07/inventory_levels/set.json"
             response = requests.post(url, json=payload, headers=headers)
-            data = response.json()
-            print(data)
+            response.raise_for_status()
 
-            # if response.status_code == 200 or response.status_code == 201:
+            # Log the result
+            data = response.json()
             sku = str(i['sku'])
             inventory_id = str(data['inventory_level']['inventory_item_id'])
             new_inventory = str(data['inventory_level']['available'])
             old_inventory = str(i['old_inventory'])
-            created_string = "Updated inventory of SKU : " + sku + " : " + "inventory_item_id : " + inventory_id + " - old: " + old_inventory + " / new: " + new_inventory 
-            print(created_string, flush=True)
-                #print(data)
-            # else:
-            #     print(response.status_code)
-            #     print(data)
-
-
-
-            response.raise_for_status()
-
-            # Log the result
-            #product_id = response.json()['variant']['product_id']
-            #variant_id = response.json()['variant']['id']
-            # print(response.json())
-            #SyncLog.objects.create(feed=feed, shop=shop, status='success', message=f"Product {product_id} synced")
-            #SyncLog.objects.create(feed=feed, shop=shop, status='success', message=f"Variant {variant_id} of product {product_id} synced")
+            created_string = "Updated inventory of SKU: " + sku + ", inventory_item_id: " + inventory_id + " - old: " + old_inventory + " / new: " + new_inventory 
             SyncLog.objects.create(feed=feed, shop=shop, status='success', message=created_string)
-            # SyncLog.objects.create(feed=feed, shop=shop, status='success', message=f"{len(changed_products)} products were synced")
+
     except Exception as e:
         feed.sync_status = 'failed'
         feed.save()
@@ -309,25 +294,16 @@ def create_to_shopify(shop, data, feed):
             # url and request for creating product
             url = f"https://{shop.shop_name}.myshopify.com/admin/api/2022-07/products.json"
             response = requests.post(url, json=payload, headers=headers)
-            data = response.json()
-            if response.status_code == 200 or response.status_code == 201:
-                product_id = data['product']['id']
-                inventory_id = data['product']['variants'][0]['inventory_item_id']
-                created_string = " product with id : " + str(product_id) + " : " + "created" + " , SKU : " + i['sku'] + " : " + "inventory_item_id : " + str(inventory_id)
-                print(created_string, flush=True)
-            else:
-                print(response.status_code)
-                print(data)
-
             response.raise_for_status()
 
             # Log the result
-            product_id = response.json()['product']['id']
-            # variant_id = response.json()['variant']['id']
-            # print(response.json())
-            #SyncLog.objects.create(feed=feed, shop=shop, status='success', message=f"Product {product_id} synced")
-            SyncLog.objects.create(feed=feed, shop=shop, status='success', message=f"Product {product_id} created")
-            # SyncLog.objects.create(feed=feed, shop=shop, status='success', message=f"{len(changed_products)} products were synced")
+            data = response.json()
+            sku = str(i['sku'])
+            product_id = str(data['product']['id'])
+            inventory_id = str(data['product']['variants'][0]['inventory_item_id'])
+            created_string = "Created product with SKU: " + sku + ", product_id: " + product_id + ", inventory_item_id: " + inventory_id
+            SyncLog.objects.create(feed=feed, shop=shop, status='success', message=created_string)
+
     except Exception as e:
         feed.sync_status = 'failed'
         feed.save()
