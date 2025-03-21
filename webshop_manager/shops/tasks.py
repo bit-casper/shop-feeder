@@ -231,6 +231,7 @@ def sync_inventory_to_shopify(shop, data, feed):
             url = f"https://{shop.shop_name}.myshopify.com/admin/api/2022-07/inventory_levels/set.json"
             response = requests.post(url, json=payload, headers=headers)
             data = response.json()
+            print(data)
 
             # if response.status_code == 200 or response.status_code == 201:
             sku = str(i['sku'])
