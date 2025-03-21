@@ -107,7 +107,8 @@ def sync_feed_to_shops(feed_id):
         for shop in feed.shops.all():
             if shop.shop_type == 'shopify':
                 # sync_to_shopify(shop, mapped_data, feed)
-                create_to_shopify(shop, mapped_data, feed)
+                sync_inventory_to_shopify(shop, mapped_data, feed)
+                # create_to_shopify(shop, mapped_data, feed)
             elif shop.shop_type == 'uniconta':
                 sync_to_uniconta(shop, mapped_data, feed)
 
@@ -185,6 +186,84 @@ def sync_to_shopify(shop, data, feed):
 
 
 
+def sync_inventory_to_shopify(shop, data, feed):
+
+    # Fetch shopify data
+    getAllProducts(shop)
+
+    # Compare feeds and shopify and build a list of products to update
+    changed_products = []
+    with open('data.json', 'r') as f:
+        shop_data = json.load(f)
+        for ishop in shop_data:
+            for variant in ishop['variants']:  # Loop through all variants
+                for ifeed in data:
+                    if variant['sku'] == ifeed['sku']:
+                        if variant['inventory_quantity'] != ifeed['inventory_quantity']:
+                            changed_products.append({
+                                "sku": variant['sku'], # For logging
+                                "old_inventory": variant['inventory_quantity'], # For logging
+                                #"location_id":61527654518, # physical location
+                                "location_id":61796188278, # remote location
+                                "inventory_item_id":variant['inventory_item_id'],
+                                "available":ifeed['inventory_quantity']
+                            })
+
+    # Build headers
+    headers = {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+        "X-Shopify-Access-Token": shop.api_access_token
+    }
+
+    # Execute the shopify update call
+    try:
+        # Loop over all changed products, build a payload for each of them and push it into shopify
+        for i in changed_products:
+            # Build payload with only the required fields
+            payload = {
+                "location_id":i['location_id'],
+                "inventory_item_id":i['inventory_item_id'],
+                "available":i['inventory_quantity']
+            }
+
+            # url and request for updating inventory
+            url = f"https://{shop.shop_name}.myshopify.com/admin/api/2022-07/inventory_levels/set.json"
+            response = requests.post(url, json=payload, headers=headers)
+            data = response.json()
+
+            # if response.status_code == 200 or response.status_code == 201:
+            sku = str(i['sku'])
+            inventory_id = str(data['inventory_item_id'])
+            new_inventory = str(data['available'])
+            old_inventory = str(i['old_inventory'])
+            created_string = "Updated inventory of SKU : " + sku + " : " + "inventory_item_id : " + inventory_id + " - old: " + old_inventory + " / new: " + new_inventory 
+            print(created_string, flush=True)
+                #print(data)
+            # else:
+            #     print(response.status_code)
+            #     print(data)
+
+
+
+            response.raise_for_status()
+
+            # Log the result
+            #product_id = response.json()['variant']['product_id']
+            #variant_id = response.json()['variant']['id']
+            # print(response.json())
+            #SyncLog.objects.create(feed=feed, shop=shop, status='success', message=f"Product {product_id} synced")
+            #SyncLog.objects.create(feed=feed, shop=shop, status='success', message=f"Variant {variant_id} of product {product_id} synced")
+            SyncLog.objects.create(feed=feed, shop=shop, status='success', message=created_string)
+            # SyncLog.objects.create(feed=feed, shop=shop, status='success', message=f"{len(changed_products)} products were synced")
+    except Exception as e:
+        feed.sync_status = 'failed'
+        feed.save()
+        SyncLog.objects.create(feed=feed, shop=None, status='failed', message=str(e))
+        raise
+
+
+
 def create_to_shopify(shop, data, feed):
 
     # Build headers
@@ -232,15 +311,11 @@ def create_to_shopify(shop, data, feed):
             if response.status_code == 200 or response.status_code == 201:
                 product_id = data['product']['id']
                 inventory_id = data['product']['variants'][0]['inventory_item_id']
-                created_string = " product with id : " + str(product_id) + " : " + "created" + "d , SKU : " + i['sku'] + " : " + "inventory_item_id : " + str(inventory_id)
+                created_string = " product with id : " + str(product_id) + " : " + "created" + " , SKU : " + i['sku'] + " : " + "inventory_item_id : " + str(inventory_id)
                 print(created_string, flush=True)
             else:
                 print(response.status_code)
-                print(response.text)
-
-            # url and request for updating variant
-            # url = f"https://{shop.shop_name}.myshopify.com/admin/api/2022-07/variants/" + str(i["variant"]["id"]) + ".json"
-            # response = requests.put(url, json=payload, headers=headers)
+                print(data)
 
             response.raise_for_status()
 
