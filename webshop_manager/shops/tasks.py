@@ -4,7 +4,7 @@ import xml.etree.ElementTree as ET
 from django.utils import timezone
 from .models import Feed, Shop, SyncLog
 import os
-from .utils import getAllProducts, DownloadNewFiles
+from .utils import getAllProducts, getAllProducts_GraphQL, DownloadNewFiles
 import json
 import time
 import math
@@ -53,7 +53,8 @@ def sync_feed_to_shops(feed_id):
         for shop in feed.shops.all():
             if shop.shop_type == 'shopify':
                 # sync_to_shopify(shop, mapped_data, feed)
-                sync_inventory_to_shopify(shop, mapped_data, feed)
+                # sync_inventory_to_shopify(shop, mapped_data, feed)
+                sync_to_shopify_graphql(shop, mapped_data, feed)
                 # create_to_shopify(shop, mapped_data, feed)
             elif shop.shop_type == 'uniconta':
                 sync_to_uniconta(shop, mapped_data, feed)
@@ -265,6 +266,104 @@ def create_to_shopify(shop, data, feed):
         SyncLog.objects.create(feed=feed, shop=None, status='failed', message=str(e))
         raise
 
+
+
+def sync_to_shopify_graphql(shop, data, feed):
+
+    # Fetch shopify data
+    getAllProducts_GraphQL(shop)
+
+    # Compare feeds and shopify and build a list of products to update
+    changed_products = []
+    with open('data.json', 'r') as f:
+        shop_data = json.load(f)
+        for ishop in shop_data:
+            for variant in ishop['variants']:  # Loop through all variants
+                for ifeed in data:
+                    if variant['sku'] == ifeed['sku']:
+                        if variant['price'] != ifeed['price']:
+                            changed_products.append({
+                                "variant": {
+                                    # "id": ishop['id'],
+                                    "id": variant['id'],
+                                    "price": str(ifeed['price'])
+                                }
+                            })
+
+    # Build headers
+    headers = {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+        "X-Shopify-Access-Token": shop.api_access_token
+    }
+
+    # Execute the shopify update call
+    try:
+        # Loop over all changed products, build a payload for each of them and push it into shopify
+        for i in changed_products:
+
+            # Delay to enforce api rate limit
+            time.sleep(520/1000)
+
+            # Build payload
+            #payload = i
+            # GraphQL query
+            # products_query = '''
+            #     query {
+            #         products(first: 5) {
+            #             edges {
+            #                 node {
+            #                     id
+            #                     handle
+            #                 }
+            #             }
+            #             pageInfo {
+            #                 hasNextPage
+            #             }
+            #         }
+            #     }
+            # '''
+
+            products_query = '''
+                query {
+                    products(first: 10, after: "eyJsYXN0X2lkIjoyMDk5NTY0MiwibGFzdF92YWx1ZSI6IjIwOTk1NjQyIn0=") {
+                        edges {
+                            node {
+                                id
+                                title
+                                handle
+                            }
+                            cursor
+                        }
+                        pageInfo {
+                            hasNextPage
+                        }
+                    }
+                }
+            '''
+
+            # Build url and send request for updating variant
+            # GraphQL url
+            url = f"https://{shop.shop_name}.myshopify.com/admin/api/2025-01/graphql.json"
+
+            # GraphQL request
+            response = requests.post(url, json=products_query, headers=headers)
+            response.raise_for_status()
+
+            # Log the result
+            data = response.json()
+            sku = str(variant['sku'])
+            product_id = str(data['variant']['product_id'])
+            variant_id = str(data['variant']['id'])
+            inventory_item_id = str(data['variant']['inventory_item_id'])
+            created_string = "Updated variant with " + "\n" + "SKU: " + sku + "\n"  + "product_id: " + product_id + "\n" + "variant_id: " + variant_id + "\n" + "inventory_item_id: " + inventory_item_id
+            SyncLog.objects.create(feed=feed, shop=shop, status='success', message=created_string)
+
+    except Exception as e:
+        feed.sync_status = 'failed'
+        feed.save()
+        SyncLog.objects.create(feed=feed, shop=None, status='failed', message=str(e))
+        raise
 
 
 

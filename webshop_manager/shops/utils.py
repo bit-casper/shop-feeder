@@ -127,6 +127,18 @@ def getAllProducts(shop):  # get all shopify products and save them into a json 
     print("Shopify products List size : "+str(len(product_list)))
 
 
+def getAllProducts_GraphQL(shop):  # get all shopify products and save them into a json file
+    url = f"https://{shop.shop_name}.myshopify.com/admin/api/2025-01/graphql.json"
+    # product_list_url = url + "?fields=id,variants&limit=200"
+
+    print("Getting all shopify products ....")
+    product_list = getProducts_GraphQL(shop, url)
+    with open('data.json', 'w') as f:
+        json.dump(product_list, f)
+    # return product_list
+    print("Shopify products List size : "+str(len(product_list)))
+
+
 
 def getProducts(shop, url, last_product_list = None):  # get shopify products
     #global index
@@ -146,6 +158,69 @@ def getProducts(shop, url, last_product_list = None):  # get shopify products
     try:
         r = requests.get(url, headers=headers, timeout=10)
         data = r.json()
+        products = data['products']
+
+        for p in products:
+            # product_list.append(p)
+            final_product_list.append(p)
+
+        if "Link" in r.headers:
+            if "rel=\"next\"" in r.headers['Link']:
+                next = ''
+                urls = findUrlInString(r.headers['Link'])
+                if len(urls) == 1:
+                    next = urls[0]
+                else:
+                    next = urls[1]
+                getProducts(next, last_product_list=final_product_list)
+
+        return final_product_list
+    except requests.exceptions.Timeout as e:
+        print(e)
+        time.sleep(2)
+        getProducts(url)
+    # Tell the user their URL was bad and try a different one
+    except requests.exceptions.RequestException as e:
+        # catastrophic error. bail.
+        raise SystemExit(e)
+    
+
+
+def getProducts_GraphQL(shop, url, last_product_list = None):  # get shopify products
+    #global index
+    if last_product_list == None:
+        final_product_list = []
+    else:
+        final_product_list = last_product_list
+
+    index = 0
+    index = index+1
+    print("page : "+str(index))
+
+    time.sleep(501/1000)
+    headers = {"Accept": "application/json",
+               "Content-Type": "application/json",
+               "X-Shopify-Access-Token": shop.api_access_token}
+    
+    products_query = '''
+        query {
+            products(first: 5) {
+                edges {
+                    node {
+                            id
+                            handle
+                    }
+                }
+                pageInfo {
+                    hasNextPage
+                }
+            }
+        }
+    '''
+    try:
+        r = requests.post(url, data=products_query, headers=headers)
+        data = r.json()
+        print(data)
         products = data['products']
 
         for p in products:
