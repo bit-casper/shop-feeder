@@ -239,16 +239,19 @@ def getProducts_GraphQL(shop, url, last_product_list = None):  # get shopify pro
                     variants(first: 5) {
                         edges {
                             node {
-                            id
-                            sku
-                            price
-                            inventoryQuantity 
+                                id
+                                sku
+                                price
+                                inventoryQuantity
                                 inventoryItem {
                                     id
                                     inventoryLevels(first: 5) {
                                         edges {
                                             node {
-                                                availableQuantity
+                                                quantities(names: ["AVAILABLE"]) {
+                                                    name
+                                                    quantity
+                                                }
                                                 location {
                                                     name
                                                 }
