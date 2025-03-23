@@ -202,7 +202,7 @@ def getProducts_GraphQL(shop, url, last_product_list = None):  # get shopify pro
                "Content-Type": "application/json",
                "X-Shopify-Access-Token": shop.api_access_token}
     
-    products_query = '''{
+    query = '''{
         query {
             products(first: 10) {
                 edges {
@@ -219,8 +219,12 @@ def getProducts_GraphQL(shop, url, last_product_list = None):  # get shopify pro
             }
         }
     }'''
+    payload = {
+        "query": query,
+        "variables": {}  # Optional: add variables if needed
+    }
     try:
-        r = requests.post(url, data=products_query, headers=headers)
+        r = requests.post(url, data=payload, headers=headers)
         data = r.json()
         print(data)
         products = data['products']
