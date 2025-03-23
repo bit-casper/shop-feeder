@@ -220,8 +220,10 @@ def getProducts_GraphQL(shop, url, last_product_list = None):  # get shopify pro
         "query": query,
         "variables": {}  # Optional: add variables if needed
     }
+
+    
     try:
-        r = requests.post(url, data=payload, headers=headers)
+        r = requests.post(url, data=json.dumps(payload), headers=headers)
         data = r.json()
         print(data)
         products = data['products']
