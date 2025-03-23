@@ -225,7 +225,7 @@ def getProducts_GraphQL(shop, url, last_product_list = None):  # get shopify pro
     try:
         r = requests.post(url, data=json.dumps(payload), headers=headers)
         data = r.json()
-        print(r)
+        print(json.loads(r.text))
         products = data['products']
 
         for p in products:
