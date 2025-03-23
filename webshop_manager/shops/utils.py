@@ -203,21 +203,21 @@ def getProducts_GraphQL(shop, url, last_product_list = None):  # get shopify pro
                "X-Shopify-Access-Token": shop.api_access_token}
     
     query = '''
-    query {
-        products(first: 10) {
-            edges {
-                node {
-                    id
-                    title
-                    handle
+        query {
+            products(first: 10) {
+                edges {
+                    node {
+                        id
+                        title
+                        handle
+                    }
+                    cursor
                 }
-                cursor
-            }
-            pageInfo {
-                hasNextPage
+                pageInfo {
+                    hasNextPage
+                }
             }
         }
-    }
     '''
     payload = {
         "query": query,
