@@ -202,6 +202,32 @@ def getProducts_GraphQL(shop, url, last_product_list = None):  # get shopify pro
                "Content-Type": "application/json",
                "X-Shopify-Access-Token": shop.api_access_token}
     
+    # query = """
+    # query {
+    #     products(first: 5) {
+    #         edges {
+    #             node {
+    #                 id
+    #                 title
+    #                 description
+    #                 variants(first: 5) {
+    #                     edges {
+    #                         node {
+    #                             sku
+    #                             price
+    #                             inventoryQuantity
+    #                             inventoryItem {
+    #                                 id
+    #                             }
+    #                         }
+    #                     }
+    #                 }
+    #             }
+    #         }
+    #     }
+    # }
+    # """
+    
     query = """
     query {
         products(first: 5) {
@@ -213,11 +239,22 @@ def getProducts_GraphQL(shop, url, last_product_list = None):  # get shopify pro
                     variants(first: 5) {
                         edges {
                             node {
-                                sku
-                                price
-                                inventoryQuantity
+                            id
+                            sku
+                            price
+                            inventoryQuantity 
                                 inventoryItem {
                                     id
+                                    inventoryLevels(first: 5) {
+                                        edges {
+                                            node {
+                                                availableQuantity
+                                                location {
+                                                    name
+                                                }
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -227,7 +264,6 @@ def getProducts_GraphQL(shop, url, last_product_list = None):  # get shopify pro
         }
     }
     """
-    
     payload = {
         "query": query,
         "variables": {}  # Optional: add variables if needed
