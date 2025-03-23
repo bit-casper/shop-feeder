@@ -204,18 +204,20 @@ def getProducts_GraphQL(shop, url, last_product_list = None):  # get shopify pro
     
     products_query = '''
         query {
-            products(first: 5) {
-                edges {
-                    node {
-                            id
-                            handle
-                    }
-                }
-                pageInfo {
-                    hasNextPage
-                }
-            }
+    products(first: 10) {
+      edges {
+        node {
+          id
+          title
+          handle
         }
+        cursor
+      }
+      pageInfo {
+        hasNextPage
+      }
+    }
+  }
     '''
     try:
         r = requests.post(url, data=products_query, headers=headers)
