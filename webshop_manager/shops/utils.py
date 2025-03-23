@@ -210,6 +210,7 @@ def getProducts_GraphQL(shop, url, last_product_list = None):  # get shopify pro
                     id
                     title
                     description
+                    price
                 }
             }
         }
