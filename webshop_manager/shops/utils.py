@@ -205,17 +205,17 @@ def getProducts_GraphQL(shop, url, last_product_list = None):  # get shopify pro
     products_query = '''{
         query {
             products(first: 10) {
-            edges {
-                node {
-                id
-                title
-                handle
+                edges {
+                    node {
+                        id
+                        title
+                        handle
+                    }
+                    cursor
                 }
-                cursor
-            }
-            pageInfo {
-                hasNextPage
-            }
+                pageInfo {
+                    hasNextPage
+                }
             }
         }
     }'''
