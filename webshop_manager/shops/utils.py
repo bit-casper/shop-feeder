@@ -248,7 +248,7 @@ def getProducts_GraphQL(shop, url, last_product_list = None):  # get shopify pro
                                     inventoryLevels(first: 5) {
                                         edges {
                                             node {
-                                                quantities(names: ["AVAILABLE"]) {
+                                                quantities(names: ["available"]) {
                                                     name
                                                     quantity
                                                 }
