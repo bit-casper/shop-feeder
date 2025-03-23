@@ -204,13 +204,24 @@ def getProducts_GraphQL(shop, url, last_product_list = None):  # get shopify pro
     
     query = """
     query {
-        products(first: 10) {
+        products(first: 5) {
             edges {
                 node {
                     id
                     title
                     description
-                    price
+                    variants(first: 5) {
+                        edges {
+                            node {
+                                sku
+                                priceV2 {
+                                    amount
+                                    currencyCode
+                                }
+                            inventoryQuantity
+                            }
+                        }
+                    }
                 }
             }
         }
