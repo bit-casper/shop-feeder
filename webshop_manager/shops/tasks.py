@@ -417,7 +417,7 @@ def sync_to_uniconta(shop, data, feed):
         #print(json.dumps(data))
         # Loop over all changed products, build a payload for each of them and push it into shopify
         for i in data:
-
+            print(i)
             # Delay to enforce api rate limit
             time.sleep(520/1000)
             time.sleep(1)
