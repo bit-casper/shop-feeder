@@ -420,7 +420,7 @@ def sync_to_uniconta(shop, data, feed):
             print(i)
             # Delay to enforce api rate limit
             time.sleep(520/1000)
-            time.sleep(1)
+            #time.sleep(1)
 
             payload = {
                 "Item": i['sku'],
@@ -447,9 +447,9 @@ def sync_to_uniconta(shop, data, feed):
 
             # Send request
             response = requests.post(url, json=payload, headers=headers)
-            print(response.status_code)
-            print(response.text)
-            #response.raise_for_status()
+            #print(response.status_code)
+            #print(response.text)
+            response.raise_for_status()
 
             # Log the result
             # data = response.json()
