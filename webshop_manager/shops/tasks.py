@@ -420,6 +420,7 @@ def sync_to_uniconta(shop, data, feed):
 
             # Delay to enforce api rate limit
             time.sleep(520/1000)
+            time.sleep(1)
 
             payload = {
                 "Item": i['sku'],
