@@ -427,19 +427,19 @@ def sync_to_uniconta(shop, data, feed):
                 # "Webshop": true,
                 "Name": i['title'],
                 "Description": i['body_html'],
-                "QtyOnStock": 1.0,
-                "Qty": 2.0,
-                "Count": 3.0,
+                #"QtyOnStock": 1.0,
+                #"Qty": 2.0,
+                #"Count": 3.0,
                 "InStock": i['inventory_quantity'],
-                "Stock": 4.0,
-                "Available": 5.0,
+                #"Stock": 4.0,
+                #"Available": 5.0,
                 "SalesPrice1": i['price'],
                 "EAN": i['barcode'],
                 "Weight": i['weight'],
                 #"Image": i['images'],
                 #"ParentSKU": {},
-                "Inventory": 6.0,
-                "Quantity": 7.0
+                #"Inventory": 6.0,
+                #"Quantity": 7.0
             }
 
             # Build url and send request for updating variant
