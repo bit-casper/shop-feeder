@@ -435,7 +435,7 @@ def sync_to_uniconta(shop, data, feed):
                 #"Available": 5.0,
                 "SalesPrice1": i['price'],
                 "EAN": i['barcode'],
-                "Weight": i['weight']
+                #"Weight": i['weight']
                 #"Image": i['images']
                 #"ParentSKU": {},
                 #"Inventory": 6.0,
@@ -447,7 +447,7 @@ def sync_to_uniconta(shop, data, feed):
 
             # Send request
             response = requests.post(url, json=payload, headers=headers)
-            print(response.text)
+            #print(response.text)
             response.raise_for_status()
 
             # Log the result
