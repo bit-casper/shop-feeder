@@ -383,39 +383,79 @@ def sync_to_shopify_graphql(shop, data, feed):
 
 def sync_to_uniconta(shop, data, feed):
     
-    username = config('UNICONTA_USERNAME')
-    password = config('UNICONTA_PASSWORD')
-    company_id = config('UNICONTA_COMPANY_ID')
+    # username = config('UNICONTA_USERNAME')
+    # password = config('UNICONTA_PASSWORD')
+    # company_id = config('UNICONTA_COMPANY_ID')
+
+    username = shop.api_key
+    password = shop.api_secret
+    company_id = shop.api_access_token
+
     credentials = f"00{company_id}/{username}:{password}"
     encoded_credentials = base64.b64encode(credentials.encode('utf-8')).decode('utf-8')
     headers = {
         'Authorization': f"{encoded_credentials}",
         'Content-Type': 'application/json'
     }
-    # payload = {
-    #     'ItemNumber': data.get('sku', ''),
-    #     'Name': data.get('title', 'Unnamed Product'),
-    #     'Description': data.get('description', ''),
-    #     'SalesPrice': data.get('price', '0.00')
-    # }
-    payload = {
-        "Item": data.get('sku', ''),
-        # "Webshop": true,
-        "Name": data.get('title', 'Unnamed Product'),
-        "QtyOnStock": 22.0,
-        "Qty": 22.0,
-        "Count": 22.0,
-        "InStock": 22.0,
-        "Stock": 22.0,
-        "Available": 22.0,
-        "SalesPrice1": data.get('price', '0.00'),
-        "ParentSKU": {},
-        "Inventory": 100.0,
-        "Quantity": 100.0
-    }
-    # Adjust endpoint based on Uniconta API docs
-    url = "https://odata.uniconta.com/api/Entities/Insert/InvItemClient"
-    response = requests.post(url, json=payload, headers=headers)
-    response.raise_for_status()
 
-    SyncLog.objects.create(feed=feed, shop=shop, status='success', message="Product synced to Uniconta")
+
+    # changed_products = []
+    # with open('data.json', 'r') as f:
+    #     shop_data = json.load(f)
+    #     for ishop in shop_data:
+    #         for variant in ishop['variants']:  # Loop through all variants
+    #             for ifeed in data:
+    #                 if variant['sku'] == ifeed['sku']:
+    #                     if variant['price'] != ifeed['price']:
+    #                         changed_products.append({
+    #                             "variant": {
+    #                                 # "id": ishop['id'],
+    #                                 "id": variant['id'],
+    #                                 "price": str(ifeed['price'])
+    #                             }
+    #                         })
+    
+    # Execute the shopify update call
+    try:
+        # Loop over all changed products, build a payload for each of them and push it into shopify
+        for i in data:
+
+            payload = {
+                "Item": i['variant'][''],
+                # "Webshop": true,
+                "Name": i['title'],
+                "QtyOnStock": 1.0,
+                "Qty": 2.0,
+                "Count": 3.0,
+                "InStock": i['inventory_quantity'],
+                "Stock": 4.0,
+                "Available": 5.0,
+                "SalesPrice1": i['price'],
+                "ParentSKU": {},
+                "Inventory": 6.0,
+                "Quantity": 7.0
+            }
+
+            # Build url and send request for updating variant
+            url = "https://odata.uniconta.com/api/Entities/Insert/InvItemClient"
+
+            # Send request
+            response = requests.post(url, json=payload, headers=headers)
+            response.raise_for_status()
+
+            # Log the result
+            data = response.json()
+            sku = str(variant['sku'])
+            product_id = str(data['variant']['product_id'])
+            variant_id = str(data['variant']['id'])
+            inventory_item_id = str(data['variant']['inventory_item_id'])
+            
+            created_string = "Created product with " + "\n" + "SKU: " + sku + "\n"  + "product_id: " + product_id + "\n" + "variant_id: " + variant_id + "\n" + "inventory_item_id: " + inventory_item_id
+            # SyncLog.objects.create(feed=feed, shop=shop, status='success', message="Product synced to Uniconta")
+            SyncLog.objects.create(feed=feed, shop=shop, status='success', message=created_string)
+
+    except Exception as e:
+        feed.sync_status = 'failed'
+        feed.save()
+        SyncLog.objects.create(feed=feed, shop=None, status='failed', message=str(e))
+        raise
