@@ -382,10 +382,6 @@ def sync_to_shopify_graphql(shop, data, feed):
 ### UNICONTA SECTION ###
 
 def sync_to_uniconta(shop, data, feed):
-    
-    # username = config('UNICONTA_USERNAME')
-    # password = config('UNICONTA_PASSWORD')
-    # company_id = config('UNICONTA_COMPANY_ID')
 
     username = shop.api_key
     password = shop.api_secret
@@ -396,11 +392,7 @@ def sync_to_uniconta(shop, data, feed):
     auth_header = f"Basic {encoded_credentials}"
     headers = {
         'Authorization': auth_header,
-        #'Cache-Control': 'no-cache',
         'Content-Type': 'application/json'
-        #'Accept': '/*/',
-        #'Accept-Encoding': 'gzip, deflate, br',
-        #'Connection': 'keep-alive'
     }
 
 
@@ -430,16 +422,17 @@ def sync_to_uniconta(shop, data, feed):
                 "Item": i['sku'],
                 # "Webshop": true,
                 "Name": i['title'],
-                "QtyOnStock": 1.0,
-                "Qty": 2.0,
-                "Count": 3.0,
+                "Description": i['body_html'],
+                #"QtyOnStock": 1.0,
+                #"Qty": 2.0,
+                #"Count": 3.0,
                 "InStock": i['inventory_quantity'],
-                "Stock": 4.0,
-                "Available": 5.0,
-                "SalesPrice1": i['price'],
-                "ParentSKU": {},
-                "Inventory": 6.0,
-                "Quantity": 7.0
+                #"Stock": 4.0,
+                #"Available": 5.0,
+                "SalesPrice": i['price'],
+                #"ParentSKU": {},
+                #"Inventory": 6.0,
+                #"Quantity": 7.0
             }
 
             # Build url and send request for updating variant

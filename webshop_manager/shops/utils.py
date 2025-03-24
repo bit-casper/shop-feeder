@@ -513,3 +513,10 @@ def DownloadNewFiles(feed):
     # for file in fetched_files:
     #     shutil.move(str(file), os.path.join(settings.PATH_TO_PRODUCT_FEEDS, file))
     #     print("moved {} to its final location".format(file))
+
+
+
+
+
+
+

@@ -3,6 +3,9 @@ Notes
     celery -A webshop_manager worker -l info
 
 
+Uniconta API endpoints list:
+https://www.uniconta.com/da/unipedia/odata-new-query-odbc-skyen/
+
 Shopify rest api is legacy, they recommend all apps start implementing GraphQL Admin API.
 Here is a quick Python example of Shopify GraphQL: 
 https://medium.com/@markwkiehl/a-beginner-guide-to-shopify-graphql-512069805678
