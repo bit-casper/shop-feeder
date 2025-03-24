@@ -430,6 +430,7 @@ def sync_to_uniconta(shop, data, feed):
                 #"Stock": 4.0,
                 #"Available": 5.0,
                 "SalesPrice1": i['price'],
+                "EAN": i['barcode'],
                 #"ParentSKU": {},
                 #"Inventory": 6.0,
                 #"Quantity": 7.0
