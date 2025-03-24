@@ -417,11 +417,12 @@ def sync_to_uniconta(shop, data, feed):
     
     # Execute the shopify update call
     try:
+        print(data)
         # Loop over all changed products, build a payload for each of them and push it into shopify
         for i in data:
 
             payload = {
-                "Item": i['variant'][''],
+                "Item": i['sku'],
                 # "Webshop": true,
                 "Name": i['title'],
                 "QtyOnStock": 1.0,
