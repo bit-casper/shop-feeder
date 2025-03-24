@@ -431,8 +431,8 @@ def sync_to_uniconta(shop, data, feed):
                 #"Available": 5.0,
                 "SalesPrice1": i['price'],
                 "EAN": i['barcode'],
-                #"Weight": i['weight'],
-                "Image": i['images']
+                "Weight": i['weight'],
+                #"Image": i['images']
                 #"ParentSKU": {},
                 #"Inventory": 6.0,
                 #"Quantity": 7.0
