@@ -13,7 +13,7 @@ TODO
 - When creating product, we get 'product_id', 'sku' and 'inventory_item_id' in response.json() 
     We should save these in the database so we can always look up those id's locally, letting us save api calls later
 
-
+- Cleanup: Move utility functions (non decorated functions) from tasks.py to utils.py
 
 Update price workflow:
     - Get all feeds from suppliers

@@ -8,6 +8,8 @@ from .utils import getAllProducts, getAllProducts_GraphQL, DownloadNewFiles
 import json
 import time
 import math
+import base64
+from decouple import config
 
 
 
@@ -71,6 +73,11 @@ def sync_feed_to_shops(feed_id):
         raise
 
 
+
+
+
+
+### SHOPIFY SECTION ###
 
 def sync_to_shopify(shop, data, feed):
 
@@ -367,20 +374,47 @@ def sync_to_shopify_graphql(shop, data, feed):
 
 
 
+
+
+
+
+
+### UNICONTA SECTION ###
+
 def sync_to_uniconta(shop, data, feed):
-    # Uniconta REST API (placeholder - adjust to actual API)
+    
+    username = config('UNICONTA_USERNAME')
+    password = config('UNICONTA_PASSWORD')
+    company_id = config('UNICONTA_COMPANY_ID')
+    credentials = f"00{company_id}/{username}:{password}"
+    encoded_credentials = base64.b64encode(credentials.encode('utf-8')).decode('utf-8')
     headers = {
-        'Authorization': f"Bearer {shop.api_key}",
+        'Authorization': f"{encoded_credentials}",
         'Content-Type': 'application/json'
     }
+    # payload = {
+    #     'ItemNumber': data.get('sku', ''),
+    #     'Name': data.get('title', 'Unnamed Product'),
+    #     'Description': data.get('description', ''),
+    #     'SalesPrice': data.get('price', '0.00')
+    # }
     payload = {
-        'ItemNumber': data.get('sku', ''),
-        'Name': data.get('title', 'Unnamed Product'),
-        'Description': data.get('description', ''),
-        'SalesPrice': data.get('price', '0.00')
+        "Item": data.get('sku', ''),
+        # "Webshop": true,
+        "Name": data.get('title', 'Unnamed Product'),
+        "QtyOnStock": 22.0,
+        "Qty": 22.0,
+        "Count": 22.0,
+        "InStock": 22.0,
+        "Stock": 22.0,
+        "Available": 22.0,
+        "SalesPrice1": data.get('price', '0.00'),
+        "ParentSKU": {},
+        "Inventory": 100.0,
+        "Quantity": 100.0
     }
     # Adjust endpoint based on Uniconta API docs
-    url = f"{shop.api_endpoint}/api/items"
+    url = "https://odata.uniconta.com/api/Entities/Insert/InvItemClient"
     response = requests.post(url, json=payload, headers=headers)
     response.raise_for_status()
 
