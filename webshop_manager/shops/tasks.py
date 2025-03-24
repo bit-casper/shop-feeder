@@ -395,7 +395,11 @@ def sync_to_uniconta(shop, data, feed):
     encoded_credentials = base64.b64encode(credentials.encode('utf-8')).decode('utf-8')
     headers = {
         'Authorization': f"{encoded_credentials}",
-        'Content-Type': 'application/json'
+        'Cache-Control': ' no-cache',
+        'Content-Type': 'application/json',
+        'Accept': '/*/',
+        'Accept-Encoding': 'gzip, deflate, br',
+        'Connection': 'keep-alive'
     }
 
 
@@ -442,18 +446,19 @@ def sync_to_uniconta(shop, data, feed):
 
             # Send request
             response = requests.post(url, json=payload, headers=headers)
+            print(response.json())
             response.raise_for_status()
 
             # Log the result
-            data = response.json()
-            sku = str(variant['sku'])
-            product_id = str(data['variant']['product_id'])
-            variant_id = str(data['variant']['id'])
-            inventory_item_id = str(data['variant']['inventory_item_id'])
+            # data = response.json()
+            # sku = str(i['variant']['sku'])
+            # product_id = str(i['variant']['product_id'])
+            # variant_id = str(i['variant']['id'])
+            # inventory_item_id = str(i['variant']['inventory_item_id'])
             
-            created_string = "Created product with " + "\n" + "SKU: " + sku + "\n"  + "product_id: " + product_id + "\n" + "variant_id: " + variant_id + "\n" + "inventory_item_id: " + inventory_item_id
-            # SyncLog.objects.create(feed=feed, shop=shop, status='success', message="Product synced to Uniconta")
-            SyncLog.objects.create(feed=feed, shop=shop, status='success', message=created_string)
+            # created_string = "Created product with " + "\n" + "SKU: " + sku + "\n"  + "product_id: " + product_id + "\n" + "variant_id: " + variant_id + "\n" + "inventory_item_id: " + inventory_item_id
+            SyncLog.objects.create(feed=feed, shop=shop, status='success', message="Product synced to Uniconta")
+            # SyncLog.objects.create(feed=feed, shop=shop, status='success', message=created_string)
 
     except Exception as e:
         feed.sync_status = 'failed'
