@@ -447,7 +447,8 @@ def sync_to_uniconta(shop, data, feed):
 
             # Send request
             response = requests.post(url, json=payload, headers=headers)
-            #print(response.text)
+            print(response.status_code)
+            print(response.text)
             #response.raise_for_status()
 
             # Log the result
