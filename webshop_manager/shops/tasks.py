@@ -414,7 +414,7 @@ def sync_to_uniconta(shop, data, feed):
     
     # Execute the shopify update call
     try:
-        print(json.dumps(data))
+        #print(json.dumps(data))
         # Loop over all changed products, build a payload for each of them and push it into shopify
         for i in data:
 
@@ -440,7 +440,7 @@ def sync_to_uniconta(shop, data, feed):
 
             # Send request
             response = requests.post(url, json=payload, headers=headers)
-            print(response.status_code)
+            #print(response.status_code)
             response.raise_for_status()
 
             # Log the result
