@@ -426,7 +426,7 @@ def sync_to_uniconta(shop, data, feed):
                 "Item": i['sku'],
                 # "Webshop": true,
                 "Name": i['title'],
-                "Description": i['body_html'],
+                #"Description": i['body_html'],
                 #"QtyOnStock": 1.0,
                 #"Qty": 2.0,
                 #"Count": 3.0,
