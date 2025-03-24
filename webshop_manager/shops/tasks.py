@@ -395,7 +395,7 @@ def sync_to_uniconta(shop, data, feed):
     encoded_credentials = base64.b64encode(credentials.encode('utf-8')).decode('utf-8')
     headers = {
         'Authorization': f"{encoded_credentials}",
-        'Cache-Control': ' no-cache',
+        'Cache-Control': 'no-cache',
         'Content-Type': 'application/json',
         'Accept': '/*/',
         'Accept-Encoding': 'gzip, deflate, br',
