@@ -51,7 +51,7 @@ def sync_to_uniconta(shop, data, feed):
             if i["MainItemSKU"] == None:
                 MainItemSKU = i["sku"]
             else:
-                MainItemSKU = ["MainItemSKU"]
+                MainItemSKU = i["MainItemSKU"]
 
             payload = {
                 "Item": i['sku'],
