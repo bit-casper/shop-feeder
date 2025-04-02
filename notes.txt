@@ -11,9 +11,16 @@ Here is a quick Python example of Shopify GraphQL:
 https://medium.com/@markwkiehl/a-beginner-guide-to-shopify-graphql-512069805678
 
 
+
+
+
 TODO
 
     How we will handle Uniconta:
+        We compare Shopify with Feeds
+        If new prods in feeds are not in Shopify, cache those prods
+        Then compare new prods with Uniconta
+        If new are not in Uniconta, push new to Uniconta
 
 
 - Create a Client model which needs to contain Shops and Feeds.
@@ -27,6 +34,9 @@ TODO
 - tasks.py -> sync_feed_to_shops() is currently creating products, we need it to only update existing products. This is why we need inventory_id
 - Move sync buttom from feed to shop
 - More detailed logging (Would be nice to see which data was updated and the before and after values)
+
+
+
 
 
 
