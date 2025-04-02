@@ -9,6 +9,8 @@ from .models import Shop, Feed
 from .forms import ShopForm, FeedForm
 from .tasks import sync_feed_to_shops  # Add this import
 
+
+
 class ShopListView(LoginRequiredMixin, View):
     def get(self, request):
         shops = Shop.objects.all()
@@ -22,6 +24,8 @@ class ShopListView(LoginRequiredMixin, View):
             return redirect('shop_list')
         return self.get(request)
 
+
+
 class ShopCreateView(LoginRequiredMixin, View):
     def get(self, request):
         form = ShopForm()
@@ -33,6 +37,8 @@ class ShopCreateView(LoginRequiredMixin, View):
             form.save()
             return redirect('shop_list')
         return render(request, 'shops/shop_form.html', {'form': form, 'title': 'Add Shop'})
+
+
 
 class ShopUpdateView(LoginRequiredMixin, View):
     def get(self, request, shop_id):
@@ -48,11 +54,15 @@ class ShopUpdateView(LoginRequiredMixin, View):
             return redirect('shop_list')
         return render(request, 'shops/shop_form.html', {'form': form, 'shop': shop, 'title': 'Edit Shop'})
 
+
+
 class ShopDeleteView(LoginRequiredMixin, View):
     def post(self, request, shop_id):
         shop = get_object_or_404(Shop, id=shop_id)
         shop.delete()
         return redirect('shop_list')
+
+
 
 class FeedCreateView(LoginRequiredMixin, View):
     def get(self, request):
@@ -69,6 +79,8 @@ class FeedCreateView(LoginRequiredMixin, View):
             return redirect('shop_list')
         print("Form errors:", form.errors)
         return render(request, 'shops/feed_form.html', {'form': form, 'title': 'Add Feed'})
+
+
 
 class FeedEditDashboardView(LoginRequiredMixin, View):
     def get(self, request, feed_id):
@@ -95,12 +107,13 @@ class FeedEditDashboardView(LoginRequiredMixin, View):
             'title': f'Edit Feed: {feed.url or feed.ftp_host}',
         })
 
+
+
 class FeedDeleteView(LoginRequiredMixin, View):
     def post(self, request, feed_id):
         feed = get_object_or_404(Feed, id=feed_id)
         feed.delete()
         return redirect('shop_list')
-
 
 
 

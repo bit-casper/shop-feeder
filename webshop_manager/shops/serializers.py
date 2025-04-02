@@ -4,7 +4,7 @@ from .models import Shop, Feed
 class FeedSerializer(serializers.ModelSerializer):
     class Meta:
         model = Feed
-        fields = ['id', 'source_type', 'feed_product_tag', 'ftp_host', 'ftp_user', 'ftp_pass', 'url', 'file_pattern',
+        fields = ['id', 'source_type', 'feed_product_tag', 'sku_prefix', 'ftp_host', 'ftp_user', 'ftp_pass', 'url', 'file_pattern',
                   'format_type', 'mapping', 'last_sync', 'sync_status']
 
 class ShopSerializer(serializers.ModelSerializer):

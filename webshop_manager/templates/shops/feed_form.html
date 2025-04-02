@@ -89,6 +89,13 @@
             {% endif %}
         </div>
         <div class="form-group">
+            {{ form.sku_prefix.label_tag }}
+            <input type="text" class="form-control" id="id_sku_prefix" name="sku_prefix" value="{{ form.sku_prefix.value|default:'' }}">
+            {% if form.sku_prefix.errors %}
+                <div class="invalid-feedback">{{ form.sku_prefix.errors|first }}</div>
+            {% endif %}
+        </div>
+        <div class="form-group">
             {{ form.mapping.label_tag }}
             {{ form.mapping }}
             {% if form.mapping.errors %}

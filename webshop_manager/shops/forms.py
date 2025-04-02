@@ -29,7 +29,7 @@ class FeedForm(forms.ModelForm):
 
     class Meta:
         model = Feed
-        fields = ['name', 'shops', 'source_type', 'feed_product_tag', 'ftp_host', 'ftp_user', 'ftp_pass', 'url', 'file_pattern', 'format_type', 'mapping']
+        fields = ['name', 'shops', 'source_type', 'feed_product_tag', 'sku_prefix', 'ftp_host', 'ftp_user', 'ftp_pass', 'url', 'file_pattern', 'format_type', 'mapping']
         widgets = {
             'ftp_pass': forms.PasswordInput(),
             'mapping': forms.Textarea(attrs={'rows': 4}),

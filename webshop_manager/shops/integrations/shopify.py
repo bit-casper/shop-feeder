@@ -6,7 +6,8 @@ import math
 from ..utils import *
 
 
-def sync_to_shopify(shop, data, feed):
+
+def sync_to_shopify(shop, mapped_data, feed):
 
     # Fetch shopify data
     getAllProducts(shop)
@@ -17,7 +18,7 @@ def sync_to_shopify(shop, data, feed):
         shop_data = json.load(f)
         for ishop in shop_data:
             for variant in ishop['variants']:  # Loop through all variants
-                for ifeed in data:
+                for ifeed in mapped_data:
                     if variant['sku'] == ifeed['sku']:
                         if variant['price'] != ifeed['price']:
                             changed_products.append({
@@ -52,11 +53,11 @@ def sync_to_shopify(shop, data, feed):
             response.raise_for_status()
 
             # Log the result
-            data = response.json()
+            response_data = response.json()
             sku = str(variant['sku'])
-            product_id = str(data['variant']['product_id'])
-            variant_id = str(data['variant']['id'])
-            inventory_item_id = str(data['variant']['inventory_item_id'])
+            product_id = str(response_data['variant']['product_id'])
+            variant_id = str(response_data['variant']['id'])
+            inventory_item_id = str(response_data['variant']['inventory_item_id'])
             created_string = "Updated variant with " + "\n" + "SKU: " + sku + "\n"  + "product_id: " + product_id + "\n" + "variant_id: " + variant_id + "\n" + "inventory_item_id: " + inventory_item_id
             SyncLog.objects.create(feed=feed, shop=shop, status='success', message=created_string)
 
@@ -68,8 +69,7 @@ def sync_to_shopify(shop, data, feed):
 
 
 
-
-def sync_inventory_to_shopify(shop, data, feed):
+def sync_inventory_to_shopify(shop, mapped_data, feed):
 
     # Fetch shopify data
     getAllProducts(shop)
@@ -80,7 +80,7 @@ def sync_inventory_to_shopify(shop, data, feed):
         shop_data = json.load(f)
         for ishop in shop_data:
             for variant in ishop['variants']:  # Loop through all variants
-                for ifeed in data:
+                for ifeed in mapped_data:
                     if variant['sku'] == ifeed['sku']:
                         if math.floor(float(variant['inventory_quantity'])) != math.floor(float(ifeed['inventory_quantity'])):
                             changed_products.append({
@@ -120,10 +120,10 @@ def sync_inventory_to_shopify(shop, data, feed):
             response.raise_for_status()
 
             # Log the result
-            data = response.json()
+            response_data = response.json()
             sku = str(i['sku'])
-            inventory_id = str(data['inventory_level']['inventory_item_id'])
-            new_inventory = str(data['inventory_level']['available'])
+            inventory_id = str(response_data['inventory_level']['inventory_item_id'])
+            new_inventory = str(response_data['inventory_level']['available'])
             old_inventory = str(i['old_inventory'])
             # created_string = "Updated inventory of SKU: " + sku + ", inventory_item_id: " + inventory_id + " - old: " + old_inventory + " / new: " + new_inventory
             created_string = "Updated inventory of" + "\n" + "SKU: " + sku + "\n" + "inventory_item_id: " + inventory_id + "\n" + "old: " + old_inventory + "\n" + "new: " + new_inventory
@@ -137,7 +137,7 @@ def sync_inventory_to_shopify(shop, data, feed):
 
 
 
-def create_to_shopify(shop, data, feed):
+def create_to_shopify(shop, mapped_data, feed):
 
     # Build headers
     headers = {
@@ -149,7 +149,7 @@ def create_to_shopify(shop, data, feed):
     # Execute the shopify update call
     try:
         # Loop over all changed products, build a payload for each of them and push it into shopify
-        for i in data:
+        for i in mapped_data:
 
             # Delay to enforce api rate limit
             time.sleep(520/1000)
@@ -187,10 +187,10 @@ def create_to_shopify(shop, data, feed):
             response.raise_for_status()
 
             # Log the result
-            data = response.json()
+            response_data = response.json()
             sku = str(i['sku'])
-            product_id = str(data['product']['id'])
-            inventory_id = str(data['product']['variants'][0]['inventory_item_id'])
+            product_id = str(response_data['product']['id'])
+            inventory_id = str(response_data['product']['variants'][0]['inventory_item_id'])
             created_string = "Created product with" + "\n" + "SKU: " + sku + "\n" + "product_id: " + product_id + "\n" + "inventory_item_id: " + inventory_id
             SyncLog.objects.create(feed=feed, shop=shop, status='success', message=created_string)
 
@@ -202,7 +202,7 @@ def create_to_shopify(shop, data, feed):
 
 
 
-def sync_to_shopify_graphql(shop, data, feed):
+def sync_to_shopify_graphql(shop, mapped_data, feed):
 
     # Fetch shopify data
     getAllProducts_GraphQL(shop)
@@ -213,7 +213,7 @@ def sync_to_shopify_graphql(shop, data, feed):
         shop_data = json.load(f)
         for ishop in shop_data:
             for variant in ishop['variants']:  # Loop through all variants
-                for ifeed in data:
+                for ifeed in mapped_data:
                     if variant['sku'] == ifeed['sku']:
                         if variant['price'] != ifeed['price']:
                             changed_products.append({
@@ -285,11 +285,11 @@ def sync_to_shopify_graphql(shop, data, feed):
             response.raise_for_status()
 
             # Log the result
-            data = response.json()
+            response_data = response.json()
             sku = str(variant['sku'])
-            product_id = str(data['variant']['product_id'])
-            variant_id = str(data['variant']['id'])
-            inventory_item_id = str(data['variant']['inventory_item_id'])
+            product_id = str(response_data['variant']['product_id'])
+            variant_id = str(response_data['variant']['id'])
+            inventory_item_id = str(response_data['variant']['inventory_item_id'])
             created_string = "Updated variant with " + "\n" + "SKU: " + sku + "\n"  + "product_id: " + product_id + "\n" + "variant_id: " + variant_id + "\n" + "inventory_item_id: " + inventory_item_id
             SyncLog.objects.create(feed=feed, shop=shop, status='success', message=created_string)
 
@@ -431,6 +431,7 @@ def getAllProducts(shop):  # get all shopify products and save them into a json 
     print("Shopify products List size : "+str(len(product_list)))
 
 
+
 def getAllProducts_GraphQL(shop):  # get all shopify products and save them into a json file
     url = f"https://{shop.shop_name}.myshopify.com/admin/api/2025-01/graphql.json"
     # product_list_url = url + "?fields=id,variants&limit=200"
@@ -487,7 +488,7 @@ def getProducts(shop, url, last_product_list = None):  # get shopify products
     except requests.exceptions.RequestException as e:
         # catastrophic error. bail.
         raise SystemExit(e)
-    
+
 
 
 def getProducts_GraphQL(shop, url, last_product_list = None):  # get shopify products

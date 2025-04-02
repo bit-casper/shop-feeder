@@ -1,4 +1,5 @@
 from ftplib import FTP
+import re
 
 
 
@@ -8,7 +9,6 @@ def findUrlInString(string):
     regex = r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))"
     url = re.findall(regex, string)
     return [x[0] for x in url]
-
 
 
 
@@ -62,10 +62,3 @@ def DownloadNewFiles(feed):
     # for file in fetched_files:
     #     shutil.move(str(file), os.path.join(settings.PATH_TO_PRODUCT_FEEDS, file))
     #     print("moved {} to its final location".format(file))
-
-
-
-
-
-
-

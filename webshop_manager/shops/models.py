@@ -1,7 +1,7 @@
 from django.db import models
 
 class Shop(models.Model):
-    SHOP_TYPES = (('shopify', 'Shopify'), ('uniconta', 'Uniconta'))
+    SHOP_TYPES = (('shopify', 'Shopify'), ('uniconta', 'Uniconta'), ('custom', 'Custom'))
     shop_name = models.CharField(max_length=100)
     shop_type = models.CharField(max_length=20, choices=SHOP_TYPES)
     api_endpoint = models.URLField()
@@ -26,6 +26,7 @@ class Feed(models.Model):
     ftp_pass = models.CharField(max_length=255, null=True, blank=True)
     url = models.URLField(null=True, blank=True)
     file_pattern = models.CharField(max_length=255, default='products.xml')
+    sku_prefix = models.CharField(max_length=10, default="", blank=True)
     format_type = models.CharField(max_length=10, choices=FORMAT_TYPES)
     mapping = models.JSONField(blank=True, null=True, default=dict)
     last_sync = models.DateTimeField(null=True, blank=True)
