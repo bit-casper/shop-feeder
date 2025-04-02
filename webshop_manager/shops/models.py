@@ -1,7 +1,18 @@
 from django.db import models
 
+
+
+class Client(models.Model):
+    client_name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.client_name
+
+
+
 class Shop(models.Model):
     SHOP_TYPES = (('shopify', 'Shopify'), ('uniconta', 'Uniconta'), ('custom', 'Custom'))
+    client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='shops')
     shop_name = models.CharField(max_length=100)
     shop_type = models.CharField(max_length=20, choices=SHOP_TYPES)
     api_endpoint = models.URLField()
@@ -13,6 +24,8 @@ class Shop(models.Model):
 
     def __str__(self):
         return self.shop_name
+
+
 
 class Feed(models.Model):
     SOURCE_TYPES = (('ftp', 'FTP'), ('url', 'URL'), ('local', 'LOCAL'))

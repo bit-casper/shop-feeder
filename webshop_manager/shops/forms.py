@@ -1,5 +1,14 @@
 from django import forms
-from .models import Shop, Feed
+from .models import Client, Shop, Feed
+
+
+class ClientForm(forms.ModelForm):
+    class Meta:
+        model = Client
+        fields = ['client_name']
+        widgets = {
+            
+        }
 
 class ShopForm(forms.ModelForm):
     class Meta:

@@ -59,6 +59,10 @@ def sync_feed_to_shops(feed_id):
             elif shop.shop_type == 'uniconta':
                 sync_to_uniconta(shop, mapped_data, feed)
             elif shop.shop_type == 'custom':
+                # We need to fetch shopify data and compare feed and shopify to find new products, then feed the new products into the uniconta function
+                # Use either getAllProducts() or getAllProducts_GraphQL()
+                # But we need access to the Shopify AND Uniconta credentials on this custom shop.
+                # We first need to build the client model solution, then we should be able to use client->shops->shop
                 initialize_uniconta_custom_sync(shop, mapped_data, feed)
 
         feed.sync_status = 'success'

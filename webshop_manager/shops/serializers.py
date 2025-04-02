@@ -1,5 +1,12 @@
 from rest_framework import serializers
-from .models import Shop, Feed
+from .models import Client, Shop, Feed
+
+
+
+class ClientSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Client
+        fields = ['client_name']
 
 class FeedSerializer(serializers.ModelSerializer):
     class Meta:

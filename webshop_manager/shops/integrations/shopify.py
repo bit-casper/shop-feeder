@@ -419,7 +419,8 @@ def sync_to_shopify_graphql(shop, mapped_data, feed):
 #     # return product_list
 #     print("Shopify products List size : "+str(len(product_list)))
 
-def getAllProducts(shop):  # get all shopify products and save them into a json file
+# get all shopify products and save them into a json file
+def getAllProducts(shop):  
     url = f"https://{shop.shop_name}.myshopify.com/admin/api/2022-07/products.json"
     product_list_url = url + "?fields=id,variants&limit=200"
 
