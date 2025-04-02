@@ -48,6 +48,11 @@ def sync_to_uniconta(shop, data, feed):
             time.sleep(520/1000)
             #time.sleep(1)
 
+            if i["MainItemSKU"] == None:
+                MainItemSKU = i["sku"]
+            else:
+                MainItemSKU = ["MainItemSKU"]
+
             payload = {
                 "Item": i['sku'],
                 "Name": i['title'],
@@ -56,7 +61,7 @@ def sync_to_uniconta(shop, data, feed):
                 "EAN": i['barcode'],
                 "Weight": i['weight'],
                 # "Image": i['images'],             # Not used at this time.
-                "MainItemSKU": i["MainItemSKU"],    # Custom Field: The SKU of the parent product of this item. If this is the parent, this is its own SKU.
+                "MainItemSKU": MainItemSKU,         # Custom Field: The SKU of the parent product of this item. If this is the parent, this is its own SKU.
                 # "VariantSKUs": "",                # Custom Field: Comma seperated strings of variant skus. This is ignored for now.
                 # "Webshop": true                   # Custom Field: Generally ignored because it should be false by default.
             }
