@@ -51,7 +51,7 @@
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                <form action="{% url 'feed_delete' shop.id feed.id %}" method="post" style="display:inline;">
+                                <form action="{% url 'feed_delete' client_id=client_id feed_id=feed.id %}" method="post" style="display:inline;">
                                     {% csrf_token %}
                                     <button type="submit" class="btn btn-danger">Delete</button>
                                 </form>

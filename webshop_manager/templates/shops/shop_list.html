@@ -1,7 +1,8 @@
 {% extends 'base.html' %}
 {% block content %}
+    <div class="text-center"><h1>{{ client.client_name }}</h1></div>
     <h2>Shops</h2>
-    <a href="{% url 'shop_create' %}" class="btn btn-primary mb-3">Add New Shop</a>
+    <a href="{% url 'shop_create' client_id=client.id %}" class="btn btn-primary mb-3">Add New Shop</a>
     <div class="accordion" id="shopAccordion">
         <table class="table table-striped">
             <thead>
@@ -10,7 +11,7 @@
                     <th>Type</th>
                     <th>Endpoint</th>
                     <th>Active</th>
-                    <th></th>
+                    <!-- <th></th> -->
                 </tr>
             </thead>
             <tbody>
@@ -20,13 +21,13 @@
                     <td>{{ shop.get_shop_type_display }}</td>
                     <td>{{ shop.api_endpoint }}</td>
                     <td>{{ shop.is_active|yesno:"Yes,No" }}</td>
-                    <td></td>
+                    <!-- <td></td> -->
                 </tr>
                 <tr class="accordion-item">
                     <td colspan="5" class="p-0">
                         <div id="collapse{{ shop.id }}" class="accordion-collapse collapse">
                             <div class="accordion-body">
-                                <a href="{% url 'shop_update' shop.id %}" class="btn btn-sm btn-secondary">Edit</a>
+                                <a href="{% url 'shop_update' client_id=client.id shop_id=shop.id %}" class="btn btn-sm btn-secondary">Edit</a>
                                 <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteShopModal{{ shop.id }}">Delete</button>
                             </div>
                         </div>
@@ -41,11 +42,11 @@
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                             </div>
                             <div class="modal-body">
-                                Are you sure you want to delete {{ shop.name }}?
+                                Are you sure you want to delete {{ shop.shop_name }}?
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                <form action="{% url 'shop_delete' shop.id %}" method="post" style="display:inline;">
+                                <form action="{% url 'shop_delete' client_id=client.id shop_id=shop.id %}" method="post" style="display:inline;">
                                     {% csrf_token %}
                                     <button type="submit" class="btn btn-danger">Delete</button>
                                 </form>
@@ -60,9 +61,9 @@
         </table>
     </div>
 
-    <div class="dashboard mt-3">
-        <h3>Feeds</h3>
-        <a href="{% url 'feed_create' %}" class="btn btn-primary mb-3">Add New Feed</a>
+    <div class="dashboard mt-5">
+        <h2>Feeds</h2>
+        <a href="{% url 'feed_create' client.id %}" class="btn btn-primary mb-3">Add New Feed</a>
         <div class="accordion" id="feedAccordion">
             <table class="table table-striped">
                 <thead>
@@ -87,7 +88,7 @@
                         <td colspan="5" class="p-0">
                             <div id="feedCollapse{{ feed.id }}" class="accordion-collapse collapse">
                                 <div class="accordion-body">
-                                    <a href="{% url 'feed_edit_dashboard' feed.id %}" class="btn btn-sm btn-secondary">Edit</a>
+                                    <a href="{% url 'feed_edit_dashboard' client_id=client.id feed_id=feed.id %}" class="btn btn-sm btn-secondary">Edit</a>
                                     <button class="btn btn-sm btn-primary test-mapping-btn" data-feed-id="{{ feed.id }}">Test</button>
                                     <form method="post" style="display:inline;">
                                         {% csrf_token %}
@@ -111,7 +112,7 @@
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                        <form action="{% url 'feed_delete' feed.id %}" method="post" style="display:inline;">
+                                        <form action="{% url 'feed_delete' client_id=client.id feed_id=feed.id %}" method="post" style="display:inline;">
                                             {% csrf_token %}
                                             <button type="submit" class="btn btn-danger">Delete</button>
                                         </form>
@@ -120,7 +121,7 @@
                             </div>
                         </div>
                         {% empty %}
-                        <tr><td colspan="3">No feeds available.</td></tr>
+                        <tr><td colspan="5">No feeds available.</td></tr>
                         {% endfor %}
                     </tbody>
                 </table>
@@ -144,7 +145,8 @@
                 </div>
             </div>
         </div>
-    {% endblock %}
+    </div>
+{% endblock %}
 
     {% block scripts %}
     <script>

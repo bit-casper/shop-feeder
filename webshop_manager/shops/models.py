@@ -3,7 +3,7 @@ from django.db import models
 
 
 class Client(models.Model):
-    client_name = models.CharField(max_length=100)
+    client_name = models.CharField(max_length=100, blank=False)
 
     def __str__(self):
         return self.client_name
@@ -30,6 +30,7 @@ class Shop(models.Model):
 class Feed(models.Model):
     SOURCE_TYPES = (('ftp', 'FTP'), ('url', 'URL'), ('local', 'LOCAL'))
     FORMAT_TYPES = (('xml', 'XML'),)
+    client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='feeds')
     shops = models.ManyToManyField(Shop, related_name='feeds')
     name = models.CharField(max_length=100, blank=True, null=True)
     source_type = models.CharField(max_length=10, choices=SOURCE_TYPES)
@@ -47,6 +48,14 @@ class Feed(models.Model):
 
     def __str__(self):
         return self.name or f"{self.url or self.ftp_host or self.file_pattern} ({self.get_source_type_display()})"
+    
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        # Ensure shops belong to the same client
+        if self.shops.exists():
+            invalid_shops = self.shops.exclude(client=self.client)
+            if invalid_shops.exists():
+                raise ValueError("All shops linked to a feed must belong to the same client.")
 
 class SyncLog(models.Model):
     feed = models.ForeignKey(Feed, on_delete=models.CASCADE)

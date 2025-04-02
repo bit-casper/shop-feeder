@@ -5,7 +5,7 @@ from django.views import View
 from django.http import JsonResponse
 import requests
 import xml.etree.ElementTree as ET
-from .models import Shop, Feed
+from .models import Client, Shop, Feed
 from .forms import ClientForm, ShopForm, FeedForm
 from .tasks import sync_feed_to_shops  # Add this import
 
@@ -26,146 +26,164 @@ class ClientCreateView(LoginRequiredMixin, View):
 
 class ClientListView(LoginRequiredMixin, View):
     def get(self, request):
-        shops = Shop.objects.all()
-        feeds = Feed.objects.all().prefetch_related('shops')
-        return render(request, 'shops/client_list.html', {'shops': shops, 'feeds': feeds})
-
-    def post(self, request):
-        if 'sync_feed' in request.POST:
-            feed_id = request.POST.get('feed_id')
-            sync_feed_to_shops.delay(feed_id)  # Now recognized
-            return redirect('shop_list')
-        return self.get(request)
+        clients = Client.objects.all()
+        return render(request, 'shops/client_list.html', {'clients': clients})
     
 
 
-class ClientUpdateView(LoginRequiredMixin, View):
-    def get(self, request, shop_id):
-        shop = get_object_or_404(Shop, id=shop_id)
-        form = ShopForm(instance=shop)
-        return render(request, 'shops/shop_form.html', {'form': form, 'shop': shop, 'title': 'Edit Shop'})
+# class ClientUpdateView(LoginRequiredMixin, View):
+#     def get(self, request, client_id):
+#         client = get_object_or_404(Shop, id=client_id)
+#         form = ClientForm(instance=client)
+#         return render(request, 'shops/client_form.html')#, {'form': form, 'shop': shop, 'title': 'Edit Shop'})
 
-    def post(self, request, shop_id):
-        shop = get_object_or_404(Shop, id=shop_id)
-        form = ShopForm(request.POST, instance=shop)
+#     def post(self, request, client_id):
+#         client = get_object_or_404(Client, id=client_id)
+#         form = ClientForm(request.POST, instance=client)
+#         if form.is_valid():
+#             form.save()
+#             return redirect('client_list')
+#         return render(request, 'shops/client_form.html')#, {'form': form, 'shop': shop, 'title': 'Edit Shop'})
+
+class ClientUpdateView(LoginRequiredMixin, View):
+    def get(self, request, client_id):
+        client = get_object_or_404(Client, id=client_id)  # Fixed: Changed Shop to Client
+        form = ClientForm(instance=client)
+        return render(request, 'shops/client_form.html', {
+            'form': form,
+            'client': client,
+            'title': 'Edit Client',
+        })
+
+    def post(self, request, client_id):
+        client = get_object_or_404(Client, id=client_id)
+        form = ClientForm(request.POST, instance=client)
         if form.is_valid():
             form.save()
-            return redirect('shop_list')
-        return render(request, 'shops/shop_form.html', {'form': form, 'shop': shop, 'title': 'Edit Shop'})
+            return redirect('client_list')
+        return render(request, 'shops/client_form.html', {
+            'form': form,
+            'client': client,
+            'title': 'Edit Client',
+        })
     
 
 
 class ClientDeleteView(LoginRequiredMixin, View):
-    def post(self, request, shop_id):
-        shop = get_object_or_404(Shop, id=shop_id)
-        shop.delete()
-        return redirect('shop_list')
+    def post(self, request, client_id):
+        client = get_object_or_404(Client, id=client_id)
+        client.delete()
+        return redirect('client_list')
 
 
 
 class ShopCreateView(LoginRequiredMixin, View):
-    def get(self, request):
+    def get(self, request, client_id):
         form = ShopForm()
-        return render(request, 'shops/shop_form.html', {'form': form, 'title': 'Add Shop'})
+        return render(request, 'shops/shop_form.html', {'form': form, 'title': 'Add Shop', 'client_id': client_id})
 
-    def post(self, request):
+    def post(self, request, client_id):
         form = ShopForm(request.POST)
         if form.is_valid():
-            form.save()
-            return redirect('shop_list')
-        return render(request, 'shops/shop_form.html', {'form': form, 'title': 'Add Shop'})
+            shop = form.save(commit=False) 
+            shop.client = Client.objects.get(id=client_id) 
+            shop.save()
+            return redirect('shop_list', client_id=client_id)
+        return render(request, 'shops/shop_form.html', {'form': form, 'title': 'Add Shop', 'client_id': client_id})
 
 
 
 class ShopListView(LoginRequiredMixin, View):
-    def get(self, request):
-        shops = Shop.objects.all()
-        feeds = Feed.objects.all().prefetch_related('shops')
-        return render(request, 'shops/shop_list.html', {'shops': shops, 'feeds': feeds})
+    def get(self, request, client_id):
+        client = get_object_or_404(Client, id=client_id)
+        shops = Shop.objects.filter(client_id=client_id)
+        feeds = Feed.objects.filter(client_id=client_id).prefetch_related('shops').distinct()
+        return render(request, 'shops/shop_list.html', {'shops': shops, 'feeds': feeds, 'client': client,})
 
-    def post(self, request):
+    def post(self, request, client_id):
         if 'sync_feed' in request.POST:
             feed_id = request.POST.get('feed_id')
-            sync_feed_to_shops.delay(feed_id)  # Now recognized
-            return redirect('shop_list')
-        return self.get(request)
+            sync_feed_to_shops.delay(feed_id)
+            return redirect('shop_list', client_id=client_id)
+        return self.get(request, client_id)
 
 
 
 class ShopUpdateView(LoginRequiredMixin, View):
-    def get(self, request, shop_id):
-        shop = get_object_or_404(Shop, id=shop_id)
+    def get(self, request, shop_id, client_id):  # Add client_id parameter
+        shop = get_object_or_404(Shop, id=shop_id, client_id=client_id)
         form = ShopForm(instance=shop)
-        return render(request, 'shops/shop_form.html', {'form': form, 'shop': shop, 'title': 'Edit Shop'})
+        return render(request, 'shops/shop_form.html', {'form': form, 'shop': shop, 'title': 'Edit Shop', 'client_id': client_id})
 
-    def post(self, request, shop_id):
-        shop = get_object_or_404(Shop, id=shop_id)
+    def post(self, request, shop_id, client_id):  # Add client_id parameter
+        shop = get_object_or_404(Shop, id=shop_id, client_id=client_id)
         form = ShopForm(request.POST, instance=shop)
         if form.is_valid():
             form.save()
-            return redirect('shop_list')
-        return render(request, 'shops/shop_form.html', {'form': form, 'shop': shop, 'title': 'Edit Shop'})
+            return redirect('shop_list', client_id=client_id)
+        return render(request, 'shops/shop_form.html', {'form': form, 'shop': shop, 'title': 'Edit Shop', 'client_id': client_id})
 
 
 
 class ShopDeleteView(LoginRequiredMixin, View):
-    def post(self, request, shop_id):
-        shop = get_object_or_404(Shop, id=shop_id)
+    def post(self, request, shop_id, client_id):  # Add client_id
+        shop = get_object_or_404(Shop, id=shop_id, client_id=client_id)
         shop.delete()
-        return redirect('shop_list')
+        return redirect('shop_list', client_id=client_id)
 
 
 
 class FeedCreateView(LoginRequiredMixin, View):
-    def get(self, request):
-        form = FeedForm()
-        return render(request, 'shops/feed_form.html', {'form': form, 'title': 'Add Feed'})
+    def get(self, request, client_id):
+        form = FeedForm(client_id=client_id)
+        return render(request, 'shops/feed_form.html', {'form': form, 'title': 'Add Feed', 'client_id': client_id})
 
-    def post(self, request):
-        form = FeedForm(request.POST)
+    def post(self, request, client_id):
+        form = FeedForm(request.POST, client_id=client_id)
         if form.is_valid():
             feed = form.save(commit=False)
+            feed.client = Client.objects.get(id=client_id)
             feed.save()
-            if form.cleaned_data['shops']:
-                feed.shops.set(form.cleaned_data['shops'])
-            return redirect('shop_list')
-        print("Form errors:", form.errors)
-        return render(request, 'shops/feed_form.html', {'form': form, 'title': 'Add Feed'})
+            form.save_m2m()
+            return redirect('shop_list', client_id=client_id)
+        return render(request, 'shops/feed_form.html', {'form': form, 'title': 'Add Feed', 'client_id': client_id})
 
 
 
 class FeedEditDashboardView(LoginRequiredMixin, View):
-    def get(self, request, feed_id):
-        feed = get_object_or_404(Feed, id=feed_id)
-        form = FeedForm(instance=feed)
+    def get(self, request, feed_id, client_id):
+        feed = get_object_or_404(Feed, id=feed_id, client_id=client_id)
+        form = FeedForm(instance=feed, client_id=client_id)
         return render(request, 'shops/feed_form.html', {
             'form': form,
             'feed': feed,
             'title': f'Edit Feed: {feed.url or feed.ftp_host or feed.name}',
+            'client_id': client_id,
         })
 
-    def post(self, request, feed_id):
-        feed = get_object_or_404(Feed, id=feed_id)
-        form = FeedForm(request.POST, instance=feed)
+    def post(self, request, feed_id, client_id):
+        feed = get_object_or_404(Feed, id=feed_id, client_id=client_id)
+        form = FeedForm(request.POST, instance=feed, client_id=client_id)
         if form.is_valid():
             feed = form.save(commit=False)
             feed.save()
             feed.shops.set(form.cleaned_data['shops'])
-            return redirect('shop_list')
+            return redirect('shop_list', client_id=client_id)
         print("Form errors:", form.errors)
         return render(request, 'shops/feed_form.html', {
             'form': form,
             'feed': feed,
             'title': f'Edit Feed: {feed.url or feed.ftp_host}',
+            'client_id': client_id,
         })
 
 
 
 class FeedDeleteView(LoginRequiredMixin, View):
-    def post(self, request, feed_id):
-        feed = get_object_or_404(Feed, id=feed_id)
+    def post(self, request, feed_id, client_id):  # Add client_id
+        feed = get_object_or_404(Feed, id=feed_id, client_id=client_id)
         feed.delete()
-        return redirect('shop_list')
+        return redirect('shop_list', client_id=client_id)
 
 
 

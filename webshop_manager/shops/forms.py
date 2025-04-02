@@ -6,9 +6,8 @@ class ClientForm(forms.ModelForm):
     class Meta:
         model = Client
         fields = ['client_name']
-        widgets = {
-            
-        }
+
+
 
 class ShopForm(forms.ModelForm):
     class Meta:
@@ -20,21 +19,27 @@ class ShopForm(forms.ModelForm):
             'api_access_token': forms.PasswordInput(),
         }
 
+
+
 class FeedForm(forms.ModelForm):
     shops = forms.ModelMultipleChoiceField(
-        queryset=Shop.objects.all(),
+        queryset=Shop.objects.all(),  # This will be overridden in __init__
         widget=forms.CheckboxSelectMultiple,
         required=True,
         label='Subscribed Shops'
     )
 
     def __init__(self, *args, **kwargs):
+        client_id = kwargs.pop('client_id', None)  # Extract client_id from kwargs
         super().__init__(*args, **kwargs)
-        for shop in self.fields['shops'].queryset:
-            self.fields['shops'].choices = [
-                (shop.id, f"{shop.shop_name} - {shop.get_shop_type_display()}")
-                for shop in self.fields['shops'].queryset
-            ]
+        if client_id:
+            # Filter shops by the client_id
+            self.fields['shops'].queryset = Shop.objects.filter(client_id=client_id)
+        # Update choices with filtered queryset
+        self.fields['shops'].choices = [
+            (shop.id, f"{shop.shop_name} - {shop.get_shop_type_display()}")
+            for shop in self.fields['shops'].queryset
+        ]
 
     class Meta:
         model = Feed

@@ -18,7 +18,8 @@
                     <td colspan="6" class="p-0">
                         <div id="collapse{{ client.id }}" class="accordion-collapse collapse" data-bs-parent="#feedAccordion">
                             <div class="accordion-body">
-                                {% comment %} <a href="{% url 'feed_update' shop.id feed.id %}" class="btn btn-sm btn-secondary">Open</a> {% endcomment %}
+                                <a href="{% url 'shop_list' client.id %}" class="btn btn-sm btn-secondary">Open</a>
+                                <a href="{% url 'client_update' client_id=client.id %}" class="btn btn-sm btn-secondary">Edit</a>
                                 <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteFeedModal{{ client.id }}">Delete</button>
                             </div>
                         </div>
@@ -54,5 +55,28 @@
 {% endblock %}
 
 {% block scripts %}
+<script>
+    // Reset all accordions on page show (navigation or load)
+    window.addEventListener('pageshow', function (e) {
+        const collapses = document.querySelectorAll('.accordion-collapse');
+        collapses.forEach(collapse => {
+            collapse.classList.remove('show');
+        });
+    });
 
+    // Ensure only one accordion is open at a time across both sections
+    document.querySelectorAll('.clickable-row').forEach(row => {
+        row.addEventListener('click', function () {
+            const targetId = this.getAttribute('data-bs-target');
+            const targetCollapse = document.querySelector(targetId);
+            const allCollapses = document.querySelectorAll('.accordion-collapse');
+
+            allCollapses.forEach(collapse => {
+                if (collapse !== targetCollapse && collapse.classList.contains('show')) {
+                    collapse.classList.remove('show');
+                }
+            });
+        });
+    });
+</script>
 {% endblock %}
