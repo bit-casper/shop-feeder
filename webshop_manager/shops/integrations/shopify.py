@@ -13,9 +13,7 @@ def sync_shopify_to_db(shop):
     # Fetch shopify data
     getAllProducts(shop) # creates data.json
 
-    # Compare shopify to our database and create products in database if they do not already exist
-    #changed_products = []
-
+    # Create or update products in database based on the downloaded shopify data
     with open('data.json', 'r') as f:
         shop_data = json.load(f)
         for ishop in shop_data: # 
