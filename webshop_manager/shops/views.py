@@ -107,7 +107,7 @@ class ShopListView(LoginRequiredMixin, View):
             return redirect('shop_list', client_id=client_id)
         elif 'sync_shop' in request.POST:
             shop_id = request.POST.get('shop_id')
-            sync_shop_to_db.delay('shop_id')
+            sync_shop_to_db.delay(shop_id)
             return redirect('shop_list', client_id=client_id)
         return self.get(request, client_id)
 
