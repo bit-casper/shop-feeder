@@ -18,29 +18,29 @@ def sync_uniconta_to_db(shop):
     with open('uniconta_data.json', 'r') as f:
         shop_data = json.load(f)
         for ishop in shop_data: # 
-            for variant in ishop['variants']:  # Loop through all variants
-                sku = variant["sku"]
-                product_id = variant["product_id"]
-                variant_id = variant["id"]
-                product_name = variant["title"]
-                price = variant["price"]
-                inventory = variant.get("inventory_quantity", 0)
-                inventory_item_id = variant["inventory_item_id"]
+            #for variant in ishop['variants']:  # Loop through all variants
+            sku = ishop["Item"]
+            product_id = ""#ishop["product_id"]
+            variant_id = ""#ishop["id"]
+            product_name = ishop["Name"]
+            price = ishop["SalesPrice1"]
+            inventory = ishop.get("Available", 0)
+            inventory_item_id = ""#ishop["inventory_item_id"]
 
-                Product.objects.update_or_create(
-                    sku=sku,
-                    defaults={
-                        'client': shop.client,
-                        'is_main_product': False,
-                        'product_name': product_name,
-                        'sku': sku,
-                        'shopify_product_id': product_id,
-                        'shopify_variant_id': variant_id,
-                        'shopify_inventory_item_id': inventory_item_id,
-                        'last_known_price': price,
-                        'last_known_inventory': inventory
-                    }
-                )
+            Product.objects.update_or_create(
+                sku=sku,
+                defaults={
+                    'client': shop.client,
+                    'is_main_product': False,
+                    'product_name': product_name,
+                    'sku': sku,
+                    'shopify_product_id': product_id,
+                    'shopify_variant_id': variant_id,
+                    'shopify_inventory_item_id': inventory_item_id,
+                    'last_known_price': price,
+                    'last_known_inventory': inventory
+                }
+            )
 
 
 
