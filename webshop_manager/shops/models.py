@@ -10,6 +10,20 @@ class Client(models.Model):
 
 
 
+class Product(models.Model):
+    client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='products')
+    is_main_product = models.BooleanField(default=False)
+    product_name = models.CharField(max_length=250)
+    shopify_sku = models.CharField(max_length=100)
+    uniconta_sku = models.CharField(max_length=100)
+    woocommerce_sku = models.CharField(max_length=100)
+    shopify_product_id = models.CharField(max_length=100)
+    shopify_variant_id = models.CharField(max_length=100)
+    last_known_price = models.CharField(max_length=100)
+    last_known_inventory = models.IntegerField(default=0)
+
+
+
 class Shop(models.Model):
     SHOP_TYPES = (('shopify', 'Shopify'), ('uniconta', 'Uniconta'), ('custom', 'Custom'))
     client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='shops')

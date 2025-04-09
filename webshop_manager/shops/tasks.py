@@ -63,7 +63,8 @@ def sync_feed_to_shops(feed_id):
                 # Use either getAllProducts() or getAllProducts_GraphQL()
                 # But we need access to the Shopify AND Uniconta credentials on this custom shop.
                 # We first need to build the client model solution, then we should be able to use client->shops->shop
-                initialize_uniconta_custom_sync(shop, mapped_data, feed)
+                #initialize_uniconta_custom_sync(shop, mapped_data, feed)
+                sync_uniconta_to_db(shop, mapped_data, feed)
 
         feed.sync_status = 'success'
         feed.last_sync = timezone.now()
