@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.core.exceptions import ObjectDoesNotExist
 
 
 class Client(models.Model):
@@ -27,16 +27,33 @@ class Product(models.Model):
         return self.sku
     
     def save(self, *args, **kwargs):
-        # If this is an update (not a creation), preserve certain fields
-        if self.pk is not None:  # Object already exists in the DB
-            original = Product.objects.get(pk=self.pk)  # Fetch the existing instance
-            self.product_name = original.product_name  # Preserve original value
-            self.sku = original.sku
-            self.shopify_product_id = original.shopify_product_id
-            self.shopify_variant_id = original.shopify_variant_id
-            self.shopify_inventory_item_id = original.shopify_inventory_item_id
-            # Note: last_known_price and last_known_inventory are allowed to change
-        super().save(*args, **kwargs)
+        if self.pk is None:  # New object, save everything as is
+            super().save(*args, **kwargs)
+        else:  # Existing object, apply custom logic
+            try:
+                original = Product.objects.get(pk=self.pk)  # Fetch the existing instance
+
+                # Preserve immutable fields
+                self.product_name = original.product_name
+                self.sku = original.sku
+                self.shopify_product_id = original.shopify_product_id
+                self.shopify_variant_id = original.shopify_variant_id
+                self.shopify_inventory_item_id = original.shopify_inventory_item_id
+                self.client = original.client  # Preserve client relationship
+                self.is_main_product = original.is_main_product
+
+                # Only update mutable fields if they’ve changed
+                price_changed = str(original.last_known_price) != str(self.last_known_price)
+                inventory_changed = original.last_known_inventory != self.last_known_inventory
+
+                if not (price_changed or inventory_changed):
+                    return  # No changes to price or inventory, skip the save
+
+                # If we reach here, at least one has changed, so proceed with save
+                super().save(*args, **kwargs)
+            except ObjectDoesNotExist:
+                # If for some reason the object doesn’t exist, save as new
+                super().save(*args, **kwargs)
 
 
 
