@@ -14,14 +14,17 @@ class Product(models.Model):
     client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='products')
     is_main_product = models.BooleanField(default=False)
     product_name = models.CharField(max_length=250, default="")
-    shopify_sku = models.CharField(max_length=100, default="")
-    uniconta_sku = models.CharField(max_length=100, default="")
-    woocommerce_sku = models.CharField(max_length=100, default="")
+    sku = models.CharField(max_length=100, default="")
+    #uniconta_sku = models.CharField(max_length=100, default="")
+    #woocommerce_sku = models.CharField(max_length=100, default="")
     shopify_product_id = models.CharField(max_length=100, default="")
     shopify_variant_id = models.CharField(max_length=100, default="")
     shopify_inventory_item_id = models.CharField(max_length=100, default="")
     last_known_price = models.CharField(max_length=100, default="")
     last_known_inventory = models.IntegerField(default=0)
+
+    def __str__(self):
+        return self.shopify_sku
 
 
 

@@ -28,9 +28,9 @@ def sync_shopify_to_db(shop):
                 inventory = variant.get("inventory_quantity", 0)
                 inventory_item_id = variant["inventory_item_id"]
 
-                # Update or create based on shopify_variant_id
+                # Update or create based on sku
                 product, created = Product.objects.update_or_create(
-                    shopify_variant_id=variant_id,  # Unique identifier
+                    sku=sku,  # Unique identifier
                     defaults={
                         'client': shop.client,
                         'is_main_product': False,
