@@ -51,8 +51,13 @@ def sync_shopify_to_db(shop):
 
                 # If it already exists, update only mutable fields
                 if not created:
-                    Product.objects.filter(sku=sku).update(**mutable_fields)
-                    print("Updated product with SKU: " + str(sku))
+                    product = Product.objects.filter(sku=sku)
+                    if product.last_known_price != price or product.last_known_inventory != inventory
+                        product.update(**mutable_fields)
+                    # Product.objects.filter(sku=sku).update(**mutable_fields)
+                        print("Updated product with SKU: " + str(sku))
+                    else:
+                        print("No update required for SKU: " + str(sku))
                 else:
                     print("Created product with SKU: " + str(sku))
 
