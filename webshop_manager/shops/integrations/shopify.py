@@ -12,17 +12,20 @@ def sync_shopify_to_db(shop):
     # Fetch shopify data
     getAllProducts(shop) # creates data.json
 
-    with open('data.json', 'r') as f:
-        shop_data = json.load(f)
-        print(shop_data)
     # Compare shopify to our database and create products in database if they do not already exist
     #changed_products = []
 
-    # with open('data.json', 'r') as f:
-    #     shop_data = json.load(f)
-    #     for ishop in shop_data:
-    #         for variant in ishop['variants']:  # Loop through all variants
-
+    with open('data.json', 'r') as f:
+        shop_data = json.load(f)
+        for ishop in shop_data: # 
+            for variant in ishop['variants']:  # Loop through all variants
+                sku = variant["sku"]
+                product_id = variant["product_id"]
+                variant_id = variant["id"]
+                product_name = variant["title"]
+                price = variant["price"]
+                #inventory = variant[""]
+                inventory_item_id = variant["inventory_item_id"]
 
 
     # for ifeed in mapped_data:
