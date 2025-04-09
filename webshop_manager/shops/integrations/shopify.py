@@ -35,10 +35,9 @@ def sync_shopify_to_db(shop):
                         'client': shop.client,
                         'is_main_product': False,
                         'product_name': product_name,
-                        'shopify_sku': sku,
-                        'uniconta_sku': "",
-                        'woocommerce_sku': "",
+                        'sku': sku,
                         'shopify_product_id': product_id,
+                        'shopify_variant_id': variant_id,
                         'shopify_inventory_item_id': inventory_item_id,
                         'last_known_price': price,
                         'last_known_inventory': inventory

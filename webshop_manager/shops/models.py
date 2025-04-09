@@ -24,7 +24,7 @@ class Product(models.Model):
     last_known_inventory = models.IntegerField(default=0)
 
     def __str__(self):
-        return self.shopify_sku
+        return self.sku
 
 
 
