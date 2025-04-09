@@ -25,7 +25,7 @@ def sync_shopify_to_db(shop):
                 variant_id = variant["id"]
                 product_name = variant["title"]
                 price = variant["price"]
-                #inventory = variant[""]
+                inventory = variant.get("inventory_quantity", 0)
                 inventory_item_id = variant["inventory_item_id"]
 
                 # Update or create based on shopify_variant_id
@@ -41,7 +41,7 @@ def sync_shopify_to_db(shop):
                         'shopify_product_id': product_id,
                         'shopify_inventory_item_id': inventory_item_id,
                         'last_known_price': price,
-                        'last_known_inventory': ""
+                        'last_known_inventory': inventory
                     }
                 )
 
