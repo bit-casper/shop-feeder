@@ -5,57 +5,43 @@ import time
 import math
 from ..utils import *
 import base64
-
+from ..models import Product
 
 
 # We need a processing function
 # We need a sync function
 
-# Sync uniconta to local DB
 def sync_uniconta_to_db(shop):
-    username = shop.api_key
-    password = shop.api_secret
-    company_id = shop.api_access_token
+    getAllUnicontaProducts(shop) # creates data.json
 
-    credentials = f"00{company_id}/{username}:{password}"
-    encoded_credentials = base64.b64encode(credentials.encode('utf-8')).decode('utf-8')
-    auth_header = f"Basic {encoded_credentials}"
-    headers = {
-        'Authorization': auth_header,
-        'Content-Type': 'application/json'
-    }
+    # Create or update products in database based on the downloaded shopify data
+    with open('uniconta_data.json', 'r') as f:
+        shop_data = json.load(f)
+        for ishop in shop_data: # 
+            for variant in ishop['variants']:  # Loop through all variants
+                sku = variant["sku"]
+                product_id = variant["product_id"]
+                variant_id = variant["id"]
+                product_name = variant["title"]
+                price = variant["price"]
+                inventory = variant.get("inventory_quantity", 0)
+                inventory_item_id = variant["inventory_item_id"]
 
-    try:
+                Product.objects.update_or_create(
+                    sku=sku,
+                    defaults={
+                        'client': shop.client,
+                        'is_main_product': False,
+                        'product_name': product_name,
+                        'sku': sku,
+                        'shopify_product_id': product_id,
+                        'shopify_variant_id': variant_id,
+                        'shopify_inventory_item_id': inventory_item_id,
+                        'last_known_price': price,
+                        'last_known_inventory': inventory
+                    }
+                )
 
-        url = "https://odata.uniconta.com/api/Entities/InvItemClientUser"
-
-        # Send request
-        response = requests.post(url, headers=headers)
-        #print(response.status_code)
-        #print(response.text)
-        response.raise_for_status()
-
-        # Log the result
-        data = response.json()
-
-        for i in data:
-            sku = str(i["MainItemSKU"])
-            print(sku)
-        # variant_id = str(i['variant']['id'])
-        # inventory_item_id = str(i['variant']['inventory_item_id'])
-        
-        #created_string = "Created product with " + "\n" + "SKU: " + sku + "\n"  + "product_id: " + product_id + "\n" + "variant_id: " + variant_id + "\n" + "inventory_item_id: " + inventory_item_id
-        # created_string = "Created product with " + "\n" + "SKU: " + sku + "\n"  + "MainItemSKU: " + MainItemSKU + "\n" + "Variant names: " + VariantSKUs
-        #SyncLog.objects.create(feed=feed, shop=shop, status='success', message="Product synced to Uniconta")
-        print("success")
-        # SyncLog.objects.create(feed=feed, shop=shop, status='success', message=created_string)
-
-    except Exception as e:
-        # feed.sync_status = 'failed'
-        # feed.save()
-        # SyncLog.objects.create(feed=feed, shop=None, status='failed', message=str(e))
-        print("failed")
-        raise
 
 
 # Handle our special sejlerbixen case
@@ -243,3 +229,39 @@ def sync_to_uniconta(shop, mapped_data, feed):
         feed.save()
         SyncLog.objects.create(feed=feed, shop=None, status='failed', message=str(e))
         raise
+
+
+
+
+
+# get all uniconta products and save them into a json file
+def getAllUnicontaProducts(shop):
+    username = shop.api_key
+    password = shop.api_secret
+    company_id = shop.api_access_token
+
+    credentials = f"00{company_id}/{username}:{password}"
+    encoded_credentials = base64.b64encode(credentials.encode('utf-8')).decode('utf-8')
+    auth_header = f"Basic {encoded_credentials}"
+    headers = {
+        'Authorization': auth_header,
+        'Content-Type': 'application/json'
+    }
+
+    url = "https://odata.uniconta.com/api/Entities/InvItemClientUser"
+
+    print("Getting all uniconta products ....")
+    #product_list = getProducts(shop, product_list_url)
+    # Send request
+    response = requests.post(url, headers=headers)
+    #print(response.status_code)
+    #print(response.text)
+    response.raise_for_status()
+
+    # Log the result
+    product_list = response.json()
+
+    with open('uniconta_data.json', 'w') as f:
+        json.dump(product_list, f)
+    # return product_list
+    print("Shopify products List size : "+str(len(product_list)))

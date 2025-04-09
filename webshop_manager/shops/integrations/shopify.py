@@ -14,7 +14,7 @@ def sync_shopify_to_db(shop):
     getAllProducts(shop) # creates data.json
 
     # Create or update products in database based on the downloaded shopify data
-    with open('data.json', 'r') as f:
+    with open('shopify_data.json', 'r') as f:
         shop_data = json.load(f)
         for ishop in shop_data: # 
             for variant in ishop['variants']:  # Loop through all variants
@@ -62,7 +62,7 @@ def sync_to_shopify(shop, mapped_data, feed):
 
     # Compare feeds and shopify and build a list of products to update
     changed_products = []
-    with open('data.json', 'r') as f:
+    with open('shopify_data.json', 'r') as f:
         shop_data = json.load(f)
         for ishop in shop_data:
             for variant in ishop['variants']:  # Loop through all variants
@@ -124,7 +124,7 @@ def sync_inventory_to_shopify(shop, mapped_data, feed):
 
     # Compare feeds and shopify and build a list of products to update
     changed_products = []
-    with open('data.json', 'r') as f:
+    with open('shopify_data.json', 'r') as f:
         shop_data = json.load(f)
         for ishop in shop_data:
             for variant in ishop['variants']:  # Loop through all variants
@@ -257,7 +257,7 @@ def sync_to_shopify_graphql(shop, mapped_data, feed):
 
     # Compare feeds and shopify and build a list of products to update
     changed_products = []
-    with open('data.json', 'r') as f:
+    with open('shopify_data.json', 'r') as f:
         shop_data = json.load(f)
         for ishop in shop_data:
             for variant in ishop['variants']:  # Loop through all variants
@@ -474,7 +474,7 @@ def getAllProducts(shop):
 
     print("Getting all shopify products ....")
     product_list = getProducts(shop, product_list_url)
-    with open('data.json', 'w') as f:
+    with open('shopify_data.json', 'w') as f:
         json.dump(product_list, f)
     # return product_list
     print("Shopify products List size : "+str(len(product_list)))
@@ -487,7 +487,7 @@ def getAllProducts_GraphQL(shop):  # get all shopify products and save them into
 
     print("Getting all shopify products ....")
     product_list = getProducts_GraphQL(shop, url)
-    with open('data.json', 'w') as f:
+    with open('shopify_data.json', 'w') as f:
         json.dump(product_list, f)
     # return product_list
     print("Shopify products List size : "+str(len(product_list)))

@@ -90,7 +90,8 @@ def sync_shop_to_db(shop_id):
         if shop.shop_type == 'shopify':
             sync_shopify_to_db(shop)
             
-        # elif shop.shop_type == 'uniconta':
+        elif shop.shop_type == 'uniconta':
+            sync_uniconta_to_db(shop)
         #     xml_data = DownloadNewFiles(feed)
         #     #return JsonResponse({'error': 'FTP not yet implemented'}, status=400)
         # elif shop.shop_type == 'custom':
