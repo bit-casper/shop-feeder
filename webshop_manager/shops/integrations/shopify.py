@@ -4,7 +4,6 @@ import json
 import time
 import math
 from ..utils import *
-from django.core.exceptions import ObjectDoesNotExist
 from ..models import Product
 
 # Sync shopify to local DB

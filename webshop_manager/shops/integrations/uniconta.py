@@ -8,11 +8,46 @@ import base64
 from ..models import Product
 
 
-# We need a processing function
-# We need a sync function
+# FOR CREATING PRODUCT IN UNICONTA
+# We need to get products from shopify, into our DB
+# Then we need to download feed and compare to our DB
+# If new product in feed, that are not in DB we need to check if exists in Uniconta.
+# If not exist in Uniconta, we create it.
+
+def sync_db_to_uniconta(shop):
+
+    # Create or update products in database based on the downloaded shopify data
+    with open('uniconta_data.json', 'r') as f:
+        shop_data = json.load(f)
+        for ishop in shop_data: # 
+            #for variant in ishop['variants']:  # Loop through all variants
+            sku = ishop["Item"]
+            product_id = ""#ishop["product_id"]
+            variant_id = ""#ishop["id"]
+            product_name = ishop["Name"]
+            price = ishop["SalesPrice1"]
+            inventory = ishop.get("Available", 0)
+            inventory_item_id = ""#ishop["inventory_item_id"]
+
+            Product.objects.update_or_create(
+                sku=sku,
+                defaults={
+                    'client': shop.client,
+                    'is_main_product': False,
+                    'product_name': product_name,
+                    'sku': sku,
+                    'shopify_product_id': product_id,
+                    'shopify_variant_id': variant_id,
+                    'shopify_inventory_item_id': inventory_item_id,
+                    'last_known_price': price,
+                    'last_known_inventory': inventory
+                }
+            )
+
+
 
 def sync_uniconta_to_db(shop):
-    getAllUnicontaProducts(shop) # creates data.json
+    getAllUnicontaProducts(shop) # creates uniconta_data.json
 
     # Create or update products in database based on the downloaded shopify data
     with open('uniconta_data.json', 'r') as f:

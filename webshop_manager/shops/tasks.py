@@ -8,7 +8,12 @@ from .utils import DownloadNewFiles
 from .integrations.shopify import *
 from .integrations.uniconta import *
 
-
+# WE NEED TO CREATE A CUSTOM TASK FOR SEJLERBIXEN
+# Here's the flow for each update cycle:
+#   - Incrementally sync Shopify products into our DB.
+#   - Download, compare, update and create from feed to our DB. Newly create are marked with 'new = true'
+#   - Compare and update changed prices and inventories from DB to Shopify.
+#   - Test all products marked 'new = true' in DB, against Uniconta. If they don't exist, create them.
 
 @shared_task
 def sync_feed_to_shops(feed_id):
@@ -101,8 +106,6 @@ def sync_shop_to_db(shop_id):
         #     file_path = os.path.join(base_dir, feed.file_pattern)
         #     tree = ET.parse(file_path)
         #     xml_data = tree.getroot()
-
-
 
         print("success")
         # feed.sync_status = 'success'

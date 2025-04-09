@@ -16,20 +16,14 @@ https://medium.com/@markwkiehl/a-beginner-guide-to-shopify-graphql-512069805678
 
 TODO
 
-    How we will handle Uniconta:
-        We compare Shopify with Feeds
-        If new prods in feeds are not in Shopify, cache those prods
-        Then compare new prods with Uniconta
-        If new are not in Uniconta, push new to Uniconta
+    WE NEED TO CREATE A CUSTOM TASK FOR SEJLERBIXEN
+    Here's the flow for each update cycle:
+        - Incrementally sync Shopify products into our DB.
+        - Download, compare, update and create from feed to our DB. Newly create are marked with 'new = true'
+        - Compare and update changed prices and inventories from DB to Shopify.
+        - Test all products marked 'new = true' in DB, against Uniconta. If they don't exist, create them.
 
 
-- Create a Client model which needs to contain Shops and Feeds.
-- Login Dashboard needs to be a list of clients. Clicking on a client takes us to the current dashboard, showing shops and feeds.
-
-- When creating product, we get 'product_id', 'sku' and 'inventory_item_id' in response.json() 
-    We should save these in the database so we can always look up those id's locally, letting us save api calls later
-
-- Cleanup: Move utility functions (non decorated functions) from tasks.py to utils.py
 
 - tasks.py -> sync_feed_to_shops() is currently creating products, we need it to only update existing products. This is why we need inventory_id
 - Move sync buttom from feed to shop
@@ -37,11 +31,12 @@ TODO
 
 
 
-
-
-
-
 FIXED
 
+- When creating product, we get 'product_id', 'sku' and 'inventory_item_id' in response.json() 
+    We should save these in the database so we can always look up those id's locally, letting us save api calls later
+- Cleanup: Move utility functions (non decorated functions) from tasks.py to integrations/shopify.py and integrations/uniconta.py
+- Create a Client model which needs to contain Shops and Feeds.
+- Login Dashboard needs to be a list of clients. Clicking on a client takes us to the current dashboard, showing shops and feeds.
 - tasks.py - mapped fields works in same cases. Palby "OnHandAvailPhysical" specifically doesn't work according to logs from latest test, trying to push N/A when its actually 0.00
 - tasks.py -> sync_feed_to_shops() is currently creating multiple products because the for-loop is arranged wrong.
