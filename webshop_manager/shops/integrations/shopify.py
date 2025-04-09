@@ -26,21 +26,34 @@ def sync_shopify_to_db(shop):
                 inventory = variant.get("inventory_quantity", 0)
                 inventory_item_id = variant["inventory_item_id"]
 
-                # Update or create based on sku
-                product, created = Product.objects.update_or_create(
+                # Define fields that should only be set on creation
+                immutable_fields = {
+                    'client': shop.client,
+                    'is_main_product': False,
+                    'product_name': product_name,
+                    'shopify_sku': sku,
+                    'uniconta_sku': "",
+                    'woocommerce_sku': "",
+                    'shopify_product_id': product_id,
+                    'shopify_variant_id': variant_id,
+                    'shopify_inventory_item_id': inventory_item_id,
+                }
+
+                # Define fields that can be updated
+                mutable_fields = {
+                    'last_known_price': price,
+                    'last_known_inventory': inventory,
+                }
+
+                # Check if the product already exists
+                product, created = Product.objects.get_or_create(
                     sku=sku,  # Unique identifier
-                    defaults={
-                        'client': shop.client,
-                        'is_main_product': False,
-                        'product_name': product_name,
-                        'sku': sku,
-                        'shopify_product_id': product_id,
-                        'shopify_variant_id': variant_id,
-                        'shopify_inventory_item_id': inventory_item_id,
-                        'last_known_price': price,
-                        'last_known_inventory': inventory
-                    }
+                    defaults={**immutable_fields, **mutable_fields}  # All fields on creation
                 )
+
+                # If it already exists, update only mutable fields
+                if not created:
+                    Product.objects.filter(sku=sku).update(**mutable_fields)
 
 
     # for ifeed in mapped_data:
