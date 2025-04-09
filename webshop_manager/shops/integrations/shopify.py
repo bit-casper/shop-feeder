@@ -26,40 +26,20 @@ def sync_shopify_to_db(shop):
                 inventory = variant.get("inventory_quantity", 0)
                 inventory_item_id = variant["inventory_item_id"]
 
-                # Define fields that should only be set on creation
-                immutable_fields = {
-                    'client': shop.client,
-                    'is_main_product': False,
-                    'product_name': product_name,
-                    'sku': sku,
-                    'shopify_product_id': product_id,
-                    'shopify_variant_id': variant_id,
-                    'shopify_inventory_item_id': inventory_item_id,
-                }
-
-                # Define fields that can be updated
-                mutable_fields = {
-                    'last_known_price': price,
-                    'last_known_inventory': inventory,
-                }
-
-                # Check if the product already exists
-                product, created = Product.objects.get_or_create(
-                    sku=sku,  # Unique identifier
-                    defaults={**immutable_fields, **mutable_fields}  # All fields on creation
+                Product.objects.update_or_create(
+                    sku=sku,
+                    defaults={
+                        'client': shop.client,
+                        'is_main_product': False,
+                        'product_name': product_name,
+                        'sku': sku,
+                        'shopify_product_id': product_id,
+                        'shopify_variant_id': variant_id,
+                        'shopify_inventory_item_id': inventory_item_id,
+                        'last_known_price': price,
+                        'last_known_inventory': inventory
+                    }
                 )
-
-                # If it already exists, update only mutable fields
-                if not created:
-                    product = Product.objects.filter(sku=sku)
-                    if product.last_known_price != price or product.last_known_inventory != inventory:
-                        product.update(**mutable_fields)
-                    # Product.objects.filter(sku=sku).update(**mutable_fields)
-                        print("Updated product with SKU: " + str(sku))
-                    else:
-                        print("No update required for SKU: " + str(sku))
-                else:
-                    print("Created product with SKU: " + str(sku))
 
 
     # for ifeed in mapped_data:
