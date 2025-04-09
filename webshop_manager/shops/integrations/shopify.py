@@ -6,11 +6,39 @@ import math
 from ..utils import *
 
 
+# Sync shopify to local DB
+def sync_shopify_to_db(shop):
+
+    # Fetch shopify data
+    getAllProducts(shop) # creates data.json
+
+    # Compare shopify to our database and create products in database if they do not already exist
+    #changed_products = []
+    
+    # with open('data.json', 'r') as f:
+    #     shop_data = json.load(f)
+    #     for ishop in shop_data:
+    #         for variant in ishop['variants']:  # Loop through all variants
+
+
+
+    # for ifeed in mapped_data:
+    #     if "MainItemSKU" in ifeed:
+    #         is_main_product = True
+    #     else:
+    #         is_main_product = False
+
+    #     if "sku" in ifeed:
+    #         sku = ifeed['sku']
+    #     if "price" in ifeed:
+    #         price = ifeed["price"]
+        
+
 
 def sync_to_shopify(shop, mapped_data, feed):
 
     # Fetch shopify data
-    getAllProducts(shop)
+    getAllProducts(shop) # creates data.json
 
     # Compare feeds and shopify and build a list of products to update
     changed_products = []

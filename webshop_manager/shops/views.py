@@ -7,7 +7,7 @@ import requests
 import xml.etree.ElementTree as ET
 from .models import Client, Shop, Feed
 from .forms import ClientForm, ShopForm, FeedForm
-from .tasks import sync_feed_to_shops  # Add this import
+from .tasks import sync_feed_to_shops, sync_shop_to_db  # Add this import
 
 
 class ClientCreateView(LoginRequiredMixin, View):
@@ -104,6 +104,10 @@ class ShopListView(LoginRequiredMixin, View):
         if 'sync_feed' in request.POST:
             feed_id = request.POST.get('feed_id')
             sync_feed_to_shops.delay(feed_id)
+            return redirect('shop_list', client_id=client_id)
+        elif 'sync_shop' in request.POST:
+            shop_id = request.POST.get('shop_id')
+            sync_shop_to_db.delay('shop_id')
             return redirect('shop_list', client_id=client_id)
         return self.get(request, client_id)
 

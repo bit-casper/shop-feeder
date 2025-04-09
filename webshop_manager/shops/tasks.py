@@ -76,3 +76,40 @@ def sync_feed_to_shops(feed_id):
         feed.save()
         SyncLog.objects.create(feed=feed, shop=None, status='failed', message=str(e))
         raise
+
+
+
+@shared_task
+def sync_shop_to_db(shop_id):
+    shop = Shop.objects.get(id=shop_id)
+    # shop.sync_status = 'running'
+    # shop.save()
+
+    try:
+        # Fetch feed data
+        if shop.shop_type == 'shopify':
+            sync_shopify_to_db(shop)
+            
+        # elif shop.shop_type == 'uniconta':
+        #     xml_data = DownloadNewFiles(feed)
+        #     #return JsonResponse({'error': 'FTP not yet implemented'}, status=400)
+        # elif shop.shop_type == 'custom':
+        #     base_dir = os.path.dirname(os.path.abspath(__file__))
+        #     file_path = os.path.join(base_dir, feed.file_pattern)
+        #     tree = ET.parse(file_path)
+        #     xml_data = tree.getroot()
+
+
+
+        print("success")
+        # feed.sync_status = 'success'
+        # feed.last_sync = timezone.now()
+        # feed.save()
+        # SyncLog.objects.create(feed=feed, shop=None, status='success', message='Sync completed successfully')
+
+    except Exception as e:
+        print("failed")
+        # feed.sync_status = 'failed'
+        # feed.save()
+        # SyncLog.objects.create(feed=feed, shop=None, status='failed', message=str(e))
+        raise

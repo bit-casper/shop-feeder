@@ -1,0 +1,123 @@
+{
+    "data": {
+        "products": {
+            "edges": [
+                {
+                    "node": {
+                        "id": "gid://shopify/Product/7701067661430",
+                        "title": "Royal manuelt ankerspil",
+                        "description": "Lofrans manuelt ankerspil til både på 26-43 fod. Dette manuelle Lofrans ankerspil til både på 26-43 fod, er lavet i eloxeret aluminiumshus og kædehjul af bronce.",
+                        "variants": {
+                            "edges": [
+                                {
+                                    "node": {
+                                        "id": "gid://shopify/ProductVariant/42095618261110",
+                                        "sku": "1010010",
+                                        "price": "5349.00",
+                                        "inventoryQuantity": 5,
+                                        "inventoryItem": {
+                                            "id": "gid://shopify/InventoryItem/44198012420214",
+                                            "inventoryLevels": {
+                                                "edges": [
+                                                    {
+                                                        "node": {
+                                                            "quantities": [
+                                                                {
+                                                                    "name": "available",
+                                                                    "quantity": 0
+                                                                }
+                                                            ],
+                                                            "location": {
+                                                                "name": "Skt. Olai Bakke 15"
+                                                            }
+                                                        }
+                                                    },
+                                                    {
+                                                        "node": {
+                                                            "quantities": [
+                                                                {
+                                                                    "name": "available",
+                                                                    "quantity": 5
+                                                                }
+                                                            ],
+                                                            "location": {
+                                                                "name": "Fjernlager"
+                                                            }
+                                                        }
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "node": {
+                        "id": "gid://shopify/Product/7701067694198",
+                        "title": "Royal manuelt ankerspil 3/8",
+                        "description": "Lofrans manuelt ankerspil til både på 26-43 fod. Dette manuelle Lofrans ankerspil til både på 26-43 fod, er lavet i eloxeret aluminiumshus og kædehjul af bronce.",
+                        "variants": {
+                            "edges": [
+                                {
+                                    "node": {
+                                        "id": "gid://shopify/ProductVariant/42095618293878",
+                                        "sku": "1010020",
+                                        "price": "5349.00",
+                                        "inventoryQuantity": 999,
+                                        "inventoryItem": {
+                                            "id": "gid://shopify/InventoryItem/44198012452982",
+                                            "inventoryLevels": {
+                                                "edges": [
+                                                    {
+                                                        "node": {
+                                                            "quantities": [
+                                                                {
+                                                                    "name": "available",
+                                                                    "quantity": 0
+                                                                }
+                                                            ],
+                                                            "location": {
+                                                                "name": "Skt. Olai Bakke 15"
+                                                            }
+                                                        }
+                                                    },
+                                                    {
+                                                        "node": {
+                                                            "quantities": [
+                                                                {
+                                                                    "name": "available",
+                                                                    "quantity": 999
+                                                                }
+                                                            ],
+                                                            "location": {
+                                                                "name": "Fjernlager"
+                                                            }
+                                                        }
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            ]
+        }
+    },
+    "extensions": {
+        "cost": {
+            "requestedQueryCost": 128,
+            "actualQueryCost": 12,
+            "throttleStatus": {
+                "maximumAvailable": 2000.0,
+                "currentlyAvailable": 1988,
+                "restoreRate": 100.0
+            }
+        }
+    }
+}

@@ -28,6 +28,11 @@
                         <div id="collapse{{ shop.id }}" class="accordion-collapse collapse">
                             <div class="accordion-body">
                                 <a href="{% url 'shop_update' client_id=client.id shop_id=shop.id %}" class="btn btn-sm btn-secondary">Edit</a>
+                                <form method="post" style="display:inline;">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="shop_id" value="{{ shop.id }}">
+                                    <button type="submit" name="sync_shop" class="btn btn-sm btn-success">Sync</button>
+                                </form>
                                 <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteShopModal{{ shop.id }}">Delete</button>
                             </div>
                         </div>
