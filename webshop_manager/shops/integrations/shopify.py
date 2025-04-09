@@ -52,6 +52,9 @@ def sync_shopify_to_db(shop):
                 # If it already exists, update only mutable fields
                 if not created:
                     Product.objects.filter(sku=sku).update(**mutable_fields)
+                    print("Updated product with SKU: " + str(sku))
+                else:
+                    print("Created product with SKU: " + str(sku))
 
 
     # for ifeed in mapped_data:
