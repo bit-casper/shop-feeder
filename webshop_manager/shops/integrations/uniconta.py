@@ -253,7 +253,7 @@ def getAllUnicontaProducts(shop):
     print("Getting all uniconta products ....")
     #product_list = getProducts(shop, product_list_url)
     # Send request
-    response = requests.post(url, headers=headers)
+    response = requests.get(url, headers=headers)
     #print(response.status_code)
     #print(response.text)
     response.raise_for_status()
