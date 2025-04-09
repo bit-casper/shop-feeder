@@ -4,7 +4,8 @@ import json
 import time
 import math
 from ..utils import *
-
+from django.core.exceptions import ObjectDoesNotExist
+from ..models import Product
 
 # Sync shopify to local DB
 def sync_shopify_to_db(shop):
@@ -26,6 +27,23 @@ def sync_shopify_to_db(shop):
                 price = variant["price"]
                 #inventory = variant[""]
                 inventory_item_id = variant["inventory_item_id"]
+
+                # Update or create based on shopify_variant_id
+                product, created = Product.objects.update_or_create(
+                    shopify_variant_id=variant_id,  # Unique identifier
+                    defaults={
+                        'client': shop.client,
+                        'is_main_product': False,
+                        'product_name': product_name,
+                        'shopify_sku': sku,
+                        'uniconta_sku': "",
+                        'woocommerce_sku': "",
+                        'shopify_product_id': product_id,
+                        'shopify_inventory_item_id': inventory_item_id,
+                        'last_known_price': price,
+                        'last_known_inventory': ""
+                    }
+                )
 
 
     # for ifeed in mapped_data:
