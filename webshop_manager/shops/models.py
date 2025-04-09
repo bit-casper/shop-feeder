@@ -31,7 +31,7 @@ class Product(models.Model):
         if self.pk is not None:  # Object already exists in the DB
             original = Product.objects.get(pk=self.pk)  # Fetch the existing instance
             self.product_name = original.product_name  # Preserve original value
-            self.sku = original.shopify_sku
+            self.sku = original.sku
             self.shopify_product_id = original.shopify_product_id
             self.shopify_variant_id = original.shopify_variant_id
             self.shopify_inventory_item_id = original.shopify_inventory_item_id
