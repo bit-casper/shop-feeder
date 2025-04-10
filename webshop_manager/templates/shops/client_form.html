@@ -13,6 +13,7 @@
 
         <div class="form-group">
             {{ form.update_iteration_delay.label_tag }}
+            <small class="form-text text-muted">Delay between batches in seconds</small>
             <input type="number" class="form-control" id="id_update_iteration_delay" name="update_iteration_delay" value="{{ form.update_iteration_delay.value|default_if_none:'' }}" min="1" required>
             {% if form.update_iteration_delay.errors %}
                 <div class="invalid-feedback">{{ form.update_iteration_delay.errors|first }}</div>
@@ -21,6 +22,7 @@
 
         <div class="form-group">
             {{ form.update_batch_size.label_tag }}
+            <small class="form-text text-muted">Number of products per batch (max 250)</small>
             <input type="number" class="form-control" id="id_update_batch_size" name="update_batch_size" value="{{ form.update_batch_size.value|default_if_none:'' }}" min="1" max="250" required>
             {% if form.update_batch_size.errors %}
                 <div class="invalid-feedback">{{ form.update_batch_size.errors|first }}</div>
