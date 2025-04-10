@@ -15,6 +15,8 @@ from .integrations.uniconta import *
 #   - Compare and update changed prices and inventories from DB to Shopify.
 #   - Test all products marked 'new = true' in DB, against Uniconta. If they don't exist, create them.
 
+
+# This function reads products from Shopify and creates a super shallow mirror of them in our database.
 @shared_task
 def sync_shopify_products_to_db(shop_id, last_cursor=None, processed_products=0):
     shop = Shop.objects.get(id=shop_id)
@@ -36,7 +38,6 @@ def sync_shopify_products_to_db(shop_id, last_cursor=None, processed_products=0)
         "X-Shopify-Access-Token": shop.api_access_token
     }
 
-    # Updated GraphQL query to include inventoryQuantity
     query = """
     query ($first: Int!, $after: String) {
         products(first: $first, after: $after) {

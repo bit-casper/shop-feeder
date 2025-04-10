@@ -19,16 +19,15 @@ TODO
     WE NEED TO CREATE A CUSTOM TASK FOR SEJLERBIXEN
     Here's the flow for each update cycle:
         1. Incrementally sync Shopify products into our DB.
-        2. Download feed and compare, update and create from feed to our DB. Newly create are marked with 'new = true'
+            (DONE) Create a function in tasks.py that should run with a fixed interval to perform this task.
+
+        2. Download feed and compare, update and create from feed to our DB. Newly created are marked with 'new = true'
+            When the function in step 1 finish, it should initiate a new function that performs this task.
+            
         3. Compare and update changed prices and inventories from DB to Shopify.
         4. Test all products marked 'new = true' in DB, against Uniconta. If they don't exist, create them.
 
     
-
-    1. Incrementally sync Shopify products into our DB.
-        Create a function in tasks.py that should run with a fixed interval to perform this task.
-
-
 
 
 
