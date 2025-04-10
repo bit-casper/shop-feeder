@@ -3,7 +3,7 @@ from django.core.exceptions import ObjectDoesNotExist
 
 
 class Client(models.Model):
-    client_name = models.CharField(max_length=100, blank=False)
+    client_name = models.CharField(max_length=100, blank=False, default="Client")
 
     def __str__(self):
         return self.client_name

@@ -7,12 +7,16 @@
             <thead>
                 <tr>
                     <th>Name</th>
+                    <th>Products</th>
+                    <th>Last Sync</th>
                 </tr>
             </thead>
             <tbody>
                 {% for client in clients %}
                 <tr class="clickable-row" data-bs-toggle="collapse" data-bs-target="#collapse{{ client.id }}" aria-expanded="false" aria-controls="collapse{{ client.id }}">
                     <td>{{ client.client_name }}</td>
+                    <td>{{ client.product_count }}</td>
+                    <td>datetime</td>
                 </tr>
                 <tr class="accordion-item">
                     <td colspan="6" class="p-0">
@@ -25,6 +29,7 @@
                         </div>
                     </td>
                 </tr>
+                
                 <!-- Delete Modal -->
                 <div class="modal fade" id="deleteFeedModal{{ client.id }}" tabindex="-1">
                     <div class="modal-dialog">

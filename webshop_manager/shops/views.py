@@ -8,6 +8,7 @@ import xml.etree.ElementTree as ET
 from .models import Client, Shop, Feed
 from .forms import ClientForm, ShopForm, FeedForm
 from .tasks import sync_feed_to_shops, sync_shop_to_db  # Add this import
+from django.db.models import Count
 
 
 class ClientCreateView(LoginRequiredMixin, View):
@@ -26,7 +27,7 @@ class ClientCreateView(LoginRequiredMixin, View):
 
 class ClientListView(LoginRequiredMixin, View):
     def get(self, request):
-        clients = Client.objects.all()
+        clients = Client.objects.all().annotate(product_count=Count('products'))
         return render(request, 'shops/client_list.html', {'clients': clients})
     
 

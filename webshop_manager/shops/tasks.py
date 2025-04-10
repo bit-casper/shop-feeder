@@ -15,6 +15,7 @@ from .integrations.uniconta import *
 #   - Compare and update changed prices and inventories from DB to Shopify.
 #   - Test all products marked 'new = true' in DB, against Uniconta. If they don't exist, create them.
 
+
 @shared_task
 def sync_feed_to_shops(feed_id):
     feed = Feed.objects.get(id=feed_id)
