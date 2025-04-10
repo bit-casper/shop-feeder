@@ -27,7 +27,7 @@ class ClientCreateView(LoginRequiredMixin, View):
 
 class ClientListView(LoginRequiredMixin, View):
     def get(self, request):
-        clients = Client.objects.all().annotate(product_count=Count('products'))
+        clients = Client.objects.all()#.annotate(product_count=Count('products'))
         return render(request, 'shops/client_list.html', {'clients': clients})
     
 

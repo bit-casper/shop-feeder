@@ -108,7 +108,8 @@ def sync_shopify_products_to_db(shop_id, last_cursor=None, processed_products=0)
         )
     else:
         # Sync complete: update product_count, last_updated, and reset sync_in_progress
-        client.product_count = total_processed
+        client.product_count = Product.objects.filter(client=client).count()
+        client.last_batch_product_count = total_processed
         client.last_updated = timezone.now()
         client.sync_in_progress = False
         client.save()
