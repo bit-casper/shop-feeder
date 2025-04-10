@@ -16,13 +16,54 @@ class Client(models.Model):
 
 
 
+# class Product(models.Model):
+#     client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='products')
+#     is_main_product = models.BooleanField(default=False)
+#     product_name = models.CharField(max_length=250, default="")
+#     sku = models.CharField(max_length=100, default="")
+#     shopify_product_id = models.CharField(max_length=100, default="")
+#     shopify_variant_id = models.CharField(max_length=100, default="")
+#     shopify_inventory_item_id = models.CharField(max_length=100, default="")
+#     last_known_price = models.CharField(max_length=100, default="")
+#     last_known_inventory = models.IntegerField(default=0)
+
+#     def __str__(self):
+#         return self.sku
+    
+#     def save(self, *args, **kwargs):
+#         if self.pk is None:  # New object, save everything as is
+#             super().save(*args, **kwargs)
+#         else:  # Existing object, apply custom logic
+#             try:
+#                 original = Product.objects.get(pk=self.pk)  # Fetch the existing instance
+
+#                 # Preserve immutable fields
+#                 self.product_name = original.product_name
+#                 self.sku = original.sku
+#                 self.shopify_product_id = original.shopify_product_id
+#                 self.shopify_variant_id = original.shopify_variant_id
+#                 self.shopify_inventory_item_id = original.shopify_inventory_item_id
+#                 self.client = original.client  # Preserve client relationship
+#                 self.is_main_product = original.is_main_product
+
+#                 # Only update mutable fields if they’ve changed
+#                 price_changed = str(original.last_known_price) != str(self.last_known_price)
+#                 inventory_changed = original.last_known_inventory != self.last_known_inventory
+
+#                 if not (price_changed or inventory_changed):
+#                     return  # No changes to price or inventory, skip the save
+
+#                 # If we reach here, at least one has changed, so proceed with save
+#                 super().save(*args, **kwargs)
+#             except ObjectDoesNotExist:
+#                 # If for some reason the object doesn’t exist, save as new
+#                 super().save(*args, **kwargs)
+
 class Product(models.Model):
     client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='products')
     is_main_product = models.BooleanField(default=False)
     product_name = models.CharField(max_length=250, default="")
     sku = models.CharField(max_length=100, default="")
-    #uniconta_sku = models.CharField(max_length=100, default="")
-    #woocommerce_sku = models.CharField(max_length=100, default="")
     shopify_product_id = models.CharField(max_length=100, default="")
     shopify_variant_id = models.CharField(max_length=100, default="")
     shopify_inventory_item_id = models.CharField(max_length=100, default="")
@@ -39,26 +80,40 @@ class Product(models.Model):
             try:
                 original = Product.objects.get(pk=self.pk)  # Fetch the existing instance
 
-                # Preserve immutable fields
-                self.product_name = original.product_name
-                self.sku = original.sku
-                self.shopify_product_id = original.shopify_product_id
-                self.shopify_variant_id = original.shopify_variant_id
-                self.shopify_inventory_item_id = original.shopify_inventory_item_id
+                # Update fields only if they’re at default value
+                if original.product_name != "" and self.product_name != original.product_name:
+                    self.product_name = original.product_name
+                if original.sku != "" and self.sku != original.sku:
+                    self.sku = original.sku
+                if original.shopify_product_id != "" and self.shopify_product_id != original.shopify_product_id:
+                    self.shopify_product_id = original.shopify_product_id
+                if original.shopify_variant_id != "" and self.shopify_variant_id != original.shopify_variant_id:
+                    self.shopify_variant_id = original.shopify_variant_id
+
+                # Preserve immutable fields that shouldn’t change
                 self.client = original.client  # Preserve client relationship
                 self.is_main_product = original.is_main_product
 
-                # Only update mutable fields if they’ve changed
+                # Always allow updates to these fields
+                # last_known_price and shopify_inventory_item_id are updated directly from self
+                # last_known_inventory isn’t in the task yet, so it’s unchanged unless provided
+
+                # Check if there’s anything worth saving
                 price_changed = str(original.last_known_price) != str(self.last_known_price)
                 inventory_changed = original.last_known_inventory != self.last_known_inventory
+                inventory_item_changed = original.shopify_inventory_item_id != self.shopify_inventory_item_id
+                name_changed = self.product_name != original.product_name
+                sku_changed = self.sku != original.sku
+                product_id_changed = self.shopify_product_id != original.shopify_product_id
+                variant_id_changed = self.shopify_variant_id != original.shopify_variant_id
 
-                if not (price_changed or inventory_changed):
-                    return  # No changes to price or inventory, skip the save
+                if not (price_changed or inventory_changed or inventory_item_changed or 
+                        name_changed or sku_changed or product_id_changed or variant_id_changed):
+                    return  # No changes, skip the save
 
-                # If we reach here, at least one has changed, so proceed with save
                 super().save(*args, **kwargs)
             except ObjectDoesNotExist:
-                # If for some reason the object doesn’t exist, save as new
+                # If the object doesn’t exist, save as new
                 super().save(*args, **kwargs)
 
 

@@ -81,33 +81,25 @@ def sync_shopify_products_to_db(shop_id, last_cursor=None, processed_products=0)
         shopify_product_id = product_node["id"].split('/')[-1]
         shopify_variant_id = variant["id"].split('/')[-1] if variant else ""
         shopify_inventory_item_id = variant["inventoryItem"]["id"].split('/')[-1] if variant.get("inventoryItem") else ""
-        title = product_node["title"]
-        price = variant.get("price", "0.00")
 
-        # Check if product exists by SKU
+        # Check if product exists by SKU and update all fields
         product, created = Product.objects.get_or_create(
             sku=sku,
             defaults={
                 "client": client,
-                "product_name": title,
-                "last_known_price": price,
+                "product_name": product_node["title"],
+                "last_known_price": variant.get("price", "0.00"),
                 "shopify_product_id": shopify_product_id,
                 "shopify_variant_id": shopify_variant_id,
                 "shopify_inventory_item_id": shopify_inventory_item_id,
             },
         )
         if not created:
-            # Update only if fields are at default value or unrestricted fields
-            if product.product_name == "":
-                product.product_name = title
-            if product.sku == "":
-                product.sku = sku
-            if product.shopify_product_id == "":
-                product.shopify_product_id = shopify_product_id
-            if product.shopify_variant_id == "":
-                product.shopify_variant_id = shopify_variant_id
-            # These fields update regardless of current value
-            product.last_known_price = price
+            # Update all fields; model save() will handle restrictions
+            product.product_name = product_node["title"]
+            product.last_known_price = variant.get("price", "0.00")
+            product.shopify_product_id = shopify_product_id
+            product.shopify_variant_id = shopify_variant_id
             product.shopify_inventory_item_id = shopify_inventory_item_id
             product.save()
 
