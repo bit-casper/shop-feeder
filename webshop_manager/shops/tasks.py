@@ -46,8 +46,12 @@ def sync_shopify_products_to_db(shop_id, last_cursor=None, processed_products=0)
                     variants(first: 1) {
                         edges {
                             node {
+                                id
                                 sku
                                 price
+                                inventoryItem {
+                                    id
+                                }
                             }
                         }
                     }
@@ -73,19 +77,40 @@ def sync_shopify_products_to_db(shop_id, last_cursor=None, processed_products=0)
         if not sku:
             continue
 
+        # Extract Shopify IDs and other fields
+        shopify_product_id = product_node["id"].split('/')[-1]
+        shopify_variant_id = variant["id"].split('/')[-1] if variant else ""
+        shopify_inventory_item_id = variant["inventoryItem"]["id"].split('/')[-1] if variant.get("inventoryItem") else ""
+        title = product_node["title"]
+        price = variant.get("price", "0.00")
+
+        # Check if product exists by SKU
         product, created = Product.objects.get_or_create(
             sku=sku,
             defaults={
                 "client": client,
-                "product_name": product_node["title"],
-                "last_known_price": variant.get("price", "0.00"),
+                "product_name": title,
+                "last_known_price": price,
+                "shopify_product_id": shopify_product_id,
+                "shopify_variant_id": shopify_variant_id,
+                "shopify_inventory_item_id": shopify_inventory_item_id,
             },
         )
         if not created:
-            product.product_name = product_node["title"]
-            product.last_known_price = variant.get("price", "0.00")
+            # Update only if fields are at default value or unrestricted fields
+            if product.product_name == "":
+                product.product_name = title
+            if product.sku == "":
+                product.sku = sku
+            if product.shopify_product_id == "":
+                product.shopify_product_id = shopify_product_id
+            if product.shopify_variant_id == "":
+                product.shopify_variant_id = shopify_variant_id
+            # These fields update regardless of current value
+            product.last_known_price = price
+            product.shopify_inventory_item_id = shopify_inventory_item_id
             product.save()
-        
+
         batch_product_count += 1
 
     total_processed = processed_products + batch_product_count
@@ -109,7 +134,6 @@ def sync_shopify_products_to_db(shop_id, last_cursor=None, processed_products=0)
         "last_cursor": new_cursor if page_info.get("hasNextPage") else None,
         "processed_products": total_processed
     }
-
 
 
 
