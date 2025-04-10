@@ -73,8 +73,8 @@ def sync_shopify_products_to_db(shop_id, last_cursor=None):
             sku=sku,
             defaults={
                 "client": client,
-                "title": product_node["title"],
-                "price": variant.get("price", "0.00"),
+                "product_name": product_node["title"],
+                "last_known_price": variant.get("price", "0.00"),
             },
         )
         if not created:
