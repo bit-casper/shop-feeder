@@ -36,6 +36,7 @@ def sync_shopify_products_to_db(shop_id, last_cursor=None, processed_products=0)
         "X-Shopify-Access-Token": shop.api_access_token
     }
 
+    # Updated GraphQL query to include inventoryQuantity
     query = """
     query ($first: Int!, $after: String) {
         products(first: $first, after: $after) {
@@ -49,6 +50,7 @@ def sync_shopify_products_to_db(shop_id, last_cursor=None, processed_products=0)
                                 id
                                 sku
                                 price
+                                inventoryQuantity
                                 inventoryItem {
                                     id
                                 }
@@ -81,6 +83,7 @@ def sync_shopify_products_to_db(shop_id, last_cursor=None, processed_products=0)
         shopify_product_id = product_node["id"].split('/')[-1]
         shopify_variant_id = variant["id"].split('/')[-1] if variant else ""
         shopify_inventory_item_id = variant["inventoryItem"]["id"].split('/')[-1] if variant.get("inventoryItem") else ""
+        inventory_quantity = variant.get("inventoryQuantity", 0)  # Default to 0 if not available
 
         # Check if product exists by SKU and update all fields
         product, created = Product.objects.get_or_create(
@@ -92,6 +95,7 @@ def sync_shopify_products_to_db(shop_id, last_cursor=None, processed_products=0)
                 "shopify_product_id": shopify_product_id,
                 "shopify_variant_id": shopify_variant_id,
                 "shopify_inventory_item_id": shopify_inventory_item_id,
+                "last_known_inventory": inventory_quantity,
             },
         )
         if not created:
@@ -101,6 +105,7 @@ def sync_shopify_products_to_db(shop_id, last_cursor=None, processed_products=0)
             product.shopify_product_id = shopify_product_id
             product.shopify_variant_id = shopify_variant_id
             product.shopify_inventory_item_id = shopify_inventory_item_id
+            product.last_known_inventory = inventory_quantity
             product.save()
 
         batch_product_count += 1
