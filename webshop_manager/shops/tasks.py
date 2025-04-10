@@ -17,20 +17,18 @@ from .integrations.uniconta import *
 
 @shared_task
 def sync_shopify_products_to_db(shop_id, last_cursor=None, processed_products=0):
-    # Get the Shopify shop and client
     shop = Shop.objects.get(id=shop_id)
     client = shop.client
 
-    # Check if sync is already in progress
-    if client.sync_in_progress:
+    # Only block new manual syncs if sync is already in progress
+    if last_cursor is None and client.sync_in_progress:
         return {"shop_id": shop_id, "error": "Sync already in progress"}
-    
-    # Mark sync as in progress on first call (when last_cursor is None)
+
+    # Mark sync as in progress on first call (manual start)
     if last_cursor is None:
         client.sync_in_progress = True
         client.save()
 
-    # Shopify GraphQL endpoint
     url = f"https://{shop.shop_name}.myshopify.com/admin/api/2025-04/graphql.json"
     headers = {
         "Accept": "application/json",
@@ -38,7 +36,6 @@ def sync_shopify_products_to_db(shop_id, last_cursor=None, processed_products=0)
         "X-Shopify-Access-Token": shop.api_access_token
     }
 
-    # GraphQL query with pagination
     query = """
     query ($first: Int!, $after: String) {
         products(first: $first, after: $after) {
@@ -65,20 +62,17 @@ def sync_shopify_products_to_db(shop_id, last_cursor=None, processed_products=0)
     """
     variables = {"first": client.update_batch_size, "after": last_cursor}
 
-    # Make the request
     response = requests.post(url, json={"query": query, "variables": variables}, headers=headers)
     data = response.json().get("data", {}).get("products", {})
 
-    # Process each product
     batch_product_count = 0
     for edge in data.get("edges", []):
         product_node = edge["node"]
         variant = product_node["variants"]["edges"][0]["node"] if product_node["variants"]["edges"] else {}
         sku = variant.get("sku")
         if not sku:
-            continue  # Skip if no SKU
+            continue
 
-        # Check if product exists by SKU
         product, created = Product.objects.get_or_create(
             sku=sku,
             defaults={
@@ -94,20 +88,16 @@ def sync_shopify_products_to_db(shop_id, last_cursor=None, processed_products=0)
         
         batch_product_count += 1
 
-    # Update processed products count
     total_processed = processed_products + batch_product_count
 
-    # Check if there’s more to fetch
     page_info = data.get("pageInfo", {})
     if page_info.get("hasNextPage"):
         new_cursor = data["edges"][-1]["cursor"]
-        # Schedule the next batch with client-defined delay
         sync_shopify_products_to_db.apply_async(
             args=(shop_id, new_cursor, total_processed),
             countdown=client.update_iteration_delay
         )
     else:
-        # Sync complete: update product_count, last_updated, and reset sync_in_progress
         client.product_count = Product.objects.filter(client=client).count()
         client.last_batch_product_count = total_processed
         client.last_updated = timezone.now()

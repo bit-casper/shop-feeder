@@ -2,10 +2,15 @@ from django import forms
 from .models import Client, Shop, Feed
 
 
+# class ClientForm(forms.ModelForm):
+#     class Meta:
+#         model = Client
+#         fields = ['client_name']
+
 class ClientForm(forms.ModelForm):
     class Meta:
         model = Client
-        fields = ['client_name']
+        fields = ['client_name', 'update_iteration_delay', 'update_batch_size']
 
 
 

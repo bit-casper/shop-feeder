@@ -1,16 +1,32 @@
 {% extends 'base.html' %}
 {% block content %}
     <h2>{{ title }}</h2>
-    <form method="post" class="needs-validation">
+    <form method="post" class="needs-validation" novalidate>
         {% csrf_token %}
         <div class="form-group">
             {{ form.client_name.label_tag }}
-            <input type="text" class="form-control" id="id_client_name" name="client_name" value="{{ form.client_name.value }}" required>
+            <input type="text" class="form-control" id="id_client_name" name="client_name" value="{{ form.client_name.value|default_if_none:'' }}" required>
             {% if form.client_name.errors %}
                 <div class="invalid-feedback">{{ form.client_name.errors|first }}</div>
             {% endif %}
         </div>
-        
+
+        <div class="form-group">
+            {{ form.update_iteration_delay.label_tag }}
+            <input type="number" class="form-control" id="id_update_iteration_delay" name="update_iteration_delay" value="{{ form.update_iteration_delay.value|default_if_none:'' }}" min="1" required>
+            {% if form.update_iteration_delay.errors %}
+                <div class="invalid-feedback">{{ form.update_iteration_delay.errors|first }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            {{ form.update_batch_size.label_tag }}
+            <input type="number" class="form-control" id="id_update_batch_size" name="update_batch_size" value="{{ form.update_batch_size.value|default_if_none:'' }}" min="1" max="250" required>
+            {% if form.update_batch_size.errors %}
+                <div class="invalid-feedback">{{ form.update_batch_size.errors|first }}</div>
+            {% endif %}
+        </div>
+
         <div class="form-buttons">
             <button type="submit" class="btn btn-primary">Save</button>
             <a href="{% url 'client_list' %}" class="btn btn-secondary">Cancel</a>
