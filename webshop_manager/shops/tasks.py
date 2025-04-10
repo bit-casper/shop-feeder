@@ -15,6 +15,87 @@ from .integrations.uniconta import *
 #   - Compare and update changed prices and inventories from DB to Shopify.
 #   - Test all products marked 'new = true' in DB, against Uniconta. If they don't exist, create them.
 
+@shared_task
+def sync_shopify_products_to_db(shop_id, last_cursor=None):
+    # Get the Shopify shop
+    shop = Shop.objects.get(id=shop_id)
+    client = shop.client
+
+    # Shopify GraphQL endpoint
+    url = f"https://{shop.shop_name}.myshopify.com/admin/api/2025-04/graphql.json"
+    headers = {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+        "X-Shopify-Access-Token": shop.api_access_token
+    }
+
+    # GraphQL query with pagination
+    query = """
+    query ($first: Int!, $after: String) {
+        products(first: $first, after: $after) {
+            edges {
+                node {
+                    id
+                    title
+                    variants(first: 1) {
+                        edges {
+                            node {
+                                sku
+                                price
+                            }
+                        }
+                    }
+                }
+                cursor
+            }
+            pageInfo {
+                hasNextPage
+            }
+        }
+    }
+    """
+    variables = {"first": 50, "after": last_cursor}
+
+    # Make the request
+    response = requests.post(url, json={"query": query, "variables": variables}, headers=headers)
+    data = response.json().get("data", {}).get("products", {})
+
+    # Process each product
+    for edge in data.get("edges", []):
+        product_node = edge["node"]
+        variant = product_node["variants"]["edges"][0]["node"] if product_node["variants"]["edges"] else {}
+        sku = variant.get("sku")
+        if not sku:
+            continue  # Skip if no SKU
+
+        # Check if product exists by SKU
+        product, created = Product.objects.get_or_create(
+            sku=sku,
+            defaults={
+                "client": client,
+                "title": product_node["title"],
+                "price": variant.get("price", "0.00"),
+            },
+        )
+        if not created:
+            # Optionally update existing product
+            product.title = product_node["title"]
+            product.price = variant.get("price", "0.00")
+            product.save()
+
+    # Check if there’s more to fetch
+    page_info = data.get("pageInfo", {})
+    if page_info.get("hasNextPage"):
+        new_cursor = data["edges"][-1]["cursor"]
+        # Schedule the next batch
+        sync_shopify_products.delay(shop_id, new_cursor)
+
+    return {"shop_id": shop_id, "last_cursor": new_cursor if page_info.get("hasNextPage") else None}
+
+
+
+
+
 
 @shared_task
 def sync_feed_to_shops(feed_id):
