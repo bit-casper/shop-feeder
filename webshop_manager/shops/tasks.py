@@ -79,8 +79,8 @@ def sync_shopify_products_to_db(shop_id, last_cursor=None):
         )
         if not created:
             # Optionally update existing product
-            product.title = product_node["title"]
-            product.price = variant.get("price", "0.00")
+            product.product_name = product_node["title"]
+            product.last_known_price = variant.get("price", "0.00")
             product.save()
 
     # Check if there’s more to fetch
@@ -88,7 +88,7 @@ def sync_shopify_products_to_db(shop_id, last_cursor=None):
     if page_info.get("hasNextPage"):
         new_cursor = data["edges"][-1]["cursor"]
         # Schedule the next batch
-        sync_shopify_products.delay(shop_id, new_cursor)
+        sync_shopify_products_to_db.delay(shop_id, new_cursor)
 
     return {"shop_id": shop_id, "last_cursor": new_cursor if page_info.get("hasNextPage") else None}
 
