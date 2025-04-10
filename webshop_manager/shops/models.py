@@ -4,6 +4,12 @@ from django.core.exceptions import ObjectDoesNotExist
 
 class Client(models.Model):
     client_name = models.CharField(max_length=100, blank=False, default="Client")
+    product_count = models.IntegerField(default=0)  # Total products in shop
+    last_batch_product_count = models.IntegerField(default=0)  # Total products synced
+    last_updated = models.DateTimeField(null=True, blank=True)  # Last sync completion
+    sync_in_progress = models.BooleanField(default=False)  # Sync status
+    update_iteration_delay = models.IntegerField(default=300)  # Delay in seconds between batches
+    update_batch_size = models.IntegerField(default=50)  # Products per batch
 
     def __str__(self):
         return self.client_name
